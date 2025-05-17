@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class WebShApplication {
+public class Main_webSh_front {
 
     public static void main(String[] args) {
-        SpringApplication.run(WebShApplication.class, args);
+        SpringApplication.run(Main_webSh_front.class, args);
 
         System.out.println("Загрузка контекста");
     }
