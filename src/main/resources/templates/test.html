@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" lang="ru">
+    <title>Moment</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+
+</head>
+<body>
+<header>
+    <div class="container">
+        <div class="row">
+            <div class="col-8">
+                <h2 class="text-center text-white"> Test </h2>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+            <p></p>
+            <h3>Test page</h3>
+            <p></p>
+            <P></P>
+<!--            <style>-->
+<!--                label {-->
+<!--                    font-size: 20px;-->
+<!--                }-->
+<!--            </style>-->
+
+            <!--            <h3>   <a th:text = "'UUID = ' + ${entity.id}"  > </a>   </h3>-->
+            <h4>   <a th:text="${errorMessage}" > </a>   </h4>
+
+            <table class="table table-bordered">
+                <thead>
+                <tr class="table-warning table align-middle">
+
+                    <th>
+                        <h6> 1.....</h6>
+                    </th>
+                    <th>
+                        <h6> 2.....</h6>
+                    </th>
+                    <th>
+                        <h6> 3.....</h6>
+                    </th>
+                    <th>
+                        <h6> 4.....</h6>
+                    </th>
+                    <th>
+                        <h6> 5.....</h6>
+
+                    </th>
+                    <th></th>
+
+                </tr>
+                </thead>
+                <tbody></tbody>
+
+            </table>
+            <p></p>
+
+            <div class="container mt-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
+                        <h3 class="text-center mb-4">Test Form</h3>
+                        <form action="/save_test_data" method="post">
+
+                            <div class="row mb-3">
+                                <div class="col-sm-3"><label for="UUID">UUID</label></div>
+                                <div class="col-sm-9"><input class="form-control" id="UUID" th:value="${entity.id}" type="text"
+                                                             name="UUID" size="40"/></div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-3"><label for="testName">testName</label></div>
+                                <div class="col-sm-9"><input class="form-control" id="testName" th:value="${entity.testName}"
+                                                             type="text" name="testName" size="40"/></div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-3"><label for="testLogin">testLogin</label></div>
+                                <div class="col-sm-9"><input class="form-control" id="testLogin" th:value="${entity.testLogin}"
+                                                             type="text" name="testLogin" size="40"/></div>
+                            </div>
+
+
+                            <div class="row mb-3">
+                                <div class="col-sm-3"><label for="testPasswordUser">testPasswordUser</label></div>
+                                <div class="col-sm-9"><input  class="form-control" id="testPasswordUser"
+                                                              th:value="${entity.testPasswordUser}" type="text"
+                                                              name="testPasswordUser" size="40"/></div>
+                            </div>
+
+
+                            <div class="row mb-3">
+                                <div class="col-sm-3"><label for="testRoleUser">testRoleUser</label></div>
+                                <div class="col-sm-9"><input  class="form-control" id="testRoleUser"
+                                                              th:value="${entity.testRoleUser}" type="text" name="testRoleUser"
+                                                              size="40"/></div>
+                            </div>
+
+
+                            <div class="row mb-3">
+                                <div class="col-sm-3"><label for="testComment">testComment</label></div>
+                                <div class="col-sm-9"><input  class="form-control" id="testComment"
+                                                              th:value="${entity.testComment}" type="text" name="testComment"
+                                                              size="40"/></div>
+                            </div>
+
+
+                            <div class="row mb-3">
+                                <div class="col-sm-3"><label for="testDataCreateUser">testDataCreateUser </label></div>
+                                <div class="col-sm-9"><input  class="form-control" id="testDataCreateUser"
+                                                              th:value="${entity.testDataCreateUser}" type="text"
+                                                              name="testDataCreateUser" size="40"/></div>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary" type="submit">Сохранить</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <p></p>
+            <h3>Test page</h3>
+
+            <p></p>
+<!--            сообщение об удалении-->
+            <h6>   <a th:text="${deleteMessage}" > </a>   </h6>
+            <p></p>
+
+        </div>
+        <table class="table table-bordered">
+            <thead>
+            <tr class="table-warning table align-middle">
+
+                <th>
+                    <h6> 1.....</h6>
+                </th>
+                <th>
+                    <h6> 2.....</h6>
+                </th>
+                <th>
+                    <h6> 3.....</h6>
+                </th>
+                <th>
+                    <h6> 4.....</h6>
+                </th>
+                <th>
+                    <h6> 5.....</h6>
+
+                </th>
+                <th>
+                    <h6> 6.....</h6>
+
+                </th>
+            </tr>
+
+            </thead>
+
+<!--            private UUID id;-->
+<!--            private String testName;-->
+<!--            private String testLogin;-->
+<!--            private Integer testPasswordUser;-->
+<!--            private String testRoleUser;-->
+<!--            private String testComment;-->
+<!--            private LocalDateTime testDataCreateUser;-->
+
+            <tbody>
+            <div th:each = "entity: ${listEntity}" >
+                <tr class="table-success table align-middle">
+                    <!--   Данные по entity-->
+                    <th>
+                        <P class="fs-6" th:text="${entity.id}" ></P>
+                    </th>
+                    <th>
+                        <input class="btn btn-outline-dark" id="bolt_limit" type="text"
+                               th:name="'limit'+ ${entity.testName}" th:value="${entity.testName}"  size="10" />
+                    </th>
+                    <th>
+                        <input class="btn btn-outline-dark" id="bolt_classBolt" type="text"
+                               th:name="'classBolt' + ${entity.testLogin}" th:value="${entity.testLogin}"  size="10" />
+                    </th>
+
+                    <th>
+                        <input class="btn btn-outline-dark" id="bolt.comment" type="text"
+                               th:name="'comments' + ${entity.testRoleUser}" th:value="${entity.testRoleUser}"  size="10" />
+                    </th>
+                    <th>
+                        <P class="fs-6" th:text="${entity.testDataCreateUser}" ></P>
+                    </th>
+                    <th>
+                        <a th:href = "@{/delete/test_data/{id}(id = ${entity.id})}" >   <h8>удалить</h8>  </a>
+                    </th>
+                </tr>
+            </div>
+            <!--                        Строка создания нового болта-->
+            <tr class="table-success table align-middle">
+                <th>
+                    <input  class="btn btn-outline-dark" placeholder="новый материал" id="bolt_name_new" type="text" name="bolt_name_new"  size="10" />
+                </th>
+                <th>
+                    <input class="btn btn-outline-dark" id="bolt_limit_new" type="text"  name="bolt_limit_new" size="4" placeholder="450" />
+                </th>
+                <th>
+                    <input class="btn btn-outline-dark"  type="text" name="bolt_classBolt_new" placeholder="5.5" size="3" />
+                </th>
+                <th>
+                    <input id="bolt.comment_new" class="btn btn-outline-dark" type="text" name="bolt.comment_new" placeholder="comm" size="10" />
+                </th>
+                <th>
+
+                </th>
+                <th>
+
+                </th>
+            </tr>
+
+            </tbody>
+
+        </table>
+        <p></p>
+    </div>
+</div>
+
+<style>
+    label {
+        font-size: 17px;
+        font-weight: bold;
+        text-align: left;
+    }
+</style>
+
+
+
+</body>
+</html>

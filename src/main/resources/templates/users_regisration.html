@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns: th ="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8" lang="ru">
+    <title>Registr</title>
+    <link  href="/css/bootstrap.min.css" rel="stylesheet" >
+    <link  href="/css/style.css" rel="stylesheet" >
+</head>
+<body>
+<header>
+    <div class="container">
+        <div class="row">
+            <div class="col-5">
+                <h1 class="text-center text-white"> Regisration</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+        </div>
+        <div class="col-4">
+            <p></p>
+            <div>
+                <h6>  <a th:text="${userInfo}" > </a>   </h6>
+            </div>
+
+            <form method="Get" action="/user_registrationEnter"  >
+                <p></p>
+                <p></p>
+
+                <label for="nameUser"> Login  </label>
+                <input th:type="text" class="btn btn-outline-dark" th:name = "nameUser" id="nameUser"  />
+                <p></p>
+                <p></p>
+                <label for="passwordUser"> Password </label>
+                <input th:type="text" class="btn btn-outline-dark" th:name = "passwordUser" id="passwordUser"  />
+                <p></p>
+
+                    <input type="submit" class="btn btn-primary" value="ОК" />
+
+            </form>
+            <p></p>
+            <form method="Get" action="/users_create">
+
+                    <input type="submit" class="btn btn-primary" value="Создать" />
+            </form>
+
+        </div>
+        <div class="col-4">
+        </div>
+</div>
+    </div>
+
+
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" lang="ru">
+    <title>Moment</title>
+    <link  href="/css/bootstrap.min.css" rel="stylesheet" >
+    <link  href="/css/style.css" rel="stylesheet" >
+
+
+</head>
+<body>
+<div class="container">
+    <form action="/user_save_changes" method = "post">
+    <div class="row">
+        <div class="col-6">
+
+                <p></p>
+                <table class="table table-success table-striped">
+                    <input type="hidden" name="userId" th:value="${userDto.getId}" />
+                    <thead>
+                    <tr>
+                        <th> Name </th>
+                        <th> Role </th>
+                        <th> Password </th>
+                        <th> Data </th>
+                        <th> ID </th>
+                        <th>  </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th>
+                            <input type="text" th:name="userName" th:value="${userDto.getUserName}"  size="11" />
+                        </th>
+                        <th>
+                            <input type="text" th:name="roleUser" th:value="${userDto.getRoleUser}"  size="11" />
+                        </th>
+                        <th>
+                            <input type="text" th:name="passwordUser" th:value="${userDto.getPasswordUser}"  size="11" />
+                        </th>
+                        <th> <a th:text = "${userDto.getDataUser}" >   </a> </th>
+                        <th> <a th:text = "${userDto.getId}" >   </a> </th>
+                        <th>  <a th:href = " @{/user_delete/{id}(id = ${userDto.getId()})} " >
+                            <p th:text="удалить"> </p> </a></th>
+                    </tr>
+                    </tbody>
+                </table>
+
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <p></p>
+            Bolt
+            <p></p>
+
+            <table class="table table-success table-striped">
+                <thead>
+                <tr>
+                    <th> Name </th>
+                    <th> Limit </th>
+                    <th> Class </th>
+                    <th> Comment </th>
+                    <th> ID </th>
+                    <th> Data </th>
+                    <th></th>
+                </tr>
+                </thead>
+                <div th:each = "bolt: ${bolts}" >
+
+                    <tbody>
+                    <tr>
+                        <th>
+                            <input type="text" th:name="${bolt.getName}" th:value="${bolt.getName}"  size="11" />
+                        </th>
+                        <th>
+                            <input type="text" th:name="${bolt.getLimit}" th:value="${bolt.getLimit}"  size="5" />
+                        </th>
+                        <th>
+                            <input type="text" th:name="${bolt.getClassBolt}" th:value="${bolt.getClassBolt}"  size="4" />
+                        </th>
+                        <th>
+                            <input type="text" th:name="${bolt.getComment}" th:value="${bolt.getComment}"  size="15" />
+                        </th>
+                        <th>
+                            <a th:text = "${bolt.getId}" ></a>
+                        </th>
+                        <th>
+                            <input type="text" th:name="${bolt.getDataCreate}" th:value="${bolt.getDataCreate}"  size="15" />
+                        </th>
+                        <th>  <a th:href = "@{/bolt_delete/{id}/{userId} (id = ${bolt.getId()}, userId = ${userDto.getId})}" >
+                            <p th:text="удалить"> </p> </a></th>
+
+                    </tr>
+                    </tbody>
+
+                </div>
+            </table>
+            <p></p>
+
+
+            Sqrew
+            <p></p>
+
+            <table class="table table-success table-striped">
+                <thead>
+                <tr>
+                    <th> Name </th>
+                    <th> Limit </th>
+                    <th> Class </th>
+                    <th> Comment </th>
+                    <th> ID </th>
+                    <th> Data </th>
+                    <th></th>
+                </tr>
+                </thead>
+                <div th:each = "sqrew: ${sqrews}" >
+
+                    <tbody>
+                    <tr>
+                        <th>
+                            <input type="text" th:name="${sqrew.getName}" th:value="${sqrew.getName}"  size="11" />
+                        </th>
+                        <th>
+                            <input type="text" th:name="${sqrew.getLimit}" th:value="${sqrew.getLimit}"  size="5" />
+                        </th>
+                        <th>
+                            <input type="text" th:name="${sqrew.getClassSqrew}" th:value="${sqrew.getClassSqrew}"  size="4" />
+                        </th>
+                        <th>
+                            <input type="text" th:name="${sqrew.getComment}" th:value="${sqrew.getComment}"  size="15" />
+                        </th>
+                        <th>
+                            <a th:text = "${sqrew.getId}" ></a>
+                        </th>
+                        <th>
+                            <input type="text" th:name="${sqrew.getDataCreate}" th:value="${sqrew.getDataCreate}"  size="15" />
+                        </th>
+                        <th>  <a th:href = " @{/sqrew_delete/{id}/{userId} (id = ${sqrew.getId()}, userId = ${userDto.getId})} " >
+                            <p th:text="удалить"> </p> </a></th>
+
+                    </tr>
+                    </tbody>
+
+                </div>
+            </table>
+            <p></p>
+        </div>
+    </div>
+        <button id="submit2" type="submit"> Save</button>
+        <label for="submit2"> changes</label>
+        <p></p>
+</form>
+    <form action = "/admin" method = "get">
+            <button  id="submit1" type="submit"> На главную </button>
+    </form>
+</div>
+<p></p>
+<p></p>
+
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

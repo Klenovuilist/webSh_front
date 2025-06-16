@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en" xmlns: th ="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8" lang="ru">
+    <title>Moment</title>
+    <link  href="/css/bootstrap.min.css" rel="stylesheet" >
+    <link  href="/css/style.css" rel="stylesheet" >
+
+
+</head>
+<body>
+<header>
+    <div class="container">
+        <div class="row">
+            <div class="col-5">
+                <h1 class="text-center text-white"> Момент</h1>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="row">
+        <!--Первая колонка        -->
+        <div class="col-4">
+
+            <a href = "/user_registrationEnter" > <p th:text=" ${userName} "> </p> </a>
+            <p></p>
+
+            <form method="get" action = "/"  >
+                <p>
+                    <label for="thread">Резьба:</label>
+                        <!-- name="threadId" - параметр в get запросе - выбор резьбы                   -->
+                    <select id="thread" name="threadId" class="form-select form-select-lg mb-3">
+                        <!-- селектор выбора резьбы -->
+                        <div th:each = "thread: ${threads}" >
+
+                            <option th:id="${thread.getThread()}" th:value= "${thread.getId()}" > <a th:text = "${thread.getThread()}" > </a> </option>
+
+                        </div>
+                    </select>
+
+                    <!-- вспомогательная переменная и сохранение выбора в селект -->
+                    <input type="hidden"  id="threadSelect"  th:value="${thread}" />
+                        <!--   th:value="${thread}" - передается от сервера (М3, М4...)                 -->
+
+                    <script>
+                    const thread = document.getElementById("threadSelect");
+                    const seletct = document.getElementById(thread.getAttribute("value"));
+                    seletct.setAttribute("selected", "true");
+
+                </script>
+                </p>
+                <p>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button class="btn btn-dark" type="submit" id="apply">Применить</button>
+                </div>
+
+                </p>
+               <p></p>
+<!--       Имя резьбы-->
+            <div>
+                <h3>  <a th:text="'Резьба' + ${thread}" > </a>   </h3>
+            </div>
+            <p></p>
+
+                <!--Таблица болтов и гаек-->
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+
+                        <!--  Заголовок-->
+                        <thead>
+                        <tr class="table-secondary table align-middle">
+                            <th>
+
+                                <h6> Болт </h6>
+
+                            </th>
+                            <th>
+                                <select id="bolt" name="bolt" class="form-select form-select-lg mb-3">
+                                    <!-- селектор выбора болта -->
+                                    <div th:each = "bolt: ${bolts}" >
+
+                                        <option th:id="'bolt' + ${bolt.getId()}" th:value= "${bolt.getId()}"  >
+                                            <a th:text = "${bolt.getName()} + ', класс_ ' + ${bolt.getClassBolt()} + ' (&#963;т = ' + ${bolt.getLimit()} + ' МПа)'" > </a> </option>
+
+                                    </div>
+                                </select>
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <a href="/all_bolt">Создать или редакт.</a>
+<!--                                    <a href="/all_bolt">Редакт.</a>-->
+                                </div>
+                            </th>
+
+                        </tr>
+                        </thead>
+
+                        <tr class="table-secondary table align-middle">
+                            <th>
+                                <h6> Гайка </h6>
+                            </th>
+                            <th>
+                                <select id="sqrew" name="sqrew" class="form-select form-select-lg mb-3">
+
+                                    <!-- селектор выбора гайки -->
+                                    <div th:each = "sqrew: ${sqrews}" >
+
+                                        <option th:id="'sqrew' + ${sqrew.getId()}" th:value= "${sqrew.getId}"  >
+                                            <a th:text = "${sqrew.getName()}  + ', класс_ ' + ${sqrew.getClassSqrew()} + ' (&#963;т = ' + ${sqrew.getLimit()} + ' МПа)'" > </a> </option>
+                                    </div>
+                                </select>
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <a href="/all_sqrew">Создать или редакт.</a>
+
+                                </div>
+
+                            </th>
+
+                        </tr>
+                    </table>
+                </div>
+
+                    <!-- вспомогательная переменная и сохранение выбора в селект болта и гайки -->
+                    <input type="hidden"  id="boltSelect"  th:value="'bolt' + ${bolt.getId()}" />
+                    <!--   th:value="${bolt}" - передается от сервера                 -->
+
+                    <input type="hidden"  id="sqrewSelect"  th:value="'sqrew' + ${sqrew.getId()}" />
+                    <!--   th:value="${sqrew}" - передается от сервера                 -->
+
+                <!--Скрытые поля для отправки значений из второй формы -->
+                <input type="hidden"  id="stepThread_mm_hidden" name="stepThread_mm" value="NO" />
+                <input type="hidden"  id="middleDiamThread_mm_hidden" name="middleDiamThread_mm" value="NO" />
+                <input type="hidden"  id="k_threadDepth_hidden" name="k_threadDepth" value="NO" />
+                <input type="hidden"  id="safetyFactor_hidden" name="safetyFactor" value="NO" />
+                <input type="hidden"  id="coefficientOfFrictionThread_hidden" name="coefficientOfFrictionThread" value="NO" />
+                <input type="hidden"  id="coefficientOfFrictionBoltHead_hidden" name="coefficientOfFrictionBoltHead" value="NO" />
+                <input type="hidden"  id="diametrHead_mm_hidden" name="diametrHead_mm" value="NO" />
+                <input type="hidden"  id="diametrHole_mm_hidden" name="diametrHole_mm" value="NO" />
+
+
+<!--                вспомогательное поле для хранения текущих значений-->
+                <input type="hidden"  id="threadIdForm" name="threadIdForm" th:value="${dataForForm[threadIdForm]}" />
+                <input type="hidden"  id="sqrewIdForm" name="sqrewIdForm" th:value="${dataForForm[sqrewIdForm]}" />
+
+
+
+            </form>
+
+                    <script>
+                        const bolt = document.getElementById("boltSelect");
+                        const seletctBolt = document.getElementById(bolt.getAttribute("value"));
+                        seletctBolt.setAttribute("selected", "true");
+
+                        const sqrew = document.getElementById("sqrewSelect");
+                        const seletctSqrew = document.getElementById(sqrew.getAttribute("value"));
+                        seletctSqrew.setAttribute("selected", "true");
+
+                    </script>
+
+                    <p></p>
+                    <!-- таблица вычисленных параметров -->
+<!--       адаптация таблицы по ширине     -->
+            <div class="table-responsive">
+                <table class="table table-bordered">
+
+                    <!--  Заголовок-->
+                    <tbody>
+                    <tr class="table-danger table align-middle">
+                        <th> Момент затяжки </th>
+                        <th> Усилие затяжки </th>
+                        <th> Напряжение на 1-ом витке </th>
+                        <th> Напряжение в стержне болта </th>
+                    </tr>
+
+                    <tr class="table-warning table align-middle">
+                        <th> <a th:text = "${momentForBoltSqrew_Nm} + ' Нм'" > </a> </th>
+                        <th> <a th:text = "${powerMaxBoltSqrew_kgs} + ' кгс'" > </a> </th>
+                        <!-- <th> <a th:text = "${stregthInThread_MPa} + ' МПа'" > </a> </th>-->
+                        <th> <a th:text = "${strengthInOneTurn}" > </a> </th>
+                        <th> <a th:text = "${stregthInBoltRot_MPa} + ' МПа'" > </a> </th>
+                    </tr >
+                    </tbody>
+                </table>
+            </div>
+
+                    <p></p>
+<!-- напряжения по виткам -->
+
+            <h6> <a th:text = "'Высота гайки - ' + ${hSqrew} + ' мм'" > </a>   </h6>
+            <p></p>
+
+            <h8> <a th:text = "'Напряжение на витках резьбы (pабочих витков - ' + ${countWorkTurn} + ')'" > </a>   </h8>
+            <p></p>
+            <div th:each = "turn: ${strengthInTurn}" >
+
+                   <h10>  <a th:text = "${turn}" > </a> </h10>
+            </div>
+            <p></p>
+            <h8> * Распределение нагрузки по виткам резьбы согласно расчетам Н.Е. Жуковского</h8>
+<!--            расчет сил -->
+            <p></p>
+            <h6> Усилие затяжки F выбирается как максимально допустимое по одному из условий:
+                <p></p>
+                - прочности стержня болта (F болт);
+                <p></p>
+                <img src="image/F_bolt.JPG" class="w-75 img-fluid" alt="">
+                <P></P>
+                - прочности 1-го витка резьбы болта (F 1-болт);
+                <p></p>
+                - прочности 1-го витка гайки (F 1-гайка);
+                <p></p>
+                <p></p>
+                <img src="image/F1_turn.JPG" class="w-75 img-fluid" alt="">
+                <p></p>
+<!--                Вывод и проверка расчитанных сил по условиям прочности, проверка по условию если сила равна миним., то красная-->
+                <div th:classappend="${listMaxPower.get(1) == listMaxPower.get(0) ? 'text-danger'  : 'text-success'}">
+                    <h8   th:text = "'F bolt =  ' + ${listMaxPower.get(1)} + ' Н'"> </h8>
+                    <P></P>
+                </div>
+                <div th:classappend="${listMaxPower.get(2) == listMaxPower.get(0) ? 'text-danger'  : 'text-success'}">
+                    <h8 th:text = "'F 1-bolt =  ' + ${listMaxPower.get(2)} + ' Н'">>   </h8>
+                    <p></p>
+                </div>
+                <div th:classappend="${listMaxPower.get(3) == listMaxPower.get(0) ? 'text-danger'  : 'text-success'}">
+                    <h8 th:text = "'F 1-sqrew =  ' + ${listMaxPower.get(3)} + ' Н'"> >  </h8>
+                    <p></p>
+                </div>
+
+                На основании трех вычисленных сил выбирается наименьшая для расчета момента затяжки</h6>
+            <P></P>
+            <ul>
+                <a href="/moment_parametr">Расчет момента по параметрам</a>
+<!--                <a href="#news">News</a>-->
+<!--                <a href="#contact">Contact</a>-->
+<!--                <li><a href="#about">About</a></li>-->
+            </ul>
+
+    </div>
+
+        <!--Вторая колонка        -->
+        <div class="col-4">
+            <p></p>
+            <h4>Параметры резьбы</h4>
+            <p></p>
+            <input id="stepThread_mm" type="text" th:class="${atributeClass[stepThread_mm]}"  th:value="${dataForForm[stepThread_mm]}"  size="5" />
+            <label for="stepThread_mm">Шаг резьбы, мм  </label>
+
+            <p></p>
+
+            <input id="middleDiamThread_mm" type="text" th:class="${atributeClass[middleDiamThread_mm]}" th:name="middleDiamThread_mm" th:value="${dataForForm[middleDiamThread_mm]}"  size="5" />
+            <label for="middleDiamThread_mm">Средний диаметр резьбы, мм </label>
+
+
+            <p></p>
+            <h4>Параметры соединения</h4>
+            <p></p>
+
+            <p></p>
+
+            <input id="k_threadDepth" type="text" th:class="${atributeClass[k_threadDepth]}"  th:value="${dataForForm[k_threadDepth]}"  size="5" />
+            <label for="k_threadDepth">Коэфф. глубины резьбы = h/d </label>
+
+            <p></p>
+            <h3>  <a th:text="${error}" > </a>   </h3>
+            <input id="safetyFactor" type="text" th:class="${atributeClass[safetyFactor]}"  th:value="${dataForForm[safetyFactor]}"  size="5" />
+            <label for="safetyFactor">Коэфф. безопасности (не более 1.0) </label>
+
+            <p></p>
+
+            <input id="coefficientOfFrictionThread" type="text" th:class="${atributeClass[coefficientOfFrictionThread]}"  th:value="${dataForForm[coefficientOfFrictionThread]}"  size="5" />
+            <label for="coefficientOfFrictionThread">Коэфф. трения резьбы </label>
+
+            <p></p>
+
+            <input id="coefficientOfFrictionBoltHead" type="text" th:class="${atributeClass[coefficientOfFrictionBoltHead]}"  th:value="${dataForForm[coefficientOfFrictionBoltHead]}"  size="5" />
+            <label for="coefficientOfFrictionBoltHead">Коэфф. трения головки болта (гайки) </label>
+
+            <p></p>
+
+            <input id="diametrHead_mm" type="text" th:class="${atributeClass[diametrHead_mm]}"  th:value="${dataForForm[diametrHead_mm]}"  size="5" />
+            <label for="diametrHead_mm">диаметр головки болта (гайки)., мм </label>
+
+            <p></p>
+
+            <input id="diametrHole_mm" type="text" th:class="${atributeClass[diametrHole_mm]}"  th:value="${dataForForm[diametrHole_mm]}"  size="5" />
+            <label for="diametrHole_mm">диаметр отв., мм </label>
+            <p></p>
+
+            <form method="get" action = "/">
+
+                <!-- вспомогательная переменная и сохранение выбора в селект болта и гайки
+                при возвращении параметров по умолчанию-->
+                <input type="hidden"  name="bolt_on_main_page"  th:value="${bolt.getId()}" />
+
+                <input type="hidden"  name="sqrew_on_main_page"  th:value="${sqrew.getId()}" />
+
+
+            <div class="d-grid gap-2 d-md-block">
+                <button class="btn btn-secondary" type="submit" id="defoult">Параметры по умолчанию</button>
+            </div>
+        </form>
+
+
+
+                    <p></p>
+    </div>
+
+        <!-- третья колонка -->
+        <div class="col">
+            <p></p>
+
+            <img src="image/vint_image.JPG" class="img-fluid" alt="Винтовое болтовое соединение гайкой, в тело детали, размеры параметры, расчет момента затяжки">
+            <p></p>
+            <h6> Уравнение Каллермана - Кляйна (расчет момета затяжки M по заданному усилию F)</h6>
+            <p></p>
+            <img src="image/f_Kallerman.JPG" class="img-fluid" alt="формула Каллермана Кляйна расчет момента затяжки винтового болтового соединения
+по заданному усилию ">
+            <p></p>
+
+            <p></p>
+            <img src="image/note.JPG" class=" w-75 img-fluid" alt="описание значений">
+
+        </div>
+
+<!--      нижняя строка-->
+        <div class="row">
+
+        </div>
+    </div>
+
+    <script>
+
+        const param_1 = document.getElementById("stepThread_mm");
+        const param_2 = document.getElementById("middleDiamThread_mm");
+        const param_3 = document.getElementById("k_threadDepth");
+        const param_4 = document.getElementById("safetyFactor");
+        const param_5 = document.getElementById("coefficientOfFrictionThread");
+        const param_6 = document.getElementById("coefficientOfFrictionBoltHead");
+        const param_7 = document.getElementById("diametrHead_mm");
+        const param_8 = document.getElementById("diametrHole_mm");
+
+        // <input type="hidden"  id="stepThread_mm_hidden" name="stepThread_mm" value="NO" />
+        // <input type="hidden"  id="middleDiamThread_mm_hidden" name="middleDiamThread_mm" value="NO" />
+        // <input type="hidden"  id="k_threadDepth_hidden" name="k_threadDepth" value="NO" />
+        // <input type="hidden"  id="safetyFactor_hidden" name="safetyFactor" value="NO" />
+        // <input type="hidden"  id="coefficientOfFrictionThread_hidden" name="coefficientOfFrictionThread" value="NO" />
+        // <input type="hidden"  id="coefficientOfFrictionBoltHead_hidden" name="coefficientOfFrictionBoltHead" value="NO" />
+        // <input type="hidden"  id="diametrHead_mm_hidden" name="diametrHead_mm" value="NO" />
+        // <input type="hidden"  id="diametrHole_mm_hidden" name="diametrHole_mm" value="NO" />
+
+        // document.getElementById("apply").onclick = apply;
+
+        param_1.addEventListener("input", compareParam_1); // слушатель param_1
+        param_2.addEventListener("input", compareParam_1); // слушатель param_1
+        param_3.addEventListener("input", compareParam_1); // слушатель param_1
+        param_4.addEventListener("input", compareParam_1); // слушатель param_1
+        param_5.addEventListener("input", compareParam_1); // слушатель param_1
+        param_6.addEventListener("input", compareParam_1); // слушатель param_1
+        param_7.addEventListener("input", compareParam_1); // слушатель param_1
+        param_8.addEventListener("input", compareParam_1); // слушатель param_1
+
+        document.getElementById("stepThread_mm_hidden").setAttribute("value", param_1.getAttribute("value"));
+        document.getElementById("middleDiamThread_mm_hidden").setAttribute("value", param_2.getAttribute("value"));
+        document.getElementById("k_threadDepth_hidden").setAttribute("value", param_3.getAttribute("value"));
+        document.getElementById("safetyFactor_hidden").setAttribute("value", param_4.getAttribute("value"));
+        document.getElementById("coefficientOfFrictionThread_hidden").setAttribute("value", param_5.getAttribute("value"));
+        document.getElementById("coefficientOfFrictionBoltHead_hidden").setAttribute("value", param_6.getAttribute("value"));
+        document.getElementById("diametrHead_mm_hidden").setAttribute("value", param_7.getAttribute("value"));
+        document.getElementById("diametrHole_mm_hidden").setAttribute("value", param_8.getAttribute("value"));
+
+        function compareParam_1(e){
+            // const stepThread_mm_hidden = document.getElementById("stepThread_mm_hidden");  -  вернуть при необ.// получение скрытого поля
+            // param_1.setAttribute("class", "btn btn-warning"); // изменение параметра
+            const val = e.target.value; // получение значения value от класса который вызвал
+            e.target.setAttribute("class", "btn btn-warning");
+
+            const formInput = document.getElementsByName(e.target.id).item(0); // получение элемента скрытого поля по имени
+            formInput.setAttribute("value", val)
+            // stepThread_mm_hidden.setAttribute("value", val); // -  вернуть при необ.
+        }
+
+    </script>
+<!--    <div class="row">-->
+
+<!--        <div class="col">col</div>-->
+<!--        <div class="col">col</div>-->
+<!--        <div class="col">col</div>-->
+<!--        <div class="col">col</div>-->
+
+<!--    </div>-->
+<!--    <div class="row">-->
+<!--        <div class="col-8">col-8</div>-->
+<!--        <div class="col-4">col-4</div>-->
+<!--    </div>-->
+</div>
+
+
+
+
+<script>
+    document.write("<h6>25.09.2024</h6>");
+
+    console.log("25.09.2024");
+</script>
+
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+<footer>
+    <div class="conteiner">
+        <div class="row">
+            <div class="col-5">
+                <h4 class="text-center text-white"> EV</h4>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+dataForCalc.put("", "0");

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" lang="ru">
+    <title>Moment</title>
+    <link  href="/css/bootstrap.min.css" rel="stylesheet" >
+    <link  href="/css/style.css" rel="stylesheet" >
+
+
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-5">
+            <p></p>
+
+
+            <table class="table table-success table-striped">
+                <thead>
+                <tr>
+                    <th> Name </th>
+                    <th> Role </th>
+                    <th> Password </th>
+                    <th> Data </th>
+                    <th> ID </th>
+                    <th>  </th>
+
+                </tr>
+
+                </thead>
+
+                <div th:each = "userEntity: ${allUsers}" >
+                    <tbody>
+                    <tr>
+                        <div
+                                th:each = "parametr: ${userEntity.getUserInfo}" >
+                            <th>
+                                <a th:text = "${parametr}" >   </a>
+                            </th>
+
+                        </div>
+                        <th>
+                            <a th:href = " @{/user/{id}(id = ${userEntity.getId()})} " >
+                                <p th:text="more"> </p> </a>
+                        </th>
+                    </tr>
+                    </tbody>
+                </div>
+            </table>
+            <p></p>
+
+        </div>
+</div>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+</div>
+
+</body>
+</html>

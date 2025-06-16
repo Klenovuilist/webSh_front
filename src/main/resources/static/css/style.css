@@ -1,0 +1,41 @@
+:root {
+    --color1: #05b1b1;
+    --color2: #52339a;
+    --color3: #66d330;
+    --color4: #efda8e;
+}
+    header {
+              padding: 15px 20px;
+    }
+ footer{
+    padding: 5px;
+}
+
+
+    header, footer{
+        background: url("../image/vint.png"), linear-gradient(to right, var(--color1) 0%,var(--color2) 100%);
+        background-size: contain;
+    }
+
+/*header_1 {*/
+/*    background: url("../image/vint.png"), linear-gradient(to right, var(--color3) 0%,var(--color4) 100%);*/
+/*    background-size: contain;*/
+/*}*/
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: inline;
+    float:right;
+}
+
+li {
+    display: inline;
+}
+
+
+/* table { table-layout: fixed; } !* �������� ������ *!*/
+/*td { width: 200px; overflow: hidden;} !* ��������� ������ ������ *!*/
+
+
