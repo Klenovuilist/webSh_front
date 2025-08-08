@@ -1,1 +1,0 @@
-ALTER TABLE thread_db ADD  COLUMN step VARCHAR (20)

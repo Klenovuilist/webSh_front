@@ -1,62 +1,57 @@
 <!DOCTYPE html>
-<html lang="en" xmlns: th ="http://thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" lang="ru">
-    <title>Registr</title>
-    <link  href="/css/bootstrap.min.css" rel="stylesheet" >
-    <link  href="/css/style.css" rel="stylesheet" >
+    <meta charset="UTF-8"/>
+    <title>Авторизация</title>
+    <!-- Подключение Bootstrap CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
 </head>
 <body>
-<header>
-    <div class="container">
-        <div class="row">
-            <div class="col-5">
-                <h1 class="text-center text-white"> Regisration</h1>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow p-4 rounded">
+                <h1 class="mb-4 text-center">Регистрация</h1>
+
+                <!-- Отображение возможных ошибок при регистрации -->
+                <div th:if="${param.error}" class="alert alert-danger mb-3">Ошибка регистрации!</div>
+                <div th:if="${param.success}" class="alert alert-success mb-3">Пользователь зарегистрирован успешно!</div>
+
+                <!-- Форма регистрации -->
+                <form method="post" action="#" th:action="@{'/register'}">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Введите email" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Логин:</label>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Введите логин" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Пароль:</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Введите пароль" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Подтверждение пароля:</label>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Подтвердите пароль" required />
+                    </div>
+
+                    <div class="d-flex flex-column align-items-center">
+                        <button type="submit" class="btn btn-primary w-100 mb-3">Зарегистрироваться</button>
+
+                        <!-- Возможность вернуться обратно на страницу авторизации -->
+                        <a href="/auth" class="btn btn-link">Уже зарегистрированы?</a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-</header>
-
-<div class="container">
-    <div class="row">
-        <div class="col-4">
-        </div>
-        <div class="col-4">
-            <p></p>
-            <div>
-                <h6>  <a th:text="${userInfo}" > </a>   </h6>
-            </div>
-
-            <form method="Get" action="/user_registrationEnter"  >
-                <p></p>
-                <p></p>
-
-                <label for="nameUser"> Login  </label>
-                <input th:type="text" class="btn btn-outline-dark" th:name = "nameUser" id="nameUser"  />
-                <p></p>
-                <p></p>
-                <label for="passwordUser"> Password </label>
-                <input th:type="text" class="btn btn-outline-dark" th:name = "passwordUser" id="passwordUser"  />
-                <p></p>
-
-                    <input type="submit" class="btn btn-primary" value="ОК" />
-
-            </form>
-            <p></p>
-            <form method="Get" action="/users_create">
-
-                    <input type="submit" class="btn btn-primary" value="Создать" />
-            </form>
-
-        </div>
-        <div class="col-4">
-        </div>
 </div>
-    </div>
-
-
-<script src="/js/bootstrap.bundle.min.js"></script>
-
-
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" lang="ru">
+    <title>Smart</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+
+    <style>
+        /* Стили для элементов h8 */
+        .inline-group {
+            display: inline-block;
+            margin-right: 10px; /* Отступ справа для разделения групп */
+        }
+    </style>
+
+</head>
+<body>
+<header>
+    <div class="container">
+        <div class="row">
+            <div class="col-8">
+                <h2 class="text-center text-white"> Smart </h2>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <!--  первая строка-->
+    <div class="row">
+        <div class="col-md-11">
+            <p></p>
+            <!--каталог разделов-->
+            <div class="btn-group" role="group" > <!--имена групп в один ряд-->
+                <a th:href="'/index'" class="text-black text-decoration-none" style="margin-right: 20px; font-weight: bold;" th:text="'На главную'"></a>
+                <div th:each = "group: ${zeroGroups}" class="me-2"> <!-- Отступ справа между каждым элементом -->
+                    <a th:href="'/index/group/' + ${group.getGroupId}" class="text-black text-decoration-none" th:text="${group.getGroupName()}"></a>
+                </div>
+            </div>
+            <p></p>
+
+            <!-- Первая ссылка будет показана, если parentId не равен null -->
+            <a th:if="${group.getParrentId != null}"
+               th:href="'/index/group/' + ${group.getParrentId}" class="text-black text-decoration-none"
+               style="margin-right: 20px; font-weight: bold;"
+               th:text="'Назад '"></a>
+
+            <!-- Вторая ссылка будет показана, если parentId равен null -->
+            <a th:if="${group.getParrentId == null}"
+               th:href="'/index'" class="text-black text-decoration-none" style="margin-right: 20px; font-weight: bold;"
+               th:text="'Назад '"></a>
+
+<!--Вывод сообщения об ошибке-->
+            <h6>   <a th:text="${errorMessage}" > </a>   </h6>
+
+        </div>
+
+
+    </div>
+    <!--конец первой строки-->
+
+
+
+
+<!--    вторая строка-->
+    <div class="row g-1">
+
+<!--        контейнеры с группой и картинками-->
+        <div class="col-11">
+            <h4 class="text-center mb-4">
+                <a th:text="${group.getGroupName()}"></a>
+            </h4>
+
+         <div th:if="${not #lists.isEmpty(groups)}" class="container mt-2">
+                <div class="row justify-content-center">
+                    <div th:each="group : ${groups}" class="col-md-3 my-3">
+
+                            <div class="card h-100 border p-4 rounded shadow-lg bg-body-secondary" style="min-height: 250px;">
+                                <a th:href="'/index/group/' + ${group.getGroupId}" class="stretched-link" tabindex="-1">
+
+                                <h6 class="text-center mb-4">
+                                    <a th:text="${group.getGroupName()}"></a>
+                                </h6>
+                                <!--картинка группы  @{'/image_group/' + ${fileName}}   "@{'/image_group/new.jpg'}" -->
+                                <img th:src="@{ '/image/' + ${group.getGroupId()}}" class="rounded-img img-fluid mx-auto d-block" style="width: 100%; height: auto;" alt="Пустое изображение">
+<!--                                    <img th:src="@{ '/image_group/' + 'new' + '.jpg'}" class="img-fluid mx-auto d-block" style="width: 100%; height: auto;" alt="Пустое изображение">-->
+                                </a>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <!--конец вторая строка-->
+
+    <!--    цикл строк со строками товаров -->
+    <div class="row">
+
+        <!--  контейнеры с товарами и картинками-->
+        <div class="col-11 g-0">
+
+            <div class="container mt-0">
+                <div class="row justify-content-center">
+                    <div th:each="product: ${products}" class="col-md-3 my-3">
+
+                        <div class="card h-100 border p-4 rounded shadow-lg bg-body-secondary" style="min-height: 250px;">
+                            <a th:href="'/index/product/' + ${product.getProductId}" class="stretched-link" tabindex="-1">
+
+                                <h6 class="text-center mb-4">
+                                    <a th:text="${product.getProduct_name}"></a>
+                                </h6>
+                                 <img th:src="@{'/image/product/'+ ${product.getProductId()} + '/1'}" class="rounded-img img-fluid mx-auto d-block" style="width: 100%; height: auto;" alt="Пустое изображение">
+                                <p></p>
+                                <!-- Добавляем div для цены с абсолютным позиционированием -->
+                                <div >
+                                    <h5 style="color: darkblue;">
+                                        <a th:text="${product.getProductCoast()} + ' руб'" >
+                                        </a>
+                                    </h5>
+                                </div>
+<!--                                <h5 > <a th:text="${product.getProductCoast} + ' руб'"></a></h5>-->
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p></p>
+        </div>
+        <p></p>
+    </div>
+    <!--конец цикл строк с товарами и картинками-->
+
+</div>
+
+
+<style>
+    label {
+        font-size: 17px;
+        font-weight: bold;
+        text-align: left;
+    }
+</style>
+
+
+
+</body>
+</html>

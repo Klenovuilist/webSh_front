@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" lang="ru">
+    <title>Smart admin</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+
+</head>
+<body>
+<header>
+    <div class="container">
+        <div class="row">
+            <div class="col-8">
+                <h3 class="text-center text-white"> Smart администратор </h3>
+<!--                <h4 class="text-center text-white"> администратор </h4>-->
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <p></p>
+            <h3>Главная страница администратора</h3>
+            <p></p>
+            <P></P>
+<!--Вывод сообщения об ошибке-->
+            <h4>   <a th:text="${errorMessage}" > </a>   </h4>
+
+            <table class="table table-bordered">
+                <thead>
+                <tr class="table-warning table align-middle">
+
+                    <th>
+                        <h6> 1.....</h6>
+                    </th>
+                    <th>
+                        <h6> 2.....</h6>
+                    </th>
+                    <th>
+                        <h6> 3.....</h6>
+                    </th>
+                    <th>
+                        <h6> 4.....</h6>
+                    </th>
+                    <th>
+                        <h6> 5.....</h6>
+
+                    </th>
+                    <th></th>
+
+                </tr>
+                </thead>
+                <tbody></tbody>
+
+            </table>
+            <p></p>
+            <!--контейнер 0-->
+                <div class="row justify-content-center">
+                    <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
+                        <h6 class="text-center mb-4">Статистика</h6>
+                        <p></p>
+                        Посещения
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr class="table-warning table align-middle">
+
+                                <th>
+                                    <h6> За неделю </h6>
+                                </th>
+                                <th>
+                                    <h6> За день </h6>
+                                </th>
+                                <th>
+                                    <h6> За месяц</h6>
+                                </th>
+
+                            </tr>
+                            <tr class="table-warning table align-middle">
+
+                                <th>
+                                    <h6> ........ </h6>
+                                </th>
+                                <th>
+                                    <h6> ........ </h6>
+                                </th>
+                                <th>
+                                    <h6> ........ </h6>
+                                </th>
+
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+
+                        </table>
+                        <p></p>
+
+
+                    </div>
+
+                </div>
+
+            <!--кнопки-->
+            <div>
+                <p></p>
+                <div class="btn-group" role="group" > <!--имена групп в один ряд-->
+                    <!--                <a th:href="'/index'" class="text-black text-decoration-none" style="margin-right: 20px;" th:text="'На главную'"></a>-->
+                    <a th:href="'/product_admin/add_new'" class="text-black text-decoration-none" style="margin-right: 30px; font-weight: bold;" th:text="'Добавить продукт'"></a>
+                    <a th:href="'/product/all'" class="text-black text-decoration-none" style="margin-right: 30px; font-weight: bold;" th:text="'Все продукты'"></a>
+
+                    </div>
+                </div>
+                <p></p>
+            </div>
+           </div>
+
+    <!--контейнер с разделами-->
+            <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
+                <h6 class="text-center mb-1">Разделы</h6>
+                <form method="post" action = "/index_admin/create_group/0"
+                      id="create_group">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button class="btn btn-dark" type="submit" id="apply_2">Добавить основной раздел</button>
+                    </div>
+                </form>
+
+                <!--            создание Списка группп с отступами для подгрупп    -->
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr class="table-warning text-align-middle">
+                            <th ></th>
+                        </thead>
+
+
+                        <tbody>
+
+
+                            <tr th:each = "group: ${groups}"
+
+                                th:classappend="${group.levelGroup > 0 ? 'table-secondary' : 'table-primary'}">
+                                  <th>
+                                    <div class="row">
+                                        <div class="col-1">
+                                            <div>
+                                                <a th:href="'/index_admin/group/' + ${group.getGroupId}" > <!--class="stretched-link" tabindex="-1"-->
+                                                    <!--картинка группы  @{'/image_group/' + ${fileName}}   "@{'/image_group/new.jpg'}" -->
+                                                    <img th:src="@{ '/image/' + ${group.getGroupId()}}" class="img-fluid mx-auto d-block" style="width: 100%; height: auto;">
+
+                                                </a>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-4">
+                                            <!--Добавление отступов для подгрупп-->
+                                            <div style="display: flex; align-items: center; white-space: nowrap;">
+                                                <div th:if="${group.getLevelGroup() > 0}">
+                                             <span th:each="i : ${#numbers.sequence(0, group.getLevelGroup())}" style="/*margin-right: 10px;*/ display: inline-block;">
+                                                <span style="display: inline-block; width: 30px; height: 10px;">
+                                                </span>
+                                             </span>
+                                                </div>
+
+                                                <!-- ИМЯ ГРУППЫ -->
+                                                <div>
+                                                    <div>
+                                                        <input class="form-control" id="testName" th:value="${group.getGroupName()}"
+                                                               th:id="'group_name_' + ${group.getGroupId}"
+                                                               type="text" name="testName" size="50"/>
+                                                    </div>
+
+                                                    <div th:if="${group.getLevelGroup() == 0}">
+                                                        <h6> основной  </h6>
+                                                    </div>
+                                                    <div th:if="${group.getLevelGroup() > 0}">
+                                                        <h6> подраздел </h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            </div>
+
+                                        <!--Конец Добавление отступов для подгрупп-->
+
+                                        <!--   Кнопка удалить группу -->
+                                        <div class="col-1">
+                                            <form method="post" th:action = "'/index_admin/del_group/' + ${group.getGroupId}"
+                                                  th:id="'del_group_' + ${group.getGroupId}">
+                                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+
+                                                    <button class="btn btn-dark btn-sm mb-2"
+                                                            type="submit"
+                                                            style="height: 25px; width: 80px; font-size: 12px;">Удалить</button> <!--Удалить-->
+                                                </div>
+                                                <!--                                        скрытое поле -->
+                                                <!-- newHiddenInput_del.value = gr.groupId;                  // Значение поля
+                                    newHiddenInput_del.name = "group_del_group" + gr.groupId;-->
+                                            </form>
+                                        </div>
+
+
+                                        <!--                                <div class="col-1"></div>  &lt;!&ndash;пустая колонка&ndash;&gt;-->
+
+                                        <!--Кнопка сохранить группу -->
+                                        <div class="col-1">
+                                            <form method="post" th:action = "'/index_admin/save_group/' + ${group.getGroupId}"
+                                                  th:id="'save_group_' + ${group.getGroupId}">
+                                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                                    <button class="btn btn-dark btn-sm mb-2" type="submit"
+                                                            style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
+
+                                                    <!--                                     внутри формы
+                                                                                 newHiddenInput_save.value = gr.groupName;                  // Значение поля имя
+                                                                                newHiddenInput_save.name = "group_save_" + gr.groupId;       // Имя параметра на сохранение группы-->
+
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                        <!--Кнопка создать группу -->
+                                        <div class="col-1">
+                                            <form method="post" th:action = "'/index_admin/create_group/' + ${group.getGroupId}"
+                                                  th:id="'create_group_' + ${group.getGroupId}">
+                                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                                    <button class="btn btn-dark btn-sm" type="submit"
+                                                            style="height: 50px; width: 135px; font-size: 12px;">Добавить подраздел </button>
+                                                </div>
+                                                <!--                                        скрытое поле для формы-->
+                                                <!--                                        newHiddenInput_create.value = gr.groupId;                  // Значение поля имя
+                                                                                            newHiddenInput_create.name = "create_group_" + gr.groupId;       // Имя параметра на создание г-->
+                                            </form>
+                                            <p></p>
+                                        </div>
+
+                                        <!--Кнопка переместить в другую группу -->
+                                        <div class="col-2">
+                                            <form method="post" action="/index_admin/change_parrent_group" th:object="${group}">
+                                                <input type="hidden" name="id_group" th:value="${group.getGroupId()}"/>
+
+                                                <div class="row align-items-center">
+                                                    <div class="col-auto">
+                                                        <button class="btn btn-dark btn-sm" type="submit"
+                                                                style="font-size: 12px;">Переместить в</button>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <select id="parrent_group" name="parrent_group_Id" class="form-select form-select-sm" style="width: auto; height: 28px; font-size: 12px;">
+                                                            <option th:each="parrent : ${parentGroup}"
+                                                                    th:value="${parrent.getGroupId()}"
+                                                                    th:text="${parrent.getGroupName()}"></option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>       <!--Кнопка загрузить изображение -->
+                                        <div class="col-2">
+                                            <form method="post" enctype="multipart/form-data"
+                                                  th:action="@{'/upload_image_group/' + ${group.getGroupId()}}"
+                                                  th:object="${image}">   <!--связывает форму с объектом image-->
+                                                <input type="file" name="file" accept="image/*" required/>  <!--допустимые файлы image-->
+                                                <button type="submit">Загрузить</button>
+                                            </form>
+                                        </div>
+
+                                    </div>
+                                </th>
+                            </tr>
+                            <p></p>
+
+                        </tbody>
+                    </table>
+
+
+                <div th:each = "group: ${groups}" id="loop" >
+
+                    <input   th:value="${group.getGroupName()} + '  вложенность: ' + ${group.getLevelGroup} "
+                            type="text" name="testName" size="50"/>
+                </div>
+
+                <h4>   <a th:text="'Количество разделов = ' + ${groups.size()}" > </a>   </h4>
+                <p></p>
+            </div>
+
+
+    <p></p>
+
+
+<!--            <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">-->
+<!--                    <h6 class="text-center mb-4">Услуги</h6>-->
+<!--                </div>-->
+<!--    <p></p>-->
+
+
+        <!--контейнер 2-->
+                <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
+                    <h6 class="text-center mb-4">Последние зарегистрированные пользователи</h6>
+                </div>
+    <p></p>
+
+
+
+        <!--контейнер 3-->
+                <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
+                    <h6 class="text-center mb-4">Последние комментарии</h6>
+                </div>
+        <p></p>
+
+
+
+
+
+</div>
+
+<script th:inline="javascript">
+    const groups = [[${groups}]]; // получение коллекции groups
+
+    for (let gr of groups){
+
+
+        // скрытое поле для формы удалить группу
+        const newHiddenInput_del = document.createElement("input"); // Создаем скрытое поле для кнопки удаления
+        newHiddenInput_del.type = "hidden";                        // Устанавливаем тип поля как hidden
+        newHiddenInput_del.id = "hidden_del_group" + gr.groupId/*.toString()*/;          //  ID для каждого поля
+        newHiddenInput_del.value = gr.groupId;                  // Значение поля
+        newHiddenInput_del.name = "group_del_group" + gr.groupId;       // имя параметра на удаление группы
+
+        const del_form = document.getElementById("del_group_" + gr.groupId);
+        del_form.appendChild(newHiddenInput_del);// Добавление скрытого поля в форму удалить группу
+
+
+        // скрытое поле для формы сохранить группу
+        const newHiddenInput_save = document.createElement("input"); // Создаем скрытое поле для кнопки сохранить
+        newHiddenInput_save.type = "hidden";                        // Устанавливаем тип поля как hidden
+        newHiddenInput_save.id = "hidden_name_" + gr.groupId;          //  ID для каждого поля
+        newHiddenInput_save.value = gr.groupName;                  // Значение поля имя
+        newHiddenInput_save.name = "name_group";       // Имя параметра на сохранение name группы
+
+        const save_form = document.getElementById("save_group_" + gr.groupId); //получение объекта форма сохранить группу
+        save_form.appendChild(newHiddenInput_save);// Добавление скрытого поля в форму кнопки сохранить группу
+
+
+        // скрытое поле для формы создать группу
+        const newHiddenInput_create= document.createElement("input"); // Создаем скрытое поле для кнопки создать
+        newHiddenInput_create.type = "hidden";                        // Устанавливаем тип поля как hidden
+        newHiddenInput_create.id = "hidden_create_" + gr.groupId;          //  ID для каждого поля
+        newHiddenInput_create.value = gr.groupId;                  // Значение поля имя
+        newHiddenInput_create.name = "create_group_" + gr.groupId;       // Имя параметра на создание группы
+
+        const create_form = document.getElementById("create_group_" + gr.groupId); //получение объекта форма создать группу
+        create_form.appendChild(newHiddenInput_create);// Добавление скрытого поля в форму кнопки создать группу
+
+        const inputNameGroupe = document.getElementById("group_name_" + gr.groupId); //получение объекта имя группы для слушателя
+
+        inputNameGroupe.addEventListener("input", () => {
+            copyValue(inputNameGroupe, newHiddenInput_save );
+        }); // слушатель на изменение имени группы
+
+    }
+    // обработчик слушателя на изменение поля имя группы
+    function copyValue(param_1, param_2){
+        const val = param_1.value; // получение значения value от класса который вызвал
+
+        param_1.setAttribute("style", "background-color: yellow"); // установка нового цвета для поля
+
+        param_2.setAttribute("value", val); // новое значение для скрытого поля при изменении поля имя
+    }
+</script>
+<!--<script>-->
+<!--    const listElement = document.getElementById('list');-->
+<!--    const groupsJSON = listElement.dataset.groups;-->
+<!--    const groupsObj = JSON.parse(groupsJSON);-->
+
+<!--    const count = parseInt(document.getElementById("count").getAttribute("value")); // размер списка-->
+<!--    let i = 0;-->
+<!--    const currentElem = null;-->
+
+<!--    while (i < count){ //цикл прохода по коллекции-->
+
+<!--        funcWriteList(count); // вызов функции с рекурсией-->
+
+<!--    }-->
+<!--    function funcWriteList(count_1) {-->
+
+<!--        if (count_1 === 0) {-->
+<!--            return;-->
+<!--        }-->
+
+<!--        const newDiv = document.createElement("div"); // новый элемент div-->
+<!--        newDiv.innerHTML += `${groupsObj.name} + ${i}`;  // текст для нового элемента-->
+
+<!--        document.getElementById("output").appendChild(newDiv); //элемент добавить в существующий контейнер div-->
+<!--        i++;-->
+<!--        funcWriteList(count_1 - 1);-->
+<!--    }-->
+
+
+
+<!--</script>-->
+
+<style>
+    label {
+        font-size: 17px;
+        font-weight: bold;
+        text-align: left;
+    }
+</style>
+
+
+
+</body>
+
+</html>
+

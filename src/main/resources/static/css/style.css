@@ -1,6 +1,6 @@
 :root {
-    --color1: #05b1b1;
-    --color2: #52339a;
+    --color1: #b0cccc;
+    --color2: #09373f;
     --color3: #66d330;
     --color4: #efda8e;
 }
@@ -12,15 +12,22 @@
 }
 
 
-    header, footer{
-        background: url("../image/vint.png"), linear-gradient(to right, var(--color1) 0%,var(--color2) 100%);
-        background-size: contain;
-    }
+    /*header, footer{*/
+    /*    background: url("../image/free-png.ru-187.png"), linear-gradient(to right, var(--color1) 0%,var(--color2) 100%);*/
+    /*    background-size: contain;*/
+    /*}*/
 
-/*header_1 {*/
-/*    background: url("../image/vint.png"), linear-gradient(to right, var(--color3) 0%,var(--color4) 100%);*/
-/*    background-size: contain;*/
+/*header, footer {*/
+/*    background: url("../image/65-655486_clipart-cables-clip-art.png") no-repeat, linear-gradient(to right, var(--color1) 0%, var(--color2) 100%);*/
+/*    background-size: contain; !* Масштабируем изображение, сохраняя соотношение сторон *!*/
+/* !*   background-position: 80px 20px; !* Позиция по оси x и y *!*!*/
 /*}*/
+
+header, footer {
+    background: url("../image/1879178.png") no-repeat 50px center, /* Перемещаем изображение на 50px от левого края */ linear-gradient(to right, var(--color1) 0%, var(--color2) 100%) center/cover; /* Градиент растянут на всю ширину */
+    background-size: contain; /* Масштабируем изображение, сохраняя пропорции */
+}
+
 
 ul {
     list-style-type: none;
@@ -32,6 +39,21 @@ ul {
 
 li {
     display: inline;
+}
+.bold-text {
+    font-weight: bold;
+}
+
+/* Настройки градиентного фона */
+body {
+    background: linear-gradient(to bottom, #dde5e5, #62797e);
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Радиус закругления уголков (чем больше значение, тем сильнее округляются углы) */
+.rounded-img {
+    border-radius: 10px;
 }
 
 

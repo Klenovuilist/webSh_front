@@ -12,8 +12,8 @@
     <div class="container">
         <div class="row">
             <div class="col-8">
-                <h3 class="text-center text-white"> Smart администратор user </h3>
-                <!--                <h4 class="text-center text-white"> администратор </h4>-->
+                <h3 class="text-center text-white"> Smart администратор product </h3>
+<!--                <h4 class="text-center text-white"> администратор </h4>-->
             </div>
         </div>
     </div>
@@ -23,12 +23,12 @@
     <div class="row">
         <div class="col-8">
             <p></p>
-            <h3>Описание и редактор User, для администратора</h3>
+            <h3>Описание и редактор товара, для администратора</h3>
             <p></p>
             <h4>   <a th:text="${errorMessage}" > </a>   </h4>
             <P></P>
-            <!--Вывод сообщения об ошибке-->
-
+<!--Вывод сообщения об ошибке-->
+            <h4>   <a th:text="'товар с id = ' + ${groupId}" > </a>   </h4>
 
             <table class="table table-bordered">
                 <thead>
@@ -63,8 +63,6 @@
                 <div class="row justify-content-center">
                     <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
                         <h3 class="text-center mb-4">Описание</h3>
-                        <p></p>
-                        <h4>   <a th:text="'Пользователь с id = ' + ${userId}" > </a>   </h4>
 
                     </div>
                 </div>

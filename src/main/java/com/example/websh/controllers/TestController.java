@@ -43,7 +43,7 @@ public class TestController {
 
     @GetMapping("/test")
     public String testRequest() {
-        return "test FRONT";
+        return "test_2.html";
     }
 
     @GetMapping("/info_back")  // тестовый запрос на бэк
@@ -108,7 +108,7 @@ public class TestController {
 
         testService.deleteTestDataById(id);// удаление объекта
             wasDeleted = true;
-        return "redirect:/test_entity";
+            return "redirect:/test_entity";
     }
 
 }

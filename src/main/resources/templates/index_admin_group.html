@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" lang="ru">
+    <title>Smart admin</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+
+</head>
+<body>
+<header>
+    <div class="container">
+        <div class="row">
+            <div class="col-8">
+                <h3 class="text-center text-white"> Smart администратор </h3>
+<!--                <h4 class="text-center text-white"> администратор </h4>-->
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <p></p>
+            <h3> <a th:text="'Раздел: ' + ${group.getGroupName()}" > </a> </h3>
+            <p></p>
+
+<!--Вывод сообщения об ошибке-->
+            <h4>   <a th:text="${errorMessage}" > </a>   </h4>
+
+            <p></p>
+            <!--контейнер 0  Описание родительского раздела-->
+            <div class="container mt-8">
+                <div class="row justify-content-center">
+                    <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
+                        <p></p>
+                        <div class="row">
+                            <!--Картинка группы-->
+                            <div class="col-2">
+                                <!--картинка группы  @{'/image_group/' + ${fileName}}   "@{'/image_group/new.jpg'}" -->
+                                <img th:src="@{ '/image/' + ${group.getGroupId()}}" class="img-fluid mx-auto d-block" style="width: 100%; height: auto;">
+
+                            </div>
+
+                            <div class="col-10">
+
+                                <table class="table table-bordered">
+                                    <thead>
+                                    <tr class="table-warning table align-middle">
+
+<!--                                        <th>-->
+<!--                                            <h6> Имя </h6>-->
+<!--                                        </th>-->
+                                        <form method="post" th:action = "'/index_admin/save_group/' + ${group.getGroupId}">
+                                        <th>
+                                            <!--Поле для ввода имени группы-->
+                                            <input class="form-control" th:value="${group.getGroupName()}"
+                                                   type="text" size="50"
+                                                   name = "name_group"/>
+                                            </th>
+                                        <th>
+                                            <!--Кнопка сохранить имя группы-->
+                                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                                    <button class="btn btn-dark btn-sm mb-2" type="submit"
+                                                            style="height: 30px; width: 100px; font-size: 15px;">Сохранить</button>
+                                                </div>
+                                        </th>
+                                        </form>
+                                        <th>
+                                         <!--Кнопка загрузить изображение -->
+                                            <form method="post" enctype="multipart/form-data"
+                                      th:action="@{'/upload_image_group/' + ${group.getGroupId()}}"
+                                      th:object="${image}">   <!--связывает форму с объектом image-->
+                                    <input type="file" name="file" accept="image/*" required/>  <!--допустимые файлы image-->
+                                    <button type="submit">Загрузить изображение</button>
+                                            </form>
+                                        </th>
+                                    </tr>
+
+                                    </thead>
+                                    <tbody></tbody>
+
+                                </table>
+
+                                <p></p>
+                            </div>
+                        </div>
+                        <p></p>
+                        <a th:href="'/index_admin'" class="text-black text-decoration-none" style="margin-right: 20px; font-weight: bold;" th:text="'На главную ->'"></a>
+                    </div>
+
+                </div>
+            </div>
+
+            <p></p>
+            <!--        ккккkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk  ПОДРАЗДЕЛЫ-->
+
+            <!--контейнер 1 со списком подразделов-->
+            <div class="container mt-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-10 border p-4 rounded shadow-lg bg-body-secondary">
+                        <h6 class="text-center mb-4">Подразделы</h6>
+                        <p></p>
+                        <form method="post" th:action = "'/index_admin/create_group/' + ${group.getGroupId}"
+                              id="create_group">
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button class="btn btn-dark" type="submit" id="apply_2">Добавить подраздел</button>
+                            </div>
+                        </form>
+                        <p></p>
+
+                        <!--            создание Списока группп с отступами для подгрупп    -->
+
+                        <div class="row">
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr class="table-warning text-align-middle">
+                                    <th scope="col">Картинка</th>
+                                    <th scope="col">Наименование</th>
+                                    <th scope="col"></th>
+                                    <th scope="col"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each = "group: ${groups}" >
+                                    <td>
+                                        <a th:href="'/index_admin/group/' + ${group.getGroupId}" >
+                                            <img th:src="@{ '/image/' + ${group.getGroupId()}}" class="img-fluid mx-auto d-block" style="max-width: 150px; max-height: 150px; object-fit: contain;">
+                                        </a>
+                                    </td>
+
+                                    <td><!-- ИМЯ ГРУППЫ -->
+                                        <div style="display: flex; align-items: center; white-space: nowrap;">
+                                            <input class="form-control" th:value="${group.getGroupName()}"
+                                                   th:id="'group_name_' + ${group.getGroupId}"
+                                                   type="text" name="testName" size="50"/>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <!--                                Кнопка удалить группу -->
+                                        <form method="post" th:action = "'/index_admin/del_group/' + ${group.getGroupId}"
+                                              th:id="'del_group_' + ${group.getGroupId}">
+                                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+
+                                                <button class="btn btn-dark btn-sm mb-2"
+                                                        type="submit"
+                                                        style="height: 25px; width: 80px; font-size: 12px;">Del.</button> <!--Удалить-->
+                                            </div>
+                                            <!--                                        скрытое поле -->
+                                            <!-- newHiddenInput_del.value = gr.groupId;                  // Значение поля
+                                newHiddenInput_del.name = "group_del_group" + gr.groupId;-->
+                                        </form>
+
+                                        <!--Кнопка сохранить группу -->
+                                        <form method="post" th:action = "'/index_admin/save_group/' + ${group.getGroupId}"
+                                              th:id="'save_group_' + ${group.getGroupId}">
+                                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                                <button class="btn btn-dark btn-sm mb-2" type="submit"
+                                                        style="height: 25px; width: 80px; font-size: 12px;">Save</button>
+
+                                                <!--                                     внутри формы
+                                                                             newHiddenInput_save.value = gr.groupName;                  // Значение поля имя
+                                                                            newHiddenInput_save.name = "name_group" + gr.groupId;       // Имя параметра на сохранение группы-->
+
+                                            </div>
+                                        </form>
+                                    </td>
+
+                                     <td>
+                                         <!--Кнопка загрузить изображение -->
+                                             <form method="post" enctype="multipart/form-data"
+                                                   th:action="@{'/upload_image_group/' + ${group.getGroupId()}}"
+                                                   th:object="${image}">   <!--связывает форму с объектом image-->
+                                                 <input type="file" name="file" accept="image/*" required/>  <!--допустимые файлы image-->
+                                                 <button type="submit">Загрузить изображение</button>
+                                             </form>
+                                     </td>
+                                </tbody>
+                                </table>
+                        </div>
+
+
+
+
+                <!--скрипт для подразделов-->
+                        <script th:inline="javascript">
+                        const groups = [[${groups}]]; // получение коллекции groups
+
+                        for (let gr of groups){
+
+                            // скрытое поле для формы удалить группу
+                            const newHiddenInput_del = document.createElement("input"); // Создание скрытого поля для кнопки удаления
+                            newHiddenInput_del.type = "hidden";                        // Устанавливаем тип поля как hidden
+                            newHiddenInput_del.id = "hidden_del_group" + gr.groupId/*.toString()*/;          //  ID для каждого поля
+                            newHiddenInput_del.value = gr.groupId;                  // Значение поля
+                            newHiddenInput_del.name = "group_del_group" + gr.groupId;       // имя параметра на удаление группы
+
+                            const del_form = document.getElementById("del_group_" + gr.groupId);
+                            del_form.appendChild(newHiddenInput_del);// Добавление скрытого поля в форму удалить группу
+
+
+                            // скрытое поле для формы сохранить группу
+                            const newHiddenInput_save = document.createElement("input"); // Создаем скрытое поле для кнопки сохранить
+                            newHiddenInput_save.type = "hidden";                        // Устанавливаем тип поля как hidden
+                            newHiddenInput_save.id = "hidden_name_" + gr.groupId;          //  ID для каждого поля
+                            newHiddenInput_save.value = gr.groupName;                  // Значение поля имя
+                            newHiddenInput_save.name = "name_group";       // Имя параметра на сохранение name группы
+
+                            const save_form = document.getElementById("save_group_" + gr.groupId); //получение объекта форма сохранить группу
+                            save_form.appendChild(newHiddenInput_save);// Добавление скрытого поля в форму кнопки сохранить группу
+
+
+                            // // скрытое поле для формы создать группу
+                            // const newHiddenInput_create= document.createElement("input"); // Создаем скрытое поле для кнопки создать
+                            // newHiddenInput_create.type = "hidden";                        // Устанавливаем тип поля как hidden
+                            // newHiddenInput_create.id = "hidden_create_" + gr.groupId;          //  ID для каждого поля
+                            // newHiddenInput_create.value = gr.groupId;                  // Значение поля имя
+                            // newHiddenInput_create.name = "create_group_" + gr.groupId;       // Имя параметра на создание группы
+                            //
+                            // const create_form = document.getElementById("create_group_" + gr.groupId); //получение объекта форма создать группу
+                            // create_form.appendChild(newHiddenInput_create);// Добавление скрытого поля в форму кнопки создать группу
+
+                            const inputNameGroupe = document.getElementById("group_name_" + gr.groupId); //получение объекта имя группы для слушателя
+
+                            inputNameGroupe.addEventListener("input", () => {
+                                        copyValue(inputNameGroupe, newHiddenInput_save );
+                            }); // слушатель на изменение имени группы
+
+                        }
+                        // обработчик слушателя на изменение поля имя группы
+                        function copyValue(param_1, param_2){
+                            const val = param_1.value; // получение значения value от класса который вызвал
+
+                            param_1.setAttribute("style", "background-color: yellow"); // установка нового цвета для поля
+
+                            param_2.setAttribute("value", val); // новое значение для скрытого поля при изменении поля имя
+                        }
+                    </script>
+
+                        <p></p>
+                </div>
+                </div>
+            </div>
+
+        <p></p>
+
+            <!--контейнер 1 со списком продуктов-->
+            <div class="container mt-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-10 border p-4 rounded shadow-lg bg-body-secondary">
+
+                <h6 class="text-center mb-4">Продукты</h6>
+                <p></p>
+                <form method="get" th:action = "'/product_admin/add_new'">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button class="btn btn-dark" type="submit" >Добавить продукт</button>
+
+                    </div>
+                    <input type="hidden" name="id_group" th:value="${group.getGroupId()}"/>
+                </form>
+                <p></p>
+
+                <div class="row">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr class="table-warning text-align-middle">
+                            <th scope="col">Картинка</th>
+                            <th scope="col">Цена</th>
+                            <th scope="col">Наименование</th>
+                            <th scope="col">Действия</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="product: ${products}" class="align-middle">
+                            <td>
+                                <a th:href="'/product_admin/' + ${product.getProductId()}">
+                                    <img th:src="@{'/image/product/'+ ${product.getProductId()} + '/1'}" class="img-fluid mx-auto d-block" style="max-width: 150px; max-height: 150px; object-fit: contain;">
+                                </a>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label th:for="'coast_product' + ${product.getProductId()}" class="form-label">Цена:</label>
+                                    <input class="form-control"
+                                           th:value="${product.getProductCoast()}" type="text" size="12" th:id="'coast_product' + ${product.getProductId()}" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label th:for="'product_name_' + ${product.getProductId()}" class="form-label">Наименование:</label>
+                                    <input class="form-control"
+                                           th:value="${product.getProduct_name()}" type="text" size="50"
+                                           th:id="'product_name_' + ${product.getProductId()}" />
+                                </div>
+                            </td>
+                            <td>
+                                <form method="post" th:action="'/index_admin/del_product/' + ${product.getProductId()}"
+                                      th:id="'del_product_' + ${product.getProductId()}">
+                                    <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;">Del.</button>
+                                </form>
+                                <form method="post" th:action="'/index_admin/save_product/' + ${product.getProductId()}"
+                                      th:id="'save_product_' + ${product.getProductId()}">
+                                    <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;">Save</button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <script th:inline="javascript">
+                const products = [[${products}]]; // получение коллекции products
+
+                for (let prod of products){
+
+                    // скрытое поле для формы удалить продукт
+                    const newHiddenInput_del = document.createElement("input"); // Создание скрытого поля для кнопки удаления
+                    newHiddenInput_del.type = "hidden";                        // Устанавливаем тип поля как hidden
+                    newHiddenInput_del.id = "hidden_del_product" + prod.productId/*.toString()*/;          //  ID для каждого поля
+                    newHiddenInput_del.value = prod.productId;                  // Значение поля
+                    newHiddenInput_del.name = "del_product_" + prod.productId;       // имя параметра на удаление группы
+
+                    const del_form = document.getElementById("del_product_" + prod.productId);
+                    del_form.appendChild(newHiddenInput_del);// Добавление скрытого поля в форму удалить группу
+
+
+                    // скрытое поле для формы сохранить продукт
+                    const hiddenInput_name_save = document.createElement("input"); // Создаем скрытое поле для кнопки сохранить
+                    hiddenInput_name_save.type = "hidden";                        // Устанавливаем тип поля как hidden
+                    hiddenInput_name_save.id = "hidden_name_" + prod.productId;          //  ID для каждого поля
+                    hiddenInput_name_save.value = prod.product_name;                  // Значение поля имя
+                    hiddenInput_name_save.name = "product_name";       // Имя параметра на сохранение name группы
+
+                    const save_form = document.getElementById("save_product_" + prod.productId); //получение объекта форма сохранить группу
+                    save_form.appendChild(hiddenInput_name_save);// Добавление скрытого поля в форму кнопки сохранить группу
+
+
+                    // скрытое поле для формы сохранить продукт coast_product
+                    const hiddenInput_save_coast = document.createElement("input"); // Создаем скрытое поле для кнопки сохранить
+                    hiddenInput_save_coast.type = "hidden";                        // Устанавливаем тип поля как hidden
+                    hiddenInput_save_coast.id = "hidden_coast_" + prod.productId;          //  ID для каждого поля
+                    hiddenInput_save_coast.value = prod.productCoast;                  // Значение поля имя
+                    hiddenInput_save_coast.name = "coast_product";       // Имя параметра на сохранение name группы
+
+                    save_form.appendChild(hiddenInput_save_coast);// Добавление скрытого поля в форму кнопки сохранить группу
+
+
+                    const inputNameProduct = document.getElementById("product_name_" + prod.productId); //получение объекта имя группы для слушателя
+                    const inputCoastProduct = document.getElementById("coast_product" + prod.productId); //получение объекта имя группы для слушателя
+
+                    inputNameProduct.addEventListener("input", () => {
+                        copyValue(inputNameProduct, hiddenInput_name_save );
+                    }); // слушатель на изменение имени группы
+
+                    inputCoastProduct.addEventListener("input", () => {
+                        copyValue(inputCoastProduct, hiddenInput_save_coast );
+                    }); // слушатель на изменение имени группы
+
+                }
+                // обработчик слушателя на изменение поля имя группы
+                function copyValue(param_1, param_2){
+                    const val = param_1.value; // получение значения value от класса который вызвал
+
+                    param_1.setAttribute("style", "background-color: yellow"); // установка нового цвета для поля
+
+                    param_2.setAttribute("value", val); // новое значение для скрытого поля при изменении поля имя
+                }
+            </script>
+
+    </div>
+        <P></P>
+
+
+
+
+</div>
+
+<div class="row">
+    <div class="col-3"></div>
+</div>
+
+<style>
+    label {
+        font-size: 17px;
+        font-weight: bold;
+        text-align: left;
+    }
+</style>
+
+</div>
+
+</body>
+
+</html>
+

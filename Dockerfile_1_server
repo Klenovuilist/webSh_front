@@ -1,0 +1,7 @@
+﻿FROM eclipse-temurin:17.0.8_7-jre
+WORKDIR /package_front
+#COPY target/nameAddress-0.1.0-jar-with-dependencies.jar /tmp/app.jar
+COPY ./webSh_front-0.0.1.jar /package_front/front.jar
+EXPOSE 8098
+CMD ["java", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5004" ,"-jar", "front.jar"]
+

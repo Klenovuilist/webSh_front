@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <style>
+        /* Группы идут в одну строку */
+        .catalog-groups {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Интервал между группами */
+        }
+
+        /* Стилизация самих ссылок */
+        .group-link a {
+            font-size: 1rem;
+            color: #337ab7;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="container">
+        <div class="row">
+            <div class="col-8">
+                <h2 class="text-center text-white">Smart</h2>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <!-- Первая строка -->
+    <div class="row">
+        <div class="col-md-12">
+            <p></p>
+            <!-- Каталог товаров -->
+            <div class="catalog-groups" th:each = "group: ${groups}" id="loop">
+                <span class="group-link"><a th:text="${group.getGroupName()}"></a></span>
+                </th:each>
+            </div>
+            <p></p>
+            <p></p>
+
+            <!-- Вывод сообщения об ошибке -->
+            <h6><a th:text="${errorMessage}"></a></h6>
+            <p></p>
+        </div>
+    </div> <!-- конец первой строки -->
+</div>
+</body>
+</html>

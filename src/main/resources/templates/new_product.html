@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" lang="ru">
+    <title>Smart admin</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+
+</head>
+<body>
+<header>
+    <div class="container">
+        <div class="row">
+            <div class="col-8">
+                <h3 class="text-center text-white"> Smart администратор new product </h3>
+<!--                <h4 class="text-center text-white"> администратор </h4>-->
+            </div>
+        </div>
+    </div>
+</header>
+
+<!--Контейнер со строками-->
+<div class="container">
+    <!--   строка с картинкой   -->
+    <div class="row">
+        <div class="col-8">
+            <p></p>
+            <h3> <a th:text="'Редактор продукта: ' + ${product.getProduct_name}"></a></h3>
+            <p></p>
+            <!--Отображение картинок-->
+            <div class="container mt-5">
+                <div class="row justify-content-center">
+                    <div th:each="nameImages: ${ListNameImages}" class="col-md-3 my-3">
+                        <div>
+                            <!--                <div class="card h-100 border p-4 rounded shadow-lg bg-body-secondary" style="min-height: 250px;">-->
+                            <a th:href="'/del/image/'+ ${product.getProductId()}+ '/' + ${nameImages}" > <!--class="stretched-link" tabindex="-1-->
+
+                                <img th:src="@{'/image/product/'+ ${product.getProductId()}+ '/' + ${nameImages}}" class="img-fluid mx-auto d-block" style="width: 100%; height: auto;" alt="Описание">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+<!--Загрузка картинки-->
+            <div class="container mt-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
+                        <form method="post" enctype="multipart/form-data"
+                              th:action="'/upload_image_product/' + ${product.getProductId()}"
+                              th:object="${image}">   <!--связывает форму с объектом image-->
+                            <input type="file" name="file" accept="image/*" required/>  <!--accept="image/*" допустимые файлы image-->
+                            <button type="submit">Загрузить изображение</button>
+
+                            <!-- вспомогательная переменная и сохранение выбора в селект -->
+                            <input type="hidden"  name="currentGroupId"  th:value="${currentGroupId}" />
+
+                        </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+<!-- конец строка с картинкой   -->
+
+<!--Контейнер для формы кнопки сохранить-->
+<div>
+    <form method="post" th:action = "'/index_admin/save_product/' + ${product.getProductId()}"
+          th:id="'save_product_' + ${product.getProductId()}">
+
+    <!--   строка 1   -->
+    <div class="row">
+        <div class="col-8">
+            <!--Вывод сообщения об ошибке-->
+            <h4>   <a th:text="${errorMessage}" > </a>   </h4>
+            <P></P>
+
+            <div class="btn-group" role="group" > <!--ссылки в один ряд-->
+            <!--Ссылка на главную страницу-->
+            <a th:href="'/index_admin'" class="text-black text-decoration-none" style="margin-right: 20px; font-weight: bold;" th:text="'На главную ->'"></a>
+            <p></p>
+
+            <!--Ссылка в раздел страницу-->
+            <a th:href="'/index_admin/group/' + ${currentGroupId}" class="text-black text-decoration-none" style="margin-right: 20px; font-weight: bold;" th:text="'В раздел ->'"></a>
+            </div>
+                <p></p>
+
+            <!--Кнопка сохранить продукт -->
+<!--            <div class="col-1">-->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button class="btn btn-dark btn-sm mb-2" type="submit"
+                                style="height: 35px; width: 110px; font-size: 16px;">Сохранить</button>
+
+                        <!--                                     внутри формы
+                                                     newHiddenInput_save.value = gr.groupName;                  // Значение поля имя
+                                                    newHiddenInput_save.name = "group_save_" + gr.groupId;       // Имя параметра на сохранение группы-->
+
+                    </div>
+
+            <div class="container mt-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
+                        <p></p>
+
+                        <!--выбор группы продукта-->
+
+                        <div class="d-flex align-items-center mb-3">
+                            <label for="groups">Раздел: </label>
+                            <select id="groups" name="group_Id"
+                                    class="form-select form-select-sm"
+                                    style="width: auto; height: 35px; font-size: 18px;">
+                                <option th:each="group : ${groups}"
+                                        th:value="${group.getGroupId()}"
+                                        th:id="'group' + ${group.getGroupId()}"
+                                        th:text="${group.getGroupName()}"></option>
+                            </select>
+                        </div>
+
+                        <!-- вспомогательная переменная и сохранение выбора в селект -->
+                        <input type="hidden"  id="hiddenGroupSelect"  th:value="${currentGroupId}" />
+
+
+
+                        <script>
+                            const currentGroup = document.getElementById("hiddenGroupSelect");
+
+                            // seletct - поле соответств. одной из групп в селекторе
+                            const seletct = document.getElementById("group" + currentGroup.getAttribute("value"));
+                            seletct.setAttribute("selected", "true");
+
+                        </script>
+                        <!--конец выбор группы продукта-->
+                    <p></p>
+
+                        <!-- ИМЯ ГРУППЫ -->
+                        <div class="d-flex align-items-center mb-3">
+                            <label for="product_name" class="me-2">Наименование: </label>
+                            <input class="form-control flex-grow-1" id="product_name"
+                                   th:value="${product.getProduct_name}"
+                                   type="text" name="product_name" size="50"/>
+                        </div>
+
+                        <p></p>
+
+                        <div class="d-flex align-items-center mb-3">
+                            <label for="coast_product" class="me-2">Цена: </label>
+                            <input class="form-control flex-grow-1" id="coast_product"
+                                   th:value="${product.getProductCoast}"
+                                   type="text" name="coast_product" size="25"/>
+                        </div>
+
+                        <p></p>
+
+                        <div class="d-flex align-items-center mb-3">
+                            <label for="count_product" class="me-2">Количество: </label>
+                            <input class="form-control flex-grow-1" id="count_product"
+                                   th:value="${product.getProductCount}"
+                                   type="text" name="count_product" size="15"/>
+                        </div>
+
+                    </div>
+                </div>
+
+                </div>
+            <p></p>
+
+        </div>
+    <!--конец строка 1-->
+
+    <!--   строка 2  Описание   -->
+    <div class="row">
+        <div class="col-8">
+
+            <div class="container mt-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
+
+                        <!-- Описание -->
+                        <div class="d-flex flex-column mb-3">
+                            <label for="description" class="mb-2">Описание:</label>
+                            <textarea class="form-control"
+
+                                      th:text="${product.productDescription}"
+                                      id="description" name="product_description" rows="8">
+
+
+                            </textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+        </div>
+
+        <p></p>
+
+
+    </div>    <!--конец строка 2-->
+
+    </form> <!--формма кнопки сохранить-->
+
+</div> <!--Контейнер для формы кнопки сохранить-->
+
+    </div>
+
+
+
+<style>
+    label {
+        font-size: 17px;
+        font-weight: bold;
+        text-align: left;
+    }
+</style>
+
+
+
+</body>
+</html>

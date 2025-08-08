@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class Interceptor implements RequestInterceptor {
 
     //вставить заголовок с токеном для запроса, статичный
-    String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU5fUm9sZSIsIm5hbWUiOiJyaXRhIiwic3ViIjoidXNlckVudGl0eSIsImlhdCI6MTc1MTQ2NTA4NSwiZXhwIjoxNzUxNDgzMDg1fQ.s4reDXkoKgezPF-d8_539cssfhdwwn0CyY2PeCiBF8U";
+    String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9BRE1JTiIsIm5hbWUiOiJyaXRhIiwic3ViIjoidXNlckVudGl0eSIsImlhdCI6MTc1MzI3MTY2NywiZXhwIjoxNzU1MDcxNjY3fQ.AMfxg6rCPxdToNKq2UCcISDE3F025eO6zKP0IK3fZMg";
 
     @Override
     public void apply(RequestTemplate requestTemplate) {
@@ -19,5 +19,9 @@ public class Interceptor implements RequestInterceptor {
                     requestTemplate.header("Authorization",token);
         }
 
+            //для всех запросов из страницы админ добавить токен в заголовок
+        if(requestTemplate.url().startsWith("/api")){
+            requestTemplate.header("Authorization",token);
+        }
     }
 }

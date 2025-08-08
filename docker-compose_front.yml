@@ -1,0 +1,49 @@
+﻿#для запуска на сервере с nginx
+# приложение по докер файлу
+#version: "3.8"
+
+services:
+
+
+  app_1:
+    build:
+      #       . - текущая папка с docker файлом
+      context: .
+      #      сборка образа приложения по docker файлом
+      dockerfile: Dockerfile_1
+    networks:
+      - smartFront
+
+    container_name: front
+    ports:
+      #      внешний порт любой(80 или 443 что бы не вводить при зпросе)
+      #      внутренний порт такой же как в апликешин - связь контейнера с приложением
+
+      - "9001:8098"
+
+      #      порт для удаленного дебага 5005 по умолчанию
+      - "5004:5004"
+
+
+  nginx:
+    image: nginx:1.27.5
+    container_name: nginx_front
+    ports:
+      - "80:80"  # Доступен на порту 80
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf  # Подключение конфигурационного файла  /etc/nginx/conf.d/
+#      - /etc/ssl/:/etc/ssl/  # Папка с сертификатами /etc/ssl/ - существующаяя папка на сервере Unix
+    depends_on:
+      - app_1
+    networks:
+      - smartFront
+
+
+networks:
+  smartFront:
+    driver: bridge
+
+
+
+

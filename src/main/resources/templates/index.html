@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" lang="ru">
+    <title>Smart</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+
+    <style>
+        /* Стили для элементов h8 */
+        .inline-group {
+            display: inline-block;
+            margin-right: 10px; /* Отступ справа для разделения групп */
+        }
+    </style>
+
+</head>
+<body>
+<header>
+    <div class="container">
+        <div class="row">
+            <div class="col-8">
+                <h2 class="text-center text-white"> Smart </h2>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <!--  первая строка-->
+    <div class="row">
+        <div class="col-md-11">
+            <p></p>
+            <!--каталог разделов-->
+            <div class="btn-group" role="group" > <!--имена групп в один ряд-->
+<!--                <a th:href="'/index'" class="text-black text-decoration-none" style="margin-right: 20px;" th:text="'На главную'"></a>-->
+
+                             <div th:each = "group: ${groups}" class="me-2"> <!-- Отступ справа между каждым элементом -->
+                    <a th:href="'/index/group/' + ${group.getGroupId}" class="text-black text-decoration-none" th:text="${group.getGroupName()}"></a>
+                </div>
+            </div>
+            <p></p>
+<!--Вывод сообщения об ошибке-->
+            <h6>   <a th:text="${errorMessage}" > </a>   </h6>
+            <p></p>
+        </div>
+
+        <p></p>
+    </div> <!--конец первой строки-->
+
+    <p></p>
+<!--    вторая строка-->
+    <div class="row">
+
+<!--        контейнеры с группой и картинками-->
+        <div class="col-11">
+
+         <div class="container mt-5">
+                <div class="row justify-content-center">
+                    <div th:each="group : ${groups}" class="col-md-3 my-3">
+
+                            <div class="card h-100 border p-4 rounded shadow-lg bg-body-secondary" style="min-height: 250px;">
+                                <a th:href="'/index/group/' + ${group.getGroupId}" class="stretched-link" tabindex="-1">
+
+                                <h6 class="text-center mb-4">
+                                    <a th:text="${group.getGroupName()}"></a>
+                                </h6>
+                                <!--картинка группы  @{'/image_group/' + ${fileName}}   "@{'/image_group/new.jpg'}" -->
+                                <img th:src="@{ '/image/' + ${group.getGroupId()}}" class="rounded-img img-fluid mx-auto d-block" style="width: 100%; height: auto;" alt="Пустое изображение">
+<!--                                    <img th:src="@{ '/image_group/' + 'new' + '.jpg'}" class="img-fluid mx-auto d-block" style="width: 100%; height: auto;" alt="Пустое изображение">-->
+                                </a>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <p></p>
+        </div>
+        <p></p>
+    </div>
+</div>
+
+<style>
+    label {
+        font-size: 17px;
+        font-weight: bold;
+        text-align: left;
+    }
+</style>
+
+
+
+</body>
+</html>
