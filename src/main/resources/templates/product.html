@@ -20,19 +20,52 @@
 </header>
 
 <div class="container">
+    <p></p>
+
+    <!--  Строка с инфо сверху-->
+    <div class="row">
+        <div class="col-md-4">
+            <h6 class="text-center mb-4">
+                <a th:text="${mapInfo[5].info}"></a>
+            </h6>
+
+
+        </div>
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <h6 class="text-center mb-4">
+                <a th:text="${mapInfo[6].info}"></a>
+            </h6>
+        </div>
+
+
+    </div>
 
     <div class="row">
         <div class="col-md-11">
             <p></p>
-            <!--каталог разделов-->
+            <!--сылки каталог разделов-->
             <div class="btn-group" role="group" > <!--имена групп в один ряд-->
-                <a th:href="'/index'" class="text-black text-decoration-none" style="margin-right: 20px; font-weight: bold;" th:text="'На главную'"></a>
+                <a th:href="'/'"
+                   class="btn btn-outline-secondary text-black text-decoration-none"
+                   style="margin-right: 20px; font-weight: bold;"
+                   th:text="'На главную'"></a>
                 <div th:each = "group: ${zeroGroups}" class="me-2"> <!-- Отступ справа между каждым элементом -->
-                    <a th:href="'/index/group/' + ${group.getGroupId}" class="text-black text-decoration-none" th:text="${group.getGroupName()}"></a>
+
+                    <div th:if="${group.groupName != 'Свалка'}">  <!-- Если имя не свалка -->
+                        <a th:href="'/index/group/' + ${group.getGroupId}"
+                           class="btn btn-outline-secondary text-black text-decoration-none"
+                           style="margin-right: 20px; font-weight: bold;"
+                           th:text="${group.getGroupName()}"></a>
+                    </div>
                 </div>
             </div>
             <p></p>
-            <a th:href="'/index/group/' + ${product.getGroupsId}" class="text-black text-decoration-none" style="margin-right: 20px; font-weight: bold;" th:text="'Назад'"></a>
+            <a th:href="'/index/group/' + ${product.getGroupsId}"
+               class="btn btn-outline-secondary text-black text-decoration-none"
+               style="margin-right: 20px; font-weight: bold;"
+               th:text="'Назад'"></a>
+
 
             <!--Вывод сообщения об ошибке-->
             <h6>   <a th:text="${errorMessage}" > </a>   </h6>
@@ -73,35 +106,31 @@
                     </div>
                 </div>
             </div>
-
-
-<!--            <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">-->
-<!--                <h3 class="text-center mb-4"><a th:text="${product.getProduct_name}"> </a></h3>-->
-<!--                <p></p>-->
-<!--                <div class="row g-3"> &lt;!&ndash; Используем grid system &ndash;&gt;-->
-<!--                    <div class="col-md-8"> &lt;!&ndash; Левый блок для изображений &ndash;&gt;-->
-<!--                        <div th:each="nameImages: ${ListNameImages}" class="col-md-3 my-3">-->
-<!--                            <div>-->
-<!--                                <a th:href="'/image/product/' + ${product.getProductId()} + '/' + ${nameImages}">-->
-<!--                                    <img th:src="@{'/image/product/' + ${product.getProductId()} + '/' + ${nameImages}}" class="img-fluid mx-auto d-block" style="width: 100%; height: auto;" alt="Описание">-->
-<!--                                </a>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                    <div class="col-md-4 text-right"> &lt;!&ndash; Правый блок для описания &ndash;&gt;-->
-<!--                        <h4><a th:text="${product.getProductDescription}"> </a></h4>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-
-
             <p></p>
-
 
         </div>
 
         <p></p>
     </div>
+    <!--  Строка с инфо снизу-->
+    <div class="row">
+        <div class="col-md-4">
+            <h6 class="text-center mb-4">
+                <a th:text="${mapInfo[7].info}"></a>
+            </h6>
+
+
+        </div>
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <h6 class="text-center mb-4">
+                <a th:text="${mapInfo[8].info}"></a>
+            </h6>
+        </div>
+
+
+    </div>
+    <p></p>
 </div>
 
 <style>

@@ -1,17 +1,18 @@
 package com.example.websh.controllers;
 
 import com.example.websh.cash.Cash;
-import com.example.websh.clients.FeignForGroup;
+import com.example.websh.clients.FeignClient;
 import com.example.websh.dto.GroupProductDto;
+import com.example.websh.dto.ProductDto;
 import com.example.websh.service.AdminService;
 import com.example.websh.service.IndexService;
-import jakarta.servlet.http.HttpServletResponse;
+import com.example.websh.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
-import org.springframework.core.io.InputStreamResource;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,9 @@ public class IndexController {
 
     private final AdminService adminService;
 
-    private final FeignForGroup feignForGroup;
+    private final FeignClient feignForGroup;
+
+    private final UserService userService;
 
     private final Cash cash;
 
@@ -45,15 +48,24 @@ public class IndexController {
     @Value("${pathForSaveImage}")
     private String pathForSave; //путь сохранения картинки
 
-    @GetMapping("/index")
-    public String indexPage(Model model){
+    @GetMapping("/")
+    public String indexPage(Model model, HttpServletRequest request){
 
-        List<GroupProductDto> listZeroGroup = indexService.getListZeroGroup();
-        model.addAttribute("groups", listZeroGroup);
 
-        //todo  только для админов
-//        adminService.getAndSaveImageGroups(listZeroGroup);
+        model.addAttribute("groups", cash.getListZeroGroupNoPrefix());
 
+        model.addAttribute("userInfo", userService.getUserInfoFromToken(request));
+
+//        model.addAttribute("users", userService.getAllUsers());
+
+        List<ProductDto> productDtoList = adminService.getListProductDtoByIdGroup("1");
+        indexService.delPrefixNameProduct(productDtoList);
+        model.addAttribute("products", productDtoList); //список продуктов
+
+
+        if(! cash.mapInfo .isEmpty()){
+            model.addAttribute("mapInfo", cash.getMapInfo());
+        }
 
         return "index.html";
     }
@@ -66,9 +78,18 @@ public class IndexController {
     @GetMapping("/index/product/{id}")
     public String productPageAdmin(@PathVariable("id") String prodId, Model model){
 
-        model.addAttribute("product", adminService.getProductDtoById(prodId));
+
+        ProductDto product = adminService.getProductDtoById(prodId);
+        indexService.delPrefixNameProduct(product);
+
+        model.addAttribute("product", product);
         model.addAttribute("ListNameImages", adminService.getListNameImageProduct(UUID.fromString(prodId)));
-        model.addAttribute("zeroGroups",indexService.getListZeroGroup());
+
+        model.addAttribute("zeroGroups",cash.getListZeroGroupNoPrefix());
+
+        if(! cash.mapInfo .isEmpty()){
+            model.addAttribute("mapInfo", cash.getMapInfo());
+        }
 
         return "product.html";
     }
@@ -154,24 +175,36 @@ public class IndexController {
     public String groupPage(@PathVariable("id") String uuidGroup, Model model) {
 
         if (cash.getListGroups().isEmpty()) {
-            cash.setListGroups(feignForGroup.getGroup().getBody()); //обновление кеш листа с группами
+           cash.refreshListGroup(); //обновление кеш листа с группами
         }
-        GroupProductDto groupProductDto = cash.getListGroups().stream()
+        // получение  группы по id из cash
+        GroupProductDto groupProductDto = cash.getListGroupsNoPrefix().stream()
                 .filter(gr -> gr.getGroupId().equals(UUID.fromString(uuidGroup)))
                 .findFirst().orElse(null);
+
         if (Objects.nonNull(groupProductDto)) {
-            model.addAttribute("zeroGroups", indexService.getListZeroGroup()); // список нулевых групп
+
+            model.addAttribute("zeroGroups", cash.getListZeroGroupNoPrefix()); // список нулевых групп
+
+
             model.addAttribute("group", groupProductDto); // группа
+
+//            indexService.delPrefixNameGroup(groupProductDto.getListUnderGroups()); //удаление префиксов в имени групп
             model.addAttribute("groups", groupProductDto.getListUnderGroups()); //список подгрупп
 
-            model.addAttribute("products", adminService.getListProductDtoByIdGroup(uuidGroup)); //список продуктов
+            List<ProductDto> productDtoList = adminService.getListProductDtoByIdGroup(uuidGroup);
+            indexService.delPrefixNameProduct(productDtoList);
+            model.addAttribute("products", productDtoList); //список продуктов
 
+            if(! cash.mapInfo .isEmpty()){
+                model.addAttribute("mapInfo", cash.getMapInfo());
+            }
         }
         return "index_group.html";
     }
 
         /**
-         *  * Получение картинок для товаров по uuid и имени(запрос от браузера)
+         *  * Получение картинок для товаров по uuid продукта и имени(запрос от браузера)
          */
         @GetMapping("/image/product/{idProd}/{nameImage}")
         public ResponseEntity<byte[]> getServerImageProduct(@PathVariable("idProd") String uuidProduct
@@ -182,10 +215,10 @@ public class IndexController {
 
                 byte[] imageArrByte = response.getBody().getContentAsByteArray(); //массив байт из тела(картинки)
 
-                // Установка заголовков
+                // Получение заголовка типа расширения картинки
                 String extension = response.getHeaders().getFirst("extension");
 
-                HttpHeaders headers = new HttpHeaders(); //заголовки от сервера
+                HttpHeaders headers = new HttpHeaders(); //заголовки для браузера
 
                 if (Objects.isNull(extension)) {
                     headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);

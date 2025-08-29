@@ -24,7 +24,7 @@
 /*}*/
 
 header, footer {
-    background: url("../image/1879178.png") no-repeat 50px center, /* Перемещаем изображение на 50px от левого края */ linear-gradient(to right, var(--color1) 0%, var(--color2) 100%) center/cover; /* Градиент растянут на всю ширину */
+    background: url("/image/main.png") no-repeat 50px center, /* Перемещаем изображение на 50px от левого края */ linear-gradient(to right, var(--color1) 0%, var(--color2) 100%) center/cover; /* Градиент растянут на всю ширину */
     background-size: contain; /* Масштабируем изображение, сохраняя пропорции */
 }
 

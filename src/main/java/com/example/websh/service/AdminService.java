@@ -1,8 +1,8 @@
 package com.example.websh.service;
 
-import com.example.websh.cash.Cash;
-import com.example.websh.clients.FeignForGroup;
+import com.example.websh.clients.FeignClient;
 import com.example.websh.dto.GroupProductDto;
+import com.example.websh.dto.MainInfoDto;
 import com.example.websh.dto.ProductDto;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -25,13 +25,12 @@ import org.apache.commons.lang3.ObjectUtils;
 @RequiredArgsConstructor
 public class AdminService {
 
-    private final FeignForGroup feignForGroup;
+    private final FeignClient feignForGroup;
 
-    private final Cash cash;
+    private final JwtService jwtService;
 
-    /**
-     *
-     */
+//    private final Cash cash;
+
 
 
 
@@ -64,6 +63,31 @@ public class AdminService {
             }
             i++;
         }
+    }
+
+    public List<GroupProductDto> addUnderGroupAndStructure(List<GroupProductDto> listGroup){
+
+        //добавление в листы родителей дочерниние группы
+        for (GroupProductDto groupDto: listGroup){
+                    if (Objects.isNull(groupDto.getParrentId())) {
+                        continue;
+                    }
+                    //поиск родителя
+                    Optional<GroupProductDto> optionalGroupDto = listGroup.stream()
+                            .filter(gr -> gr.getGroupId().equals(groupDto.getParrentId()))
+                            .findFirst();
+
+                     //добавление группы в родителя
+                            optionalGroupDto
+                                    .ifPresent(gr -> gr.getListUnderGroups().add(groupDto));
+        }
+        //лист GroupProductDto только из начальных групп
+         List<GroupProductDto> listGroupDtoResult = listGroup.stream()
+                 .filter(gr -> Objects.isNull(gr.getParrentId())).toList();
+
+     return getStructureListGroup(listGroupDtoResult);
+
+//        return listGroupDtoResult;
     }
 
 
@@ -284,8 +308,11 @@ public class AdminService {
         String parrentUuid = request.getParameter("parrent_group_Id");
         String groupId = request.getParameter("id_group");
 
-        if (parrentUuid != null) {
+        if (parrentUuid != null && !parrentUuid.isBlank() && ! parrentUuid.equals("null")) {
             newDto.setParrentId(UUID.fromString(parrentUuid));
+        }
+        else {
+            newDto.setParrentId(null);
         }
 
         if (groupId != null) {
@@ -360,7 +387,10 @@ public class AdminService {
         return GroupProductDto.builder().build();
     }
 
-
+    /**
+     * Создание нового продукта - параметр "0" - id продукта
+     * @return
+     */
     public ProductDto createNewProduct() {
 
         ResponseEntity<ProductDto> response = feignForGroup.getProductById("0");
@@ -408,8 +438,15 @@ public class AdminService {
 
 
 
-        if(uuidGroupId != null){
+        if(uuidGroupId != null && ! uuidGroupId.isBlank() && ! uuidGroupId.equals("null")){
             productDto.setGroupsId(UUID.fromString(uuidGroupId));
+        }
+        else {
+            productDto.setGroupsId(null);
+        }
+
+        if(uuidGroupId != null && uuidGroupId.isBlank() && ! uuidGroupId.equals("null")){
+            productDto.setGroupsId(null);
         }
 
         if(productName != null){
@@ -433,11 +470,11 @@ public class AdminService {
     /**
      *Получить список всех продуктов
      */
-    public void getProductAllForGroup() {
+    public void getProductAllForGroup(List<GroupProductDto> listGroup) {
 
 //       List<ProductDto> productDtoList = new ArrayList<>();
 
-       for (GroupProductDto grop: cash.getListGroups()){
+       for (GroupProductDto grop: listGroup){
            List<ProductDto> currentList = getListProductDtoByIdGroup(grop.getGroupId().toString());
 
            if(! currentList.isEmpty()){
@@ -445,4 +482,39 @@ public class AdminService {
            }
        }
     }
+
+    /**
+     * Получить инфо от формы браузера и сохранить инфо на сервере
+     */
+    public void saveInfo(HttpServletRequest request) {
+        MainInfoDto mainInfoDto = new MainInfoDto();
+                Optional.ofNullable(request.getParameter("info"))
+                        .ifPresent(mainInfoDto::setInfo);
+
+        Optional.ofNullable(request.getParameter("infoId"))
+                .ifPresent(i ->{
+                    mainInfoDto.setMainInfoId(Integer.parseInt(i));
+                });
+        feignForGroup.saveInfo(mainInfoDto);
+    }
+
+
+    /**
+     * Получить инфо на сервере
+     */
+    public Map<Integer, MainInfoDto>  getInfo() {
+
+        return feignForGroup.getInfo().getBody();
+    }
+
+    /**
+     * Получить список продуктов не входящих ни в какую группу
+     */
+    public List<ProductDto> getProductNonGroup() {
+        return feignForGroup.getProductNonGroup().getBody();
+    }
+
+
+
+
 }

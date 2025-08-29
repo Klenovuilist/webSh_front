@@ -27,16 +27,56 @@
 </header>
 
 <div class="container">
-    <!--  первая строка-->
+    <p></p>
+    <!--  Строка пользоваьтель-->
+    <div class="row">
+        <div class="col-md-8">
+       </div>
+
+        <div class="col-md-4">
+            <h6 class="text-center mb-4">
+                <a href = "/athurizathion" > <p th:text="${userInfo['login']}"></p> </a>
+            </h6>
+        </div>
+
+
+    </div>
+    <P></P>
+
+    <!--  Строка с инфо сверху-->
+    <div class="row">
+        <div class="col-md-4">
+            <h6 class="text-center mb-4">
+                <a th:text="${mapInfo[2].info}"></a>
+            </h6>
+
+
+        </div>
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <h6 class="text-center mb-4">
+                <a th:text="${mapInfo[1].info}"></a>
+            </h6>
+        </div>
+
+
+    </div>
+
+    <!--  строка сылки на группы-->
     <div class="row">
         <div class="col-md-11">
             <p></p>
             <!--каталог разделов-->
             <div class="btn-group" role="group" > <!--имена групп в один ряд-->
-<!--                <a th:href="'/index'" class="text-black text-decoration-none" style="margin-right: 20px;" th:text="'На главную'"></a>-->
 
                              <div th:each = "group: ${groups}" class="me-2"> <!-- Отступ справа между каждым элементом -->
-                    <a th:href="'/index/group/' + ${group.getGroupId}" class="text-black text-decoration-none" th:text="${group.getGroupName()}"></a>
+
+                                 <div th:if="${group.groupName != 'Свалка'}"> <!--Проверка что имя не свалка-->
+
+                                     <a th:href="'/index/group/' + ${group.getGroupId}" class="btn btn-outline-secondary text-black text-decoration-none"
+                                        style="margin-right: 20px; font-weight: bold;" th:text="${group.getGroupName()}"></a>
+                                 </div>
+
                 </div>
             </div>
             <p></p>
@@ -46,31 +86,33 @@
         </div>
 
         <p></p>
-    </div> <!--конец первой строки-->
+    </div>
+
 
     <p></p>
-<!--    вторая строка-->
+    <!--        контейнеры с группой и картинками-->
     <div class="row">
 
-<!--        контейнеры с группой и картинками-->
+
         <div class="col-11">
 
          <div class="container mt-5">
                 <div class="row justify-content-center">
                     <div th:each="group : ${groups}" class="col-md-3 my-3">
 
+                        <div th:if="${group.groupName != 'Свалка'}">  <!--если не свалка то выводим группу-->
                             <div class="card h-100 border p-4 rounded shadow-lg bg-body-secondary" style="min-height: 250px;">
                                 <a th:href="'/index/group/' + ${group.getGroupId}" class="stretched-link" tabindex="-1">
 
-                                <h6 class="text-center mb-4">
-                                    <a th:text="${group.getGroupName()}"></a>
-                                </h6>
-                                <!--картинка группы  @{'/image_group/' + ${fileName}}   "@{'/image_group/new.jpg'}" -->
-                                <img th:src="@{ '/image/' + ${group.getGroupId()}}" class="rounded-img img-fluid mx-auto d-block" style="width: 100%; height: auto;" alt="Пустое изображение">
-<!--                                    <img th:src="@{ '/image_group/' + 'new' + '.jpg'}" class="img-fluid mx-auto d-block" style="width: 100%; height: auto;" alt="Пустое изображение">-->
+                                    <h6 class="text-center mb-4">
+                                        <a th:text="${group.getGroupName()}"></a>
+                                    </h6>
+                                    <!--картинка группы  @{'/image_group/' + ${fileName}}   "@{'/image_group/new.jpg'}" -->
+                                    <img th:src="@{ '/image/' + ${group.getGroupId()}}" class="rounded-img img-fluid mx-auto d-block" style="width: 100%; height: auto;" alt="Пустое изображение">
+                                    <!--                                    <img th:src="@{ '/image_group/' + 'new' + '.jpg'}" class="img-fluid mx-auto d-block" style="width: 100%; height: auto;" alt="Пустое изображение">-->
                                 </a>
                             </div>
-                        </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -78,6 +120,64 @@
         </div>
         <p></p>
     </div>
+
+
+    <!--        контейнеры с продуктами и картинками-->
+    <div class="row">
+
+        <!--  контейнеры с товарами и картинками-->
+        <div class="col-11 g-0">
+
+            <div class="container mt-0">
+                <div class="row justify-content-center">
+                    <div th:each="product: ${products}" class="col-md-3 my-3">
+
+                        <div class="card h-100 border p-4 rounded shadow-lg bg-body-secondary" style="min-height: 250px;">
+                            <a th:href="'/index/product/' + ${product.getProductId}" class="stretched-link" tabindex="-1">
+
+                                <h6 class="text-center mb-4">
+                                    <a th:text="${product.getProduct_name}"></a>
+                                </h6>
+                                <img th:src="@{'/image/product/'+ ${product.getProductId()} + '/1'}" class="rounded-img img-fluid mx-auto d-block" style="width: 100%; height: auto;" alt="Пустое изображение">
+                                <p></p>
+                                <!-- Добавляем div для цены с абсолютным позиционированием -->
+                                <div >
+                                    <h5 style="color: darkblue;">
+                                        <a th:text="${product.getProductCoast()} + ' руб'" >
+                                        </a>
+                                    </h5>
+                                </div>
+                                <!--                                <h5 > <a th:text="${product.getProductCoast} + ' руб'"></a></h5>-->
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p></p>
+        </div>
+        <p></p>
+    </div>
+
+</div>
+<P></p>
+
+<!--  Строка с инфо снизу-->
+<div class="row">
+    <div class="col-md-4">
+        <h6 class="text-center mb-4">
+            <a th:text="${mapInfo[3].info}"></a>
+        </h6>
+
+
+    </div>
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <h6 class="text-center mb-4">
+            <a th:text="${mapInfo[4].info}"></a>
+        </h6>
+    </div>
+
+
 </div>
 
 <style>

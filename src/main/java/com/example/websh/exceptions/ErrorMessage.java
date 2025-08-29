@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ErrorMessage {
-   public static String errorSave = null;
+   public static String error = null;
+
 
 }

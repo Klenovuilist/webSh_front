@@ -95,7 +95,7 @@ public class TestService {
 
                 TestEntity saveTestEntity = responseEntity.getBody();
                 testCach.refreshTestEntityCash(testClient.getTestEntity(saveTestEntity.getId()));//обновление кэш
-                ErrorMessage.errorSave = null;
+                ErrorMessage.error = null;
 
             } catch (FeignException f) {
                 String message = f.getMessage();
@@ -103,10 +103,10 @@ public class TestService {
                 int indexSubstring = message.indexOf("Ошибка");
                     if(indexSubstring != (-1)) {
                         String q = message.substring(message.indexOf("Ошибка"));
-                        ErrorMessage.errorSave = q.substring(0, q.indexOf("]"));
+                        ErrorMessage.error = q.substring(0, q.indexOf("]"));
                     }
                     else {
-                        ErrorMessage.errorSave = "Сервер не смог сохранить " + f.getMessage();
+                        ErrorMessage.error = "Сервер не смог сохранить " + f.getMessage();
                     }
                 return false;
             }

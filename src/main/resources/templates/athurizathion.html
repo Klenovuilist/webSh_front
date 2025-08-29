@@ -15,14 +15,15 @@
                 <h1 class="mb-4 text-center">Авторизация</h1>
 
                 <!-- Блок ошибок авторизации -->
-                <div th:if="${param.error}" class="alert alert-danger mb-3">Неверный логин или пароль.</div>
-                <div th:if="${param.logout}" class="alert alert-success mb-3">Вы успешно вышли из системы.</div>
+                <div th:if="${errorLogin}" class="alert alert-danger mb-3">Неверный логин или пароль.</div>
+                <div th:if="${logout}" class="alert alert-success mb-3">Вы успешно вышли из системы.</div>
+                <div th:if="${noVerify}" class="alert alert-success mb-3">Необходимо подтвердить учетную запись - пройти по ссылке из письма.</div>
 
                 <!-- Форма авторизации -->
                 <form method="post" action="#" th:action="@{'/login'}">
                     <div class="mb-3">
                         <label for="username" class="form-label">Имя пользователя:</label>
-                        <input type="text" class="form-control" id="username" name="username" placeholder="логин" required autofocus />
+                        <input type="text" class="form-control" id="username" name="userLogin" placeholder="логин" required autofocus />
                     </div>
 
                     <div class="mb-3">
@@ -33,7 +34,7 @@
                     <div class="d-flex flex-column align-items-center">
                         <button type="submit" class="btn btn-primary w-100 mb-3">Войти</button>
 
-                        <!-- Новая кнопка Регистрации -->
+                        <!-- кнопка Регистрации -->
                         <a href="/registration" class="btn btn-outline-secondary w-100">Регистрация</a>
                     </div>
                 </form>

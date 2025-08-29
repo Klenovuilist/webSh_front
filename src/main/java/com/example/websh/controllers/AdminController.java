@@ -1,11 +1,13 @@
 package com.example.websh.controllers;
 
+import com.example.websh.cash.Anchor;
 import com.example.websh.cash.Cash;
-import com.example.websh.clients.FeignForGroup;
+import com.example.websh.clients.FeignClient;
 import com.example.websh.dto.GroupProductDto;
 import com.example.websh.dto.ProductDto;
 import com.example.websh.exceptions.ErrorMessage;
 import com.example.websh.service.AdminService;
+import com.example.websh.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -15,10 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 @AllArgsConstructor
@@ -26,9 +25,13 @@ public class AdminController {
 
     private final AdminService adminService;
 
-    private final FeignForGroup feignForGroup;
+    private final FeignClient feignForGroup;
+
+    private final UserService userService;
 
     private  final Cash cash;
+
+    private  final Anchor anchor;
 
 //    public List<GroupProductDto> listGroups = new ArrayList<>();
 
@@ -43,15 +46,35 @@ public class AdminController {
 //        todo ввести проврку роли администратора
 //        каталоги товаров, списки пользователей, комментариев
 
-            cash.setListGroups(feignForGroup.getGroup().getBody()); //обновление списка групп в кэш
+//            cash.setListGroups(feignForGroup.getGroup().getBody());
+            cash.refreshListGroup();//обновление списка групп в кэш
 
-        model.addAttribute("parentGroup", cash.getListGroups());
+            cash.refreshMapInfo();
+
+        List<GroupProductDto> parentGroup = new ArrayList<>(cash.getListGroups());
+        parentGroup.add(GroupProductDto.builder()
+                        .groupName("MAIN")
+                .build());
+
+        model.addAttribute("parentGroup", parentGroup);
         model.addAttribute("groups", cash.getListGroups());
 
-        model.addAttribute("boolean", true);
+        model.addAttribute("products", adminService.getListProductDtoByIdGroup("1"));
 
-        model.addAttribute("errorMessage", ErrorMessage.errorSave);
-        ErrorMessage.errorSave = null;
+//        model.addAttribute("boolean", true);
+
+        model.addAttribute("users", userService.getAllUsers());
+
+        model.addAttribute("errorMessage", ErrorMessage.error);
+        ErrorMessage.error = null;
+
+        if(! cash.mapInfo .isEmpty()){
+            model.addAttribute("mapInfo", cash.getMapInfo());
+        }
+
+
+        model.addAttribute("point", anchor.point); // переход на нужную точку страницы
+        anchor.cleanAnhor();
 
         return "index_admin.html";
     }
@@ -107,39 +130,72 @@ public class AdminController {
         feignForGroup.changeGroup(adminService.createGroupDto(request, groupId));
 //        adminService.changeNameGroup(listGroups, newNameGroup, UUID.fromString(groupId));
 
+        anchor.point = "group_name_" + groupId; //точка перехода на странице к сохраненной группе
+
+        //условие остаться на той же странице
+        if(request.getParameter("page") != null && request.getParameter("page").equals("index_admin_group")){
+
+            cash.refreshListGroup();
+            return "redirect:/index_admin/group/" + request.getParameter("id_group");
+        }
+
         return "redirect:/index_admin";
     }
 
     @PostMapping("/index_admin/create_group/{id}")
-    public String createNewGroup(@PathVariable("id") String parrentGroupId){
-//
-//        if(parrentGroupId.equals("0")){
-//            adminService.addUnderGroup(listGroups, null);
-//        } else {
-//            adminService.addUnderGroup(listGroups, UUID.fromString(parrentGroupId));
-//        }
-// Запрос на сервер
-        feignForGroup.createGroup(parrentGroupId);
+    public String createNewGroup(@PathVariable("id") String parrentGroupId, HttpServletRequest request){
+
+        // Запрос на сервер
+        UUID uuidNewgroup = feignForGroup.createGroup(parrentGroupId).getBody();
+
+        anchor.point = "group_name_" + uuidNewgroup; //точка перехода на странице к вновь созданной группе
+
+        // условие остаться на той же странице
+        if(request.getParameter("page") != null && request.getParameter("page").equals("index_admin_group")){
+
+            cash.refreshListGroup();
+            return "redirect:/index_admin/group/" + request.getParameter("id_group");
+        }
 
         return "redirect:/index_admin";
     }
 
     @PostMapping("/index_admin/del_group/{id}")
-    public String deleteNewGroup(@PathVariable("id") String groupId){
+    public String deleteNewGroup(@PathVariable("id") String groupId, HttpServletRequest request){
 
         feignForGroup.deleteGroup(groupId);
 
-//        adminService.deleteGroup(listGroups, UUID.fromString(groupId));
+        Optional<GroupProductDto> OptParrentUuid = cash.listGroups.stream()
+                .filter(group -> group.getGroupId().toString()
+                        .equals(groupId))
+                .findFirst();
+
+        if(OptParrentUuid.isPresent()){
+            anchor.setPoint("group_name_" + OptParrentUuid.get().getGroupId().toString()); //точка перехода на странице к сохраненной группе
+        }
+
+        // условие остаться на той же странице
+        if(request.getParameter("page") != null && request.getParameter("page").equals("index_admin_group")){
+
+            cash.refreshListGroup();
+            return "redirect:/index_admin/group/" + request.getParameter("id_group");
+        }
+
+
         return "redirect:/index_admin";
     }
 
     /**
-     * Изменение родительской группы
+     * Изменение родительской группы(переместить)
      */
     @PostMapping("/index_admin/change_parrent_group")
     public String changeParrentGroup(HttpServletRequest request){
 
-        feignForGroup.changeGroup(adminService.createGroupDto(request));
+        GroupProductDto groupDto = adminService.createGroupDto(request);
+        feignForGroup.changeGroup(groupDto);
+        cash.refreshListGroup();
+
+        anchor.setPoint("group_name_" + groupDto.getGroupId().toString()); //точка перехода к группе после перемещения
 
         return "redirect:/index_admin";
     }
@@ -148,10 +204,11 @@ public class AdminController {
      * Загрузка изображения группы на сервер
      */
 
-    @PostMapping(value = "/upload_image_group/{id}" )
+    @PostMapping(value = "/upload_image_group/{id}")
     public String handleFileUpload(@RequestParam("file") MultipartFile file
             , RedirectAttributes redirectAttributes
-            , @PathVariable("id") String groupId) {
+            , @PathVariable("id") String groupId,
+            HttpServletRequest request) {
 
         try {
             //тип файла
@@ -166,8 +223,19 @@ public class AdminController {
                     , groupId //имя файла
                     , extension); // расширение файла
 
+            anchor.setPoint("group_name_" + groupId); //точка перехода к группе после загрузки сообщения
+
         } catch (IOException e) {
+            ErrorMessage.error = "Не удалось загрузить изображение \n" + e.getMessage();
+            anchor.setPoint("error"); //точка перехода к группе после загрузки сообщения
             throw new RuntimeException(e);
+        }
+
+        // условие остаться на той же странице
+        if(request.getParameter("page") != null && request.getParameter("page").equals("index_admin_group")){
+
+//            cash.refreshListGroup();
+            return "redirect:/index_admin/group/" + request.getParameter("id_group");
         }
 
         return "redirect:/index_admin";
@@ -221,7 +289,14 @@ public class AdminController {
 //        images.add("1----0");
         model.addAttribute("product", productDto);
         model.addAttribute("ListNameImages", images); //лист с именами картинок
-        model.addAttribute("groups", cash.getListGroups());
+
+        List<GroupProductDto> parentGroup = new ArrayList<>(cash.getListGroups());
+        parentGroup.add(GroupProductDto.builder()
+                .groupName("MAIN")
+                .build());
+
+//        model.addAttribute("parentGroup", parentGroup);
+        model.addAttribute("groups", parentGroup);
 
         model.addAttribute("currentGroupId", request.getParameter("id_group")); //текущее значение группы для товара
 
@@ -258,7 +333,7 @@ public class AdminController {
                     , extension); // расширение файла
 
         } catch (IOException e) {
-            ErrorMessage.errorSave = e.getMessage();
+            ErrorMessage.error = e.getMessage();
             return "redirect:/product_admin/" + productId;
 
 //            throw new RuntimeException(e);
@@ -272,7 +347,7 @@ public class AdminController {
      */
     @GetMapping("/product_admin/{productId}")
     public String adminProductById(@PathVariable("productId") String productId, Model model
-                , @ModelAttribute("currentGroupId") Optional<String> currentGroupIdOptional){
+                , @ModelAttribute("currentGroupId") Optional<String> currentGroupIdOptional){   //@ModelAttribute("currentGroupId") Optional<String> currentGroupIdOptional  для получения параметров из другого контроллера
 
         ProductDto productDto =  adminService.getProductDtoById(productId);
 //        feignForGroup.getImageProductById("0"); //получение картинки по умолчанию
@@ -288,14 +363,21 @@ public class AdminController {
 //        images.add("1----0");
         model.addAttribute("product", productDto);
         model.addAttribute("ListNameImages", images); //лист с именами картинок
-        model.addAttribute("groups", cash.getListGroups());
 
-        if(Objects.nonNull(productDto.getGroupsId())){
+        List<GroupProductDto> parentGroup = new ArrayList<>(cash.getListGroups());
+        parentGroup.add(GroupProductDto.builder()
+                .groupName("MAIN")
+                .build());
+
+//        model.addAttribute("parentGroup", parentGroup);
+        model.addAttribute("groups", parentGroup);
+
+//        if(Objects.nonNull(productDto.getGroupsId())){
             model.addAttribute("currentGroupId", productDto.getGroupsId());
-        }
-        else {
-            model.addAttribute("currentGroupId", cash.getListGroups().get(0).getGroupId());
-        }
+//        }
+//        else {
+//            model.addAttribute("currentGroupId", cash.getListGroups().get(0).getGroupId());
+//        }
 
         if (currentGroupIdOptional.isPresent() && ! currentGroupIdOptional.get().isEmpty()){
             model.addAttribute("currentGroupId", currentGroupIdOptional.get());
@@ -326,6 +408,31 @@ public class AdminController {
 
         redirectAttributes.addFlashAttribute("currentGroupId" , productDto.getGroupsId());
 
+        // условие остаться на той же странице index_admin/group
+        if(request.getParameter("page") != null && request.getParameter("page").equals("index_admin_group")){
+
+            anchor.setPoint("product_name_" + productId); //точка перехода на странице
+
+            return "redirect:/index_admin/group/" + request.getParameter("id_group");
+        }
+
+        // условие остаться на той же странице index_admin/group
+        if(request.getParameter("page") != null && request.getParameter("page").equals("index_admin")){
+
+            anchor.setPoint("product_name_" + productId); //точка перехода на странице
+
+            return "redirect:/index_admin" ;
+        }
+
+        // условие остаться на той же странице product/all
+        if(request.getParameter("page") != null && request.getParameter("page").equals("index_admin_All_product")){
+
+            anchor.setPoint("product_name_" + productId); //точка перехода на странице
+
+            return "redirect:/product/all";
+
+        }
+
         return "redirect:/product_admin/" + productId;
 
     }
@@ -334,14 +441,36 @@ public class AdminController {
     @PostMapping("/index_admin/del_product/{productId}")
     public String deleteProduct(@PathVariable("productId") String productId){
 
+      GroupProductDto groupDto = feignForGroup.deleteProduct(productId).getBody();
 
-       String parrentUuid = feignForGroup.deleteProduct(productId)
-               .getBody()
-               .getGroupId()
-               .toString();
+      if (groupDto == null){
+          return "redirect:/index_admin";
+      }
 
+       return "redirect:/index_admin/group/" + groupDto.getGroupId();
 
-        return "redirect:/index_admin/group/" + parrentUuid;
+    }
+
+    /**
+     * Удаление картинки продукта
+     * @param productId
+     * @param nameImage
+     * @param request
+     * @param redirectAttributes
+     * @return
+     */
+    @GetMapping("/del/image/{productId}/{nameImage}")
+    public String deleteProduct(@PathVariable("productId") String productId
+            , @PathVariable("nameImage") String nameImage
+            , HttpServletRequest request,
+                                RedirectAttributes redirectAttributes){
+
+        String parrentUuid = request.getParameter( "currentGroupId");
+        redirectAttributes.addFlashAttribute("currentGroupId", parrentUuid);
+
+        feignForGroup.deleteImageProduct(productId, nameImage);
+
+        return "redirect:/product_admin/" + productId;
 
     }
 
@@ -352,10 +481,40 @@ public class AdminController {
     @GetMapping("/product/all")
     public String adminProductAll(Model model) {
 
-        adminService.getProductAllForGroup();
+        cash.refreshListGroup();
+
+        adminService.getProductAllForGroup(cash.getListGroups()); // обновить кэш и записать каждой группе продукты
 
         model.addAttribute("groups", cash.getListGroups());
 
+        // создание новой группы с продуктами не вошедшими ни в один раздел
+       cash.getListGroups().add(GroupProductDto.builder()
+                .groupName("Продукты не входящие ни в один раздел")
+                .listProduct(adminService.getProductNonGroup())
+                .build());
+
+        model.addAttribute("point", anchor.point); // переход на нужную точку страницы
+        anchor.cleanAnhor();
+
         return "index_admin_All_product.html";
     }
+
+
+    /**
+     * Сохранить инфо дто и вернуть id записи
+     */
+    @PostMapping("/saveInfo")
+    public String getInfo(HttpServletRequest request){
+        adminService.saveInfo(request);
+
+     anchor.point = "info_" + request.getParameter("infoId"); //точка перехода на странице к инфо
+
+        cash.refreshMapInfo();
+
+        return "redirect:/index_admin";
+    }
+
+
+
+
 }

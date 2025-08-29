@@ -27,28 +27,57 @@
 </header>
 
 <div class="container">
-    <!--  первая строка-->
+    <p></p>
+
+    <!--  Строка с инфо сверху-->
+    <div class="row">
+        <div class="col-md-4">
+            <h6 class="text-center mb-4">
+                <a th:text="${mapInfo[5].info}"></a>
+            </h6>
+
+
+        </div>
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <h6 class="text-center mb-4">
+                <a th:text="${mapInfo[6].info}"></a>
+            </h6>
+        </div>
+
+
+    </div>
+
+    <!--   строка ссылок корневых групп-->
     <div class="row">
         <div class="col-md-11">
             <p></p>
             <!--каталог разделов-->
             <div class="btn-group" role="group" > <!--имена групп в один ряд-->
-                <a th:href="'/index'" class="text-black text-decoration-none" style="margin-right: 20px; font-weight: bold;" th:text="'На главную'"></a>
-                <div th:each = "group: ${zeroGroups}" class="me-2"> <!-- Отступ справа между каждым элементом -->
-                    <a th:href="'/index/group/' + ${group.getGroupId}" class="text-black text-decoration-none" th:text="${group.getGroupName()}"></a>
+                <a th:href="'/'"class="btn btn-outline-secondary text-black text-decoration-none"
+                   style="margin-right: 20px; font-weight: bold;" th:text="'На главную'"></a>
+
+                <div th:each = "group: ${zeroGroups}" class="me-3"> <!-- Отступ справа между каждым элементом -->
+
+                    <div th:if="${group.groupName != 'Свалка'}">  <!-- Проверка имени чтобы не была свалка -->
+                        <a th:href="'/index/group/' + ${group.getGroupId}" class="btn btn-outline-secondary text-black text-decoration-none"
+                           style="margin-right: 20px; font-weight: bold;" th:text="${group.getGroupName()}"></a>
+                    </div>
+
                 </div>
             </div>
             <p></p>
 
             <!-- Первая ссылка будет показана, если parentId не равен null -->
             <a th:if="${group.getParrentId != null}"
-               th:href="'/index/group/' + ${group.getParrentId}" class="text-black text-decoration-none"
+               th:href="'/index/group/' + ${group.getParrentId}"class="btn btn-outline-secondary text-black text-decoration-none"
                style="margin-right: 20px; font-weight: bold;"
                th:text="'Назад '"></a>
 
             <!-- Вторая ссылка будет показана, если parentId равен null -->
             <a th:if="${group.getParrentId == null}"
-               th:href="'/index'" class="text-black text-decoration-none" style="margin-right: 20px; font-weight: bold;"
+               th:href="'/index'" class="btn btn-outline-secondary text-black text-decoration-none"
+               style="margin-right: 20px; font-weight: bold;"
                th:text="'Назад '"></a>
 
 <!--Вывод сообщения об ошибке-->
@@ -58,9 +87,6 @@
 
 
     </div>
-    <!--конец первой строки-->
-
-
 
 
 <!--    вторая строка-->
@@ -95,9 +121,9 @@
         </div>
 
     </div>
-    <!--конец вторая строка-->
 
-    <!--    цикл строк со строками товаров -->
+
+    <!--     товары -->
     <div class="row">
 
         <!--  контейнеры с товарами и картинками-->
@@ -132,7 +158,26 @@
         </div>
         <p></p>
     </div>
-    <!--конец цикл строк с товарами и картинками-->
+
+    <!--  Строка с инфо снизу-->
+    <div class="row">
+        <div class="col-md-4">
+            <h6 class="text-center mb-4">
+                <a th:text="${mapInfo[7].info}"></a>
+            </h6>
+
+
+        </div>
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <h6 class="text-center mb-4">
+                <a th:text="${mapInfo[8].info}"></a>
+            </h6>
+        </div>
+
+
+    </div>
+    <p></p>
 
 </div>
 

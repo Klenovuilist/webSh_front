@@ -5,6 +5,7 @@
     <title>Smart admin</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
+    <script src="/js/bootstrap.bundle.min.js" ></script>
 
 </head>
 <body>
@@ -27,7 +28,7 @@
             <p></p>
             <P></P>
 <!--Вывод сообщения об ошибке-->
-            <h4>   <a th:text="${errorMessage}" > </a>   </h4>
+            <h4>   <a id="error" th:text="${errorMessage}" > </a>   </h4>
 
             <table class="table table-bordered">
                 <thead>
@@ -58,54 +59,54 @@
             </table>
             <p></p>
             <!--контейнер 0-->
-                <div class="row justify-content-center">
-                    <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
-                        <h6 class="text-center mb-4">Статистика</h6>
-                        <p></p>
-                        Посещения
-                        <table class="table table-bordered">
-                            <thead>
-                            <tr class="table-warning table align-middle">
+<!--                <div class="row justify-content-center">-->
+<!--                    <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">-->
+<!--                        <h6 class="text-center mb-4">Статистика</h6>-->
+<!--                        <p></p>-->
+<!--                        Посещения-->
+<!--                        <table class="table table-bordered">-->
+<!--                            <thead>-->
+<!--                            <tr class="table-warning table align-middle">-->
 
-                                <th>
-                                    <h6> За неделю </h6>
-                                </th>
-                                <th>
-                                    <h6> За день </h6>
-                                </th>
-                                <th>
-                                    <h6> За месяц</h6>
-                                </th>
+<!--                                <th>-->
+<!--                                    <h6> За неделю </h6>-->
+<!--                                </th>-->
+<!--                                <th>-->
+<!--                                    <h6> За день </h6>-->
+<!--                                </th>-->
+<!--                                <th>-->
+<!--                                    <h6> За месяц</h6>-->
+<!--                                </th>-->
 
-                            </tr>
-                            <tr class="table-warning table align-middle">
+<!--                            </tr>-->
+<!--                            <tr class="table-warning table align-middle">-->
 
-                                <th>
-                                    <h6> ........ </h6>
-                                </th>
-                                <th>
-                                    <h6> ........ </h6>
-                                </th>
-                                <th>
-                                    <h6> ........ </h6>
-                                </th>
+<!--                                <th>-->
+<!--                                    <h6> ........ </h6>-->
+<!--                                </th>-->
+<!--                                <th>-->
+<!--                                    <h6> ........ </h6>-->
+<!--                                </th>-->
+<!--                                <th>-->
+<!--                                    <h6> ........ </h6>-->
+<!--                                </th>-->
 
-                            </tr>
-                            </thead>
-                            <tbody></tbody>
+<!--                            </tr>-->
+<!--                            </thead>-->
+<!--                            <tbody></tbody>-->
 
-                        </table>
-                        <p></p>
+<!--                        </table>-->
+<!--                        <p></p>-->
 
 
-                    </div>
+<!--                    </div>-->
 
-                </div>
+<!--                </div>-->
 
             <!--кнопки-->
             <div>
                 <p></p>
-                <div class="btn-group" role="group" > <!--имена групп в один ряд-->
+                <div class="btn-group" role="group" > <!--ссылки в один ряд-->
                     <!--                <a th:href="'/index'" class="text-black text-decoration-none" style="margin-right: 20px;" th:text="'На главную'"></a>-->
                     <a th:href="'/product_admin/add_new'" class="text-black text-decoration-none" style="margin-right: 30px; font-weight: bold;" th:text="'Добавить продукт'"></a>
                     <a th:href="'/product/all'" class="text-black text-decoration-none" style="margin-right: 30px; font-weight: bold;" th:text="'Все продукты'"></a>
@@ -132,14 +133,10 @@
                         <tr class="table-warning text-align-middle">
                             <th ></th>
                         </thead>
-
-
                         <tbody>
-
-
                             <tr th:each = "group: ${groups}"
 
-                                th:classappend="${group.levelGroup > 0 ? 'table-secondary' : 'table-primary'}">
+                                th:classappend="${group.levelGroup > 0 ? 'table-secondary' : 'table-info'}">
                                   <th>
                                     <div class="row">
                                         <div class="col-1">
@@ -166,7 +163,7 @@
                                                 <!-- ИМЯ ГРУППЫ -->
                                                 <div>
                                                     <div>
-                                                        <input class="form-control" id="testName" th:value="${group.getGroupName()}"
+                                                        <input class="form-control"  th:value="${group.getGroupName()}"
                                                                th:id="'group_name_' + ${group.getGroupId}"
                                                                type="text" name="testName" size="50"/>
                                                     </div>
@@ -183,24 +180,56 @@
 
                                         <!--Конец Добавление отступов для подгрупп-->
 
+                                        <!--------------------------------------------   ---------------------->
                                         <!--   Кнопка удалить группу -->
                                         <div class="col-1">
-                                            <form method="post" th:action = "'/index_admin/del_group/' + ${group.getGroupId}"
-                                                  th:id="'del_group_' + ${group.getGroupId}">
-                                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
 
-                                                    <button class="btn btn-dark btn-sm mb-2"
-                                                            type="submit"
-                                                            style="height: 25px; width: 80px; font-size: 12px;">Удалить</button> <!--Удалить-->
-                                                </div>
-                                                <!--                                        скрытое поле -->
-                                                <!-- newHiddenInput_del.value = gr.groupId;                  // Значение поля
-                                    newHiddenInput_del.name = "group_del_group" + gr.groupId;-->
-                                            </form>
+                                            <!-- Кнопка модального окна на удаление -->
+                                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                                <button  class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;"
+                                                        data-bs-toggle="modal" th:data-bs-target="'#'+ 'modal_' + ${group.getGroupId}">
+                                                    Удалить
+                                                </button>
+                                            </div>
                                         </div>
 
 
-                                        <!--                                <div class="col-1"></div>  &lt;!&ndash;пустая колонка&ndash;&gt;-->
+                                        <!-- Модальное окно -->
+                                        <div class="modal fade" th:id="'modal_' + ${group.getGroupId}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5">
+                                                            <a> Удалить раздел <br/>
+                                                                <span th:text="${group.getGroupName()} + ' ???'"></span>
+                                                            </a>
+                                                        </h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Отмена"></button>
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <form method="post" th:action = "'/index_admin/del_group/' + ${group.getGroupId}"
+                                                              th:id="'del_group_' + ${group.getGroupId}">
+
+                                                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+
+                                                                <button class="btn btn-dark btn-sm mb-2"
+                                                                        type="submit"
+                                                                        style="height: 25px; width: 80px; font-size: 12px;">Удалить</button> <!--Удалить-->
+                                                            </div>
+                                                            <!--                                        скрытое поле -->
+                                                            <!-- newHiddenInput_del.value = gr.groupId;                  // Значение поля
+                                                newHiddenInput_del.name = "group_del_group" + gr.groupId;-->
+                                                        </form>
+                                                        <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;" data-bs-dismiss="modal">Отмена</button>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!--   ---------------------->
+
 
                                         <!--Кнопка сохранить группу -->
                                         <div class="col-1">
@@ -252,7 +281,9 @@
                                                     </div>
                                                 </div>
                                             </form>
-                                        </div>       <!--Кнопка загрузить изображение -->
+                                        </div>
+                                        <!--Кнопка загрузить изображение -->
+
                                         <div class="col-2">
                                             <form method="post" enctype="multipart/form-data"
                                                   th:action="@{'/upload_image_group/' + ${group.getGroupId()}}"
@@ -277,32 +308,397 @@
                             type="text" name="testName" size="50"/>
                 </div>
 
-                <h4>   <a th:text="'Количество разделов = ' + ${groups.size()}" > </a>   </h4>
+                <h4 >   <a th:text="'Количество разделов = ' + ${groups.size()}" > </a>   </h4>
                 <p></p>
             </div>
 
+    <!--контейнер 1 со списком продуктов-->
+             <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10 border p-4 rounded shadow-lg bg-body-secondary">
+
+                <h6 class="text-center mb-4">Продукты</h6>
+                <p></p>
+                <form method="get" th:action = "'/product_admin/add_new'">
+                    <input type="hidden"  name="id_group"  th:value="0">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button class="btn btn-dark" type="submit" >Добавить продукт</button>
+
+                    </div>
+                    <!--                    <input type="hidden" name="id_group" th:value="${group.getGroupId()}"/>-->
+                </form>
+                <p></p>
+
+                <div class="row">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr class="table-warning text-align-middle">
+                            <th scope="col">Картинка</th>
+                            <th scope="col">Цена</th>
+                            <th scope="col">Наименование</th>
+                            <th scope="col">Действия</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="product: ${products}" class="align-middle">
+                            <td>
+                                <a th:href="'/product_admin/' + ${product.getProductId()}">
+                                    <img th:src="@{'/image/product/'+ ${product.getProductId()} + '/1'}" class="img-fluid mx-auto d-block" style="max-width: 150px; max-height: 150px; object-fit: contain;">
+                                </a>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label th:for="'coast_product' + ${product.getProductId()}" class="form-label">Цена:</label>
+                                    <input class="form-control"
+                                           th:value="${product.getProductCoast()}" type="text" size="12" th:id="'coast_product' + ${product.getProductId()}" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label th:for="'product_name_' + ${product.getProductId()}" class="form-label">Наименование:</label>
+                                    <input class="form-control"
+                                           th:value="${product.getProduct_name()}" type="text" size="50"
+                                           th:id="'product_name_' + ${product.getProductId()}" />
+                                </div>
+                            </td>
+                            <td>
+
+                                <form method="post" th:action="'/index_admin/save_product/' + ${product.getProductId()}"
+                                      th:id="'save_product_' + ${product.getProductId()}">
+                                    <input type="hidden"  name="page"  value="index_admin">
+                                    <input type="hidden"  name="id_group"  >
+                                    <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
+                                </form>
+
+
+
+                                <!-- Кнопка модального окна на удаление -->
+                                <button button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;"
+                                        data-bs-toggle="modal" th:data-bs-target="'#'+ 'modal_' + ${product.getProductId()}">
+                                    Удалить
+                                </button>
+
+                                <!-- Модальное окно -->
+                                <div class="modal fade" th:id="'modal_' + ${product.getProductId()}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" > Удалить продукт ???</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Отмена"></button>
+                                            </div>
+                                            <!--                                            <div class="modal-body">-->
+                                            <!--                                                ...-->
+                                            <!--                                            </div>-->
+                                            <div class="modal-footer">
+                                                <form method="post" th:action="'/index_admin/del_product/' + ${product.getProductId()}"
+                                                      th:id="'del_product_' + ${product.getProductId()}">
+                                                    <!--                                    <input type="hidden"  name="page"  value="index_admin_group">-->
+                                                    <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;">Удалить</button>
+                                                </form>
+                                                <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;" data-bs-dismiss="modal">Отмена</button>
+                                                <!--                                                <button type="button" class="btn btn-primary">Удалить</button>-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--                   --------------------------------------------         -->
+
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <p></p>
+<div class="row">
+    <div class="col-12">
+        <table class="table table-bordered">
+            <thead>
+            <tr class="table-warning table align-middle">
+
+                <th>
+                    <!--контейнер 4  тексты-->
+                    <form method="post" th:action = "'/saveInfo'">
+                        <input type="hidden"  name="infoId"  value="2">
+
+                        <div class="col-10">
+                            <!-- Описание -->
+                            <div class="d-flex flex-column mb-3">
+                                <label for="info_2" class="mb-2">Текст сверху слева (главная страница) </label>
+                                <textarea class="form-control"
+
+                                          th:text="${mapInfo[2].info}"
+                                          id="info_2" rows="3" name="info">
+                    </textarea>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button class="btn btn-dark btn-sm mb-2" type="submit"
+                                        style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
+                            </div>
+                        </div>
+                    </form>
+                    <p></p>
+                </th>
+                <th>
+                    <!--контейнер 3  тексты-->
+                    <form method="post" th:action = "'/saveInfo'">
+                        <input type="hidden"  name="infoId"  value="1">
+
+                        <div class="col-10">
+                            <!-- Описание -->
+                            <div class="d-flex flex-column mb-3">
+                                <label for="info_1" class="mb-2">Текст сверху справа (главная страница) </label>
+                                <textarea class="form-control"
+
+                                          th:text="${mapInfo[1].info}"
+                                          id="info_1" rows="3" name="info">
+                    </textarea>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button class="btn btn-dark btn-sm mb-2" type="submit"
+                                        style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
+                            </div>
+                        </div>
+                    </form>
+                    <p></p>
+                </th>
+            </tr>
+            <tr class="table-warning table align-middle">
+                <th>
+                    <!--контейнер 5  тексты-->
+                            <form method="post" th:action = "'/saveInfo'">
+                                <input type="hidden"  name="infoId"  value="3">
+
+                                <div class="col-10">
+                                    <!-- Описание -->
+                                    <div class="d-flex flex-column mb-3">
+                                        <label for="info_3" class="mb-2">Текст внизу слева (главная страница) </label>
+                                        <textarea class="form-control"
+
+                                                  th:text="${mapInfo[3].info}"
+                                                  id="info_3" rows="3" name="info">
+                    </textarea>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <button class="btn btn-dark btn-sm mb-2" type="submit"
+                                                style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
+                                    </div>
+                                </div>
+                            </form>
+                    <p></p>
+                </th>
+                <th>
+                    <!--контейнер 6  тексты-->
+                            <form method="post" th:action = "'/saveInfo'">
+                                <input type="hidden"  name="infoId"  value="4">
+
+                                <div class="col-10">
+                                    <!-- Описание -->
+                                    <div class="d-flex flex-column mb-3">
+                                        <label for="info_4" class="mb-2">Текст внизу справа (главная страница) </label>
+                                        <textarea class="form-control"
+
+                                                  th:text="${mapInfo[4].info}"
+                                                  id="info_4" rows="3" name="info">
+                    </textarea>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <button class="btn btn-dark btn-sm mb-2" type="submit"
+                                                style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
+                                    </div>
+                                </div>
+                            </form>
+                    <p></p>
+                </th>
+            </tr>
+            <tr class="table-info">
+                <th></th>
+                <th></th>
+            </tr>
+
+            <tr class="table-warning table align-middle">
+
+                <th>
+                    <!--контейнер   тексты-->
+                    <form method="post" th:action = "'/saveInfo'">
+                        <input type="hidden"  name="infoId"  value="5">
+
+                        <div class="col-10">
+                            <!-- Описание -->
+                            <div class="d-flex flex-column mb-3">
+                                <label for="info_5" class="mb-2">Текст сверху слева (прочие страницы) </label>
+                                <textarea class="form-control"
+
+                                          th:text="${mapInfo[5].info}"
+                                          id="info_5" rows="3" name="info">
+                    </textarea>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button class="btn btn-dark btn-sm mb-2" type="submit"
+                                        style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
+                            </div>
+                        </div>
+                    </form>
+                    <p></p>
+                </th>
+                <th>
+                    <!--контейнер 3  тексты-->
+                    <form method="post" th:action = "'/saveInfo'">
+                        <input type="hidden"  name="infoId"  value="6">
+
+                        <div class="col-10">
+                            <!-- Описание -->
+                            <div class="d-flex flex-column mb-3">
+                                <label for="info_6" class="mb-2">Текст сверху справа (прочие страницы) </label>
+                                <textarea class="form-control"
+
+                                          th:text="${mapInfo[6].info}"
+                                          id="info_6" rows="3" name="info">
+                    </textarea>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button class="btn btn-dark btn-sm mb-2" type="submit"
+                                        style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
+                            </div>
+                        </div>
+                    </form>
+                    <p></p>
+                </th>
+            </tr>
+            <tr class="table-warning table align-middle">
+                <th>
+                    <!--контейнер 5  тексты-->
+                    <form method="post" th:action = "'/saveInfo'">
+                        <input type="hidden"  name="infoId"  value="7">
+
+                        <div class="col-10">
+                            <!-- Описание -->
+                            <div class="d-flex flex-column mb-3">
+                                <label for="info_7" class="mb-2">Текст внизу слева (прочие страницы) </label>
+                                <textarea class="form-control"
+
+                                          th:text="${mapInfo[7].info}"
+                                          id="info_7" rows="3" name="info">
+                    </textarea>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button class="btn btn-dark btn-sm mb-2" type="submit"
+                                        style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
+                            </div>
+                        </div>
+                    </form>
+                    <p></p>
+                </th>
+                <th>
+                    <!--контейнер 6  тексты-->
+                    <form method="post" th:action = "'/saveInfo'">
+                        <input type="hidden"  name="infoId"  value="8">
+
+                        <div class="col-10">
+                            <!-- Описание -->
+                            <div class="d-flex flex-column mb-3">
+                                <label for="info_4" class="mb-2">Текст внизу справа (прочие страницы) </label>
+                                <textarea class="form-control"
+
+                                          th:text="${mapInfo[8].info}"
+                                          id="info_8" rows="3" name="info">
+                    </textarea>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button class="btn btn-dark btn-sm mb-2" type="submit"
+                                        style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
+                            </div>
+                        </div>
+                    </form>
+                    <p></p>
+                </th>
+            </tr>
+
+            </thead>
+            <tbody></tbody>
+
+        </table>
+        <p></p>
+    </div>
+</div>
 
 
-<!--            <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">-->
-<!--                    <h6 class="text-center mb-4">Услуги</h6>-->
-<!--                </div>-->
-<!--    <p></p>-->
 
 
-        <!--контейнер 2-->
-                <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
-                    <h6 class="text-center mb-4">Последние зарегистрированные пользователи</h6>
+<!--        контейнер 2-->
+                <div id="123" class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
+                    <h6 class="text-center mb-4">  <a th:text="'Пользователи ( = ' + ${users.size} + ')'"> </a></h6>
+
+                    <table class="table table-bordered">
+                        <thead>
+
+                        <tr class="table-warning table align-middle">
+
+                            <th><h6>№</h6></th>
+                            <th>
+                                <h6> Логин </h6>
+                            </th>
+                            <th>
+                                <h6> mail </h6>
+                            </th>
+                            <th>
+                                <h6> comment</h6>
+                            </th>
+                            <th>
+                                <h6> дата</h6>
+                            </th>
+
+                        </tr>
+
+                        <tr th:each = "user, iterStat: ${users}">
+                            <td><h10><span th:text="${iterStat.count}"></span></h10></td>
+
+                           <th>  <a th:href="'/index_admin/user/' + ${user.getId}"
+                                    class="text-black text-decoration-none"
+                                    style="margin-right: 30px; font-weight: bold;" th:text="${user.getLogin}"></a>
+                           </th>
+<!--                            <th><h10 >   <a th:text="${user.getLogin}"> </a>  </h10> </th>-->
+                            <th><h10 >   <a th:text="${user.getMail}"> </a> </h10> </th>
+
+                            <th><h10 > <a th:text="${user.getComment}"></a>   </h10> </th>
+                            <th><h10 >   <a th:text="${user.getDataCreateUser}"> </a> </h10> </th>
+                        </tr>
+
+                        </thead>
+                        <tbody></tbody>
+
+                    </table>
+
                 </div>
     <p></p>
 
 
 
         <!--контейнер 3-->
-                <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
-                    <h6 class="text-center mb-4">Последние комментарии</h6>
-                </div>
+<!--                <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">-->
+<!--                    <h6 class="text-center mb-4">Последние комментарии</h6>-->
+<!--                </div>-->
         <p></p>
 
 
@@ -310,6 +706,82 @@
 
 
 </div>
+
+<input type="hidden" id="point" th:value="${point}"/>
+
+<script>
+    const point = document.getElementById("point");
+    // document.addEventListener('DOMContentLoaded', function () {
+        // var anchor = "${anchor}";
+        if(point) {
+        //     if(document.getElementById("${anchor}")) {
+                location.href += '#' + point.value;
+             }
+        // }
+    // });
+</script>
+
+<script th:inline="javascript">
+    const products = [[${products}]]; // получение коллекции products
+
+    for (let prod of products){
+
+        // скрытое поле для формы удалить продукт
+        const newHiddenInput_del = document.createElement("input"); // Создание скрытого поля для кнопки удаления
+        newHiddenInput_del.type = "hidden";                        // Устанавливаем тип поля как hidden
+        newHiddenInput_del.id = "hidden_del_product" + prod.productId/*.toString()*/;          //  ID для каждого поля
+        newHiddenInput_del.value = prod.productId;                  // Значение поля
+        newHiddenInput_del.name = "del_product_" + prod.productId;       // имя параметра на удаление группы
+
+        const del_form = document.getElementById("del_product_" + prod.productId);
+        del_form.appendChild(newHiddenInput_del);// Добавление скрытого поля в форму удалить группу
+
+
+        // скрытое поле для формы сохранить продукт
+        const hiddenInput_name_save = document.createElement("input"); // Создаем скрытое поле для кнопки сохранить
+        hiddenInput_name_save.type = "hidden";                        // Устанавливаем тип поля как hidden
+        hiddenInput_name_save.id = "hidden_name_" + prod.productId;          //  ID для каждого поля
+        hiddenInput_name_save.value = prod.product_name;                  // Значение поля имя
+        hiddenInput_name_save.name = "product_name";       // Имя параметра на сохранение name группы
+
+        const save_form = document.getElementById("save_product_" + prod.productId); //получение объекта форма сохранить группу
+        save_form.appendChild(hiddenInput_name_save);// Добавление скрытого поля в форму кнопки сохранить группу
+
+
+        // скрытое поле для формы сохранить продукт coast_product
+        const hiddenInput_save_coast = document.createElement("input"); // Создаем скрытое поле для кнопки сохранить
+        hiddenInput_save_coast.type = "hidden";                        // Устанавливаем тип поля как hidden
+        hiddenInput_save_coast.id = "hidden_coast_" + prod.productId;          //  ID для каждого поля
+        hiddenInput_save_coast.value = prod.productCoast;                  // Значение поля имя
+        hiddenInput_save_coast.name = "coast_product";       // Имя параметра на сохранение name группы
+
+        save_form.appendChild(hiddenInput_save_coast);// Добавление скрытого поля в форму кнопки сохранить группу
+
+
+        const inputNameProduct = document.getElementById("product_name_" + prod.productId); //получение объекта имя группы для слушателя
+        const inputCoastProduct = document.getElementById("coast_product" + prod.productId); //получение объекта имя группы для слушателя
+
+        inputNameProduct.addEventListener("input", () => {
+            copyValue(inputNameProduct, hiddenInput_name_save );
+        }); // слушатель на изменение имени группы
+
+        inputCoastProduct.addEventListener("input", () => {
+            copyValue(inputCoastProduct, hiddenInput_save_coast );
+        }); // слушатель на изменение имени группы
+
+    }
+    // обработчик слушателя на изменение поля имя группы
+    function copyValue(param_1, param_2){
+        const val = param_1.value; // получение значения value от класса который вызвал
+
+        param_1.setAttribute("style", "background-color: yellow"); // установка нового цвета для поля
+
+        param_2.setAttribute("value", val); // новое значение для скрытого поля при изменении поля имя
+    }
+</script>
+
+
+
 
 <script th:inline="javascript">
     const groups = [[${groups}]]; // получение коллекции groups
@@ -365,37 +837,6 @@
         param_2.setAttribute("value", val); // новое значение для скрытого поля при изменении поля имя
     }
 </script>
-<!--<script>-->
-<!--    const listElement = document.getElementById('list');-->
-<!--    const groupsJSON = listElement.dataset.groups;-->
-<!--    const groupsObj = JSON.parse(groupsJSON);-->
-
-<!--    const count = parseInt(document.getElementById("count").getAttribute("value")); // размер списка-->
-<!--    let i = 0;-->
-<!--    const currentElem = null;-->
-
-<!--    while (i < count){ //цикл прохода по коллекции-->
-
-<!--        funcWriteList(count); // вызов функции с рекурсией-->
-
-<!--    }-->
-<!--    function funcWriteList(count_1) {-->
-
-<!--        if (count_1 === 0) {-->
-<!--            return;-->
-<!--        }-->
-
-<!--        const newDiv = document.createElement("div"); // новый элемент div-->
-<!--        newDiv.innerHTML += `${groupsObj.name} + ${i}`;  // текст для нового элемента-->
-
-<!--        document.getElementById("output").appendChild(newDiv); //элемент добавить в существующий контейнер div-->
-<!--        i++;-->
-<!--        funcWriteList(count_1 - 1);-->
-<!--    }-->
-
-
-
-<!--</script>-->
 
 <style>
     label {

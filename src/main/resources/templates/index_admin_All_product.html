@@ -29,6 +29,7 @@
             <p></p>
             <h3> <a th:text="'Все продукты'" > </a> </h3>
             <p></p>
+            <a th:href="'/index_admin'" class="text-black text-decoration-none" style="margin-right: 20px; font-weight: bold;" th:text="'На главную ->'"></a>
 
 <!--Вывод сообщения об ошибке-->
             <h4>   <a th:text="${errorMessage}" > </a>   </h4>
@@ -36,29 +37,54 @@
 
 
             <!--FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF-->
-            <!--контейнер 2 со списком продуктов-->
+            <!--контейнер 2 со списком групп-->
             <div th:each="group: ${groups}" >
                 <div class="container mt-5">
                     <div class="row justify-content-center">
                         <div class="col-md-10 border p-4 rounded shadow-lg bg-body-secondary">
-                            <h6 class="text-center mb-4"><a th:text = "'Продукты раздела: '"> </a></h6>
-                            <h4 class="text-center mb-4"><a th:text = "${group.getGroupName}"> </a></h4>
+                            <div class="row">
+                                <div class="col-2">
+                                    <a th:href="'/index_admin/group/' + ${group.getGroupId}" > <!--class="stretched-link" tabindex="-1"-->
+                                        <!--картинка группы  @{'/image_group/' + ${fileName}}   "@{'/image_group/new.jpg'}" -->
+                                        <img th:src="@{ '/image/' + ${group.getGroupId()}}"  style="max-width: 150px; max-height: 150px; object-fit: contain;">
 
-                            <p></p>
-                            <form method="get" th:action = "'/product_admin/add_new'">
-                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <button class="btn btn-dark" type="submit" >Добавить продукт</button>
-
+                                    </a>
                                 </div>
-                                <!--                            <input type="hidden" name="id_group" th:value="${group.getGroupId()}"/>-->
-                            </form>
-                            <p></p>
+                                <div class="col-4">
+                                    <h5><a th:text = "${group.getGroupName}"> </a></h5>
+                                    <p></p>
+                                    <!-- Кнопка для показа таблицы -->
+                                    <button th:id="'showHideButton' + ${group.getGroupId}" class="btn btn-primary mb-3">Показать продукты</button>
+                                </div>
+                                <div class="col-3">
+                                    <div th:if="${group.getListProduct() != null}">
+                                        <h6 > <a th:text = "'Продуктов:  ' + ${group.getListProduct().size()}"> </a></h6>
+                                    </div>
+                                    <div th:if="${group.getListProduct() == null}">
+                                        <h6 > <a th:text = "'Продуктов:  0' "> </a></h6>
+                                    </div>
+                                    <p></p>
+                                    <form method="get" th:action = "'/product_admin/add_new'">
+                                        <div class="d-grid gap-2 d-md-flex">
+                                            <button class="btn btn-dark" type="submit" >Добавить продукт</button>
+                                            <input type="hidden"  name="id_group"  th:value="${group.getGroupId}">
+
+                                        </div>
+                                        <!--                            <input type="hidden" name="id_group" th:value="${group.getGroupId()}"/>-->
+                                    </form>
+                                    <p></p>
+                                </div>
+                            </div>
+
+<!--                            <h4 class="text-center mb-4"><a th:text = "${group.getGroupName}"> </a></h4>-->
+
+                            <!--Ссылка в раздел страницу-->
+                            <a th:href="'/index_admin/group/' + ${group.getGroupId}" class="text-black text-decoration-none" style="margin-right: 20px; font-weight: bold;" th:text="'В раздел ->'"></a>
 
 
-                            <!-- Контейнер с продуктами -->
+                            <!--контейнер 2 со списком продуктов-->
                             <div class="container mt-3">
-                                <!-- Кнопка для показа таблицы -->
-                                <button th:id="'showHideButton' + ${group.getGroupId}" class="btn btn-primary mb-3">Показать таблицу</button>
+
 
                                 <!-- Основная таблица, изначально скрытая -->
                                 <div th:id="'productTable' + ${group.getGroupId}" style="display: none;">
@@ -79,6 +105,7 @@
                                                         <img th:src="@{'/image/product/'+ ${product.getProductId()} + '/1'}" class="img-fluid mx-auto d-block" style="max-width: 150px; max-height: 150px; object-fit: contain;">
                                                     </a>
                                                 </td>
+
                                                 <td>
                                                     <div class="form-group">
                                                         <label th:for="'coast_product' + ${product.getProductId()}" class="form-label">Цена:</label>
@@ -92,12 +119,16 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <form method="post" th:action="'/index_admin/del_product/' + ${product.getProductId()}" th:id="'del_product_' + ${product.getProductId()}">
-                                                        <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;">Del.</button>
-                                                    </form>
                                                     <form method="post" th:action="'/index_admin/save_product/' + ${product.getProductId()}" th:id="'save_product_' + ${product.getProductId()}">
-                                                        <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;">Save</button>
+                                                        <input type="hidden"  name="page"  value="index_admin_All_product">
+                                                        <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
                                                     </form>
+                                                    <form method="post" th:action="'/index_admin/del_product/' + ${product.getProductId()}" th:id="'del_product_' + ${product.getProductId()}">
+                                                       <input type="hidden"  name="page"  value="index_admin_All_product">
+
+                                                        <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;">Удалить</button>
+                                                    </form>
+
                                                 </td>
                                             </tr>
                                             </tbody>
@@ -106,24 +137,34 @@
                                 </div>
                             </div>
 
-
-
-
-
-
-
-
                         </div>
                     </div>
                 </div>
 
             </div>
+
+            <input type="hidden" id="point" th:value="${point}"/>
+<!--            <input type="hidden" id="groups" th:value="${groups}"/>-->
+<!--точка перехода-->
+            <script>
+                const point = document.getElementById("point");
+                // document.addEventListener('DOMContentLoaded', function () {
+                // var anchor = "${anchor}";
+                if(point) {
+                    //     if(document.getElementById("${anchor}")) {
+                    location.href += '#' + point.value;
+                }
+                // }
+                // });
+            </script>
+
+
             <!-- Скрипты для переключения видимости таблицы -->
             <script th:inline="javascript">
 
-                const groups = [[${groups}]]; // получение коллекции groups
+                const groups1 = [[${groups}]]; // получение коллекции groups
 
-                for (let gr of groups){
+                for (let gr of groups1){
 
                     const button = document.getElementById("showHideButton" + gr.groupId);
                     const tableDiv = document.getElementById("productTable" + gr.groupId);
@@ -131,10 +172,10 @@
                     button.addEventListener("click", function() {
                         if(tableDiv.style.display === "none") {
                             tableDiv.style.display = "block";
-                            this.textContent = "Скрыть таблицу"; // Меняет надпись на кнопке
+                            this.textContent = "Скрыть продукты"; // Меняет надпись на кнопке
                         } else {
                             tableDiv.style.display = "none";
-                            this.textContent = "Показать таблицу";
+                            this.textContent = "Показать продукты";
                         }
                     });
 
@@ -144,54 +185,64 @@
 
 
             <script th:inline="javascript">
-                const products = [[${products}]]; // получение коллекции products
 
-                for (let prod of products){
+                const groups = [[${groups}]];
 
-                    // скрытое поле для формы удалить продукт
-                    const newHiddenInput_del = document.createElement("input"); // Создание скрытого поля для кнопки удаления
-                    newHiddenInput_del.type = "hidden";                        // Устанавливаем тип поля как hidden
-                    newHiddenInput_del.id = "hidden_del_product" + prod.productId/*.toString()*/;          //  ID для каждого поля
-                    newHiddenInput_del.value = prod.productId;                  // Значение поля
-                    newHiddenInput_del.name = "del_product_" + prod.productId;       // имя параметра на удаление группы
+                // const products = [[${products}]]; // получение коллекции products
 
-                    const del_form = document.getElementById("del_product_" + prod.productId);
-                    del_form.appendChild(newHiddenInput_del);// Добавление скрытого поля в форму удалить группу
+                for (let group of groups){
 
+                    if (!Array.isArray(group.listProduct)) continue;
 
-                    // скрытое поле для формы сохранить продукт
-                    const hiddenInput_name_save = document.createElement("input"); // Создаем скрытое поле для кнопки сохранить
-                    hiddenInput_name_save.type = "hidden";                        // Устанавливаем тип поля как hidden
-                    hiddenInput_name_save.id = "hidden_name_" + prod.productId;          //  ID для каждого поля
-                    hiddenInput_name_save.value = prod.product_name;                  // Значение поля имя
-                    hiddenInput_name_save.name = "product_name";       // Имя параметра на сохранение name группы
+                    for (let prod of group.listProduct){
 
-                    const save_form = document.getElementById("save_product_" + prod.productId); //получение объекта форма сохранить группу
-                    save_form.appendChild(hiddenInput_name_save);// Добавление скрытого поля в форму кнопки сохранить группу
+                        // скрытое поле для формы удалить продукт
+                        const newHiddenInput_del = document.createElement("input"); // Создание скрытого поля для кнопки удаления
+                        newHiddenInput_del.type = "hidden";                        // Устанавливаем тип поля как hidden
+                        newHiddenInput_del.id = "hidden_del_product" + prod.productId/*.toString()*/;          //  ID для каждого поля
+                        newHiddenInput_del.value = prod.productId;                  // Значение поля
+                        newHiddenInput_del.name = "del_product_" + prod.productId;       // имя параметра на удаление группы
+
+                        const del_form = document.getElementById("del_product_" + prod.productId);
+                        del_form.appendChild(newHiddenInput_del);// Добавление скрытого поля в форму удалить группу
 
 
-                    // скрытое поле для формы сохранить продукт coast_product
-                    const hiddenInput_save_coast = document.createElement("input"); // Создаем скрытое поле для кнопки сохранить
-                    hiddenInput_save_coast.type = "hidden";                        // Устанавливаем тип поля как hidden
-                    hiddenInput_save_coast.id = "hidden_coast_" + prod.productId;          //  ID для каждого поля
-                    hiddenInput_save_coast.value = prod.productCoast;                  // Значение поля имя
-                    hiddenInput_save_coast.name = "coast_product";       // Имя параметра на сохранение name группы
+                        // скрытое поле для формы сохранить продукт
+                        const hiddenInput_name_save = document.createElement("input"); // Создаем скрытое поле для кнопки сохранить
+                        hiddenInput_name_save.type = "hidden";                        // Устанавливаем тип поля как hidden
+                        hiddenInput_name_save.id = "hidden_name_" + prod.productId;          //  ID для каждого поля
+                        hiddenInput_name_save.value = prod.product_name;                  // Значение поля имя
+                        hiddenInput_name_save.name = "product_name";       // Имя параметра на сохранение name группы
 
-                    save_form.appendChild(hiddenInput_save_coast);// Добавление скрытого поля в форму кнопки сохранить группу
+                        const save_form = document.getElementById("save_product_" + prod.productId); //получение объекта форма сохранить группу
+                        save_form.appendChild(hiddenInput_name_save);// Добавление скрытого поля в форму кнопки сохранить группу
 
 
-                    const inputNameProduct = document.getElementById("product_name_" + prod.productId); //получение объекта имя группы для слушателя
-                    const inputCoastProduct = document.getElementById("coast_product" + prod.productId); //получение объекта имя группы для слушателя
+                        // скрытое поле для формы сохранить продукт coast_product
+                        const hiddenInput_save_coast = document.createElement("input"); // Создаем скрытое поле для кнопки сохранить
+                        hiddenInput_save_coast.type = "hidden";                        // Устанавливаем тип поля как hidden
+                        hiddenInput_save_coast.id = "hidden_coast_" + prod.productId;          //  ID для каждого поля
+                        hiddenInput_save_coast.value = prod.productCoast;                  // Значение поля имя
+                        hiddenInput_save_coast.name = "coast_product";       // Имя параметра на сохранение name группы
 
-                    inputNameProduct.addEventListener("input", () => {
-                        copyValue(inputNameProduct, hiddenInput_name_save );
-                    }); // слушатель на изменение имени группы
+                        save_form.appendChild(hiddenInput_save_coast);// Добавление скрытого поля в форму кнопки сохранить группу
 
-                    inputCoastProduct.addEventListener("input", () => {
-                        copyValue(inputCoastProduct, hiddenInput_save_coast );
-                    }); // слушатель на изменение имени группы
+
+                        const inputNameProduct = document.getElementById("product_name_" + prod.productId); //получение объекта имя группы для слушателя
+                        const inputCoastProduct = document.getElementById("coast_product" + prod.productId); //получение объекта имя группы для слушателя
+
+                        inputNameProduct.addEventListener("input", () => {
+                            copyValue(inputNameProduct, hiddenInput_name_save );
+                        }); // слушатель на изменение имени группы
+
+                        inputCoastProduct.addEventListener("input", () => {
+                            copyValue(inputCoastProduct, hiddenInput_save_coast );
+                        }); // слушатель на изменение имени группы
+
+                    }
 
                 }
+
                 // обработчик слушателя на изменение поля имя группы
                 function copyValue(param_1, param_2){
                     const val = param_1.value; // получение значения value от класса который вызвал
@@ -204,9 +255,6 @@
 
     </div>
         <P></P>
-
-
-
 
 </div>
 

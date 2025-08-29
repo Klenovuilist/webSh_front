@@ -36,10 +36,10 @@ public class TestController {
 
     }
 
-    @GetMapping("/")
-    public String index() {
-        return "index FRONT 123123132\n 123123132\n123123132\n123123132\n123123132\n";
-    }
+//    @GetMapping("/")
+//    public String index() {
+//        return "test_2.html";
+//    }
 
     @GetMapping("/test")
     public String testRequest() {
@@ -66,11 +66,11 @@ public class TestController {
 
         //Проверка на наличи ошибок
         if (isHasError) {
-            model.addAttribute("errorMessage", ErrorMessage.errorSave);
+            model.addAttribute("errorMessage", ErrorMessage.error);
         }
         else {
             model.addAttribute("errorMessage", null);
-            ErrorMessage.errorSave = null;
+            ErrorMessage.error = null;
         }
         model.addAttribute("listEntity", testService.getListTestEntity());
         

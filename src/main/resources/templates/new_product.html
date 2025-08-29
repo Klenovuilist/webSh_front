@@ -27,20 +27,22 @@
             <p></p>
             <h3> <a th:text="'Редактор продукта: ' + ${product.getProduct_name}"></a></h3>
             <p></p>
+
+
             <!--Отображение картинок-->
             <div class="container mt-5">
                 <div class="row justify-content-center">
                     <div th:each="nameImages: ${ListNameImages}" class="col-md-3 my-3">
-                        <div>
-                            <!--                <div class="card h-100 border p-4 rounded shadow-lg bg-body-secondary" style="min-height: 250px;">-->
-                            <a th:href="'/del/image/'+ ${product.getProductId()}+ '/' + ${nameImages}" > <!--class="stretched-link" tabindex="-1-->
-
-                                <img th:src="@{'/image/product/'+ ${product.getProductId()}+ '/' + ${nameImages}}" class="img-fluid mx-auto d-block" style="width: 100%; height: auto;" alt="Описание">
+                        <div >
+                            <a th:href="'/del/image/'+ ${product.getProductId()}+ '/' + ${nameImages} + '?currentGroupId=' + ${currentGroupId}"
+                               class="del_img">
+                                <img th:src="@{'/image/product/'+ ${product.getProductId()}+ '/' + ${nameImages}}"
+                                     class="img-fluid mx-auto d-block" style="width: 100%; height: auto;" alt="Описание">
+                                <input type="hidden" name="currentGroupId" th:value="${currentGroupId}">
                             </a>
                         </div>
                     </div>
                 </div>
-
             </div>
 
 <!--Загрузка картинки-->
@@ -81,10 +83,13 @@
             <div class="btn-group" role="group" > <!--ссылки в один ряд-->
             <!--Ссылка на главную страницу-->
             <a th:href="'/index_admin'" class="text-black text-decoration-none" style="margin-right: 20px; font-weight: bold;" th:text="'На главную ->'"></a>
-            <p></p>
 
             <!--Ссылка в раздел страницу-->
             <a th:href="'/index_admin/group/' + ${currentGroupId}" class="text-black text-decoration-none" style="margin-right: 20px; font-weight: bold;" th:text="'В раздел ->'"></a>
+
+                <!--Ссылка все продукты-->
+                <a th:href="'/product/all'" class="text-black text-decoration-none"
+                   style="margin-right: 20px; font-weight: bold;" th:text="'Все продукты ->'"></a>
             </div>
                 <p></p>
 
@@ -113,14 +118,16 @@
                                     class="form-select form-select-sm"
                                     style="width: auto; height: 35px; font-size: 18px;">
                                 <option th:each="group : ${groups}"
-                                        th:value="${group.getGroupId()}"
+
+                                        th:value="${group.getGroupId() ?: 'null'}"
                                         th:id="'group' + ${group.getGroupId()}"
                                         th:text="${group.getGroupName()}"></option>
                             </select>
                         </div>
 
                         <!-- вспомогательная переменная и сохранение выбора в селект -->
-                        <input type="hidden"  id="hiddenGroupSelect"  th:value="${currentGroupId}" />
+<!--                        <input type="hidden"  id="hiddenGroupSelect"  th:value="${currentGroupId}" />-->
+                        <input type="hidden" id="hiddenGroupSelect" th:value="${currentGroupId ?: 'null'}"/>
 
 
 
@@ -216,6 +223,26 @@
         text-align: left;
     }
 </style>
+
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        // Все ссылки с классом delete-image
+        const deleteLinks = document.querySelectorAll('.del_img');
+
+        // Обработчик события клика
+        deleteLinks.forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault(); // Предотвращаем стандартный переход по ссылке
+
+                // Подтверждение удаления
+                if(confirm('Удалить изображение???')) {
+                    // Если подтвердили, перенаправляемся вручную
+                    window.location.href = this.href;
+                }
+            });
+        });
+    });
+</script>
 
 
 

@@ -5,6 +5,7 @@
     <title>Smart admin</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
+    <script src="/js/bootstrap.bundle.min.js" ></script>
 
 </head>
 <body>
@@ -53,7 +54,11 @@
 <!--                                            <h6> Имя </h6>-->
 <!--                                        </th>-->
                                         <form method="post" th:action = "'/index_admin/save_group/' + ${group.getGroupId}">
+
                                         <th>
+                                            <input type="hidden"  name="page"  value="index_admin_group">
+                                            <input type="hidden"  name="id_group"  th:value="${group.getGroupId}">
+
                                             <!--Поле для ввода имени группы-->
                                             <input class="form-control" th:value="${group.getGroupName()}"
                                                    type="text" size="50"
@@ -87,7 +92,14 @@
                             </div>
                         </div>
                         <p></p>
-                        <a th:href="'/index_admin'" class="text-black text-decoration-none" style="margin-right: 20px; font-weight: bold;" th:text="'На главную ->'"></a>
+
+                        <div class="btn-group" role="group" > <!--имена групп в один ряд-->
+                            <a th:href="'/index_admin'" class="text-black text-decoration-none" style="margin-right: 20px; font-weight: bold;" th:text="'На главную ->'"></a>
+
+                            <a th:href="'/product/all'" class="text-black text-decoration-none" style="margin-right: 30px; font-weight: bold;" th:text="'Все продукты ->'"></a>
+
+                        </div>
+
                     </div>
 
                 </div>
@@ -104,6 +116,8 @@
                         <p></p>
                         <form method="post" th:action = "'/index_admin/create_group/' + ${group.getGroupId}"
                               id="create_group">
+                            <input type="hidden"  name="page"  value="index_admin_group">
+                            <input type="hidden"  name="id_group"  th:value="${group.getGroupId}">
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                 <button class="btn btn-dark" type="submit" id="apply_2">Добавить подраздел</button>
                             </div>
@@ -138,26 +152,18 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <!--                                Кнопка удалить группу -->
-                                        <form method="post" th:action = "'/index_admin/del_group/' + ${group.getGroupId}"
-                                              th:id="'del_group_' + ${group.getGroupId}">
-                                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
 
-                                                <button class="btn btn-dark btn-sm mb-2"
-                                                        type="submit"
-                                                        style="height: 25px; width: 80px; font-size: 12px;">Del.</button> <!--Удалить-->
-                                            </div>
-                                            <!--                                        скрытое поле -->
-                                            <!-- newHiddenInput_del.value = gr.groupId;                  // Значение поля
-                                newHiddenInput_del.name = "group_del_group" + gr.groupId;-->
-                                        </form>
+
 
                                         <!--Кнопка сохранить группу -->
                                         <form method="post" th:action = "'/index_admin/save_group/' + ${group.getGroupId}"
-                                              th:id="'save_group_' + ${group.getGroupId}">
+                                         th:id="'save_group_' + ${group.getGroupId}">
+                                            <input type="hidden"  name="page"  value="index_admin_group">
+                                            <input type="hidden"  name="id_group"  th:value="${group.getParrentId}">
+
                                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                                 <button class="btn btn-dark btn-sm mb-2" type="submit"
-                                                        style="height: 25px; width: 80px; font-size: 12px;">Save</button>
+                                                        style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
 
                                                 <!--                                     внутри формы
                                                                              newHiddenInput_save.value = gr.groupName;                  // Значение поля имя
@@ -165,6 +171,49 @@
 
                                             </div>
                                         </form>
+
+
+                                        <!-- Кнопка модального окна на удаление -->
+                                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                            <button button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;"
+                                                    data-bs-toggle="modal" th:data-bs-target="'#'+ 'modal_' + ${group.getGroupId}">
+                                                Удалить
+                                            </button>
+                                        </div>
+
+                                        <!-- Модальное окно -->
+                                        <div class="modal fade" th:id="'modal_' + ${group.getGroupId}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" > Удалить раздел ???</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Отмена"></button>
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <form method="post" th:action = "'/index_admin/del_group/' + ${group.getGroupId}"
+                                                              th:id="'del_group_' + ${group.getGroupId}">
+                                                            <input type="hidden"  name="page"  value="index_admin_group">
+                                                            <input type="hidden"  name="id_group"  th:value="${group.getParrentId}">
+
+                                                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+
+                                                                <button class="btn btn-dark btn-sm mb-2"
+                                                                        type="submit"
+                                                                        style="height: 25px; width: 80px; font-size: 12px;">Удалить</button> <!--Удалить-->
+                                                            </div>
+                                                            <!--                                        скрытое поле -->
+                                                            <!-- newHiddenInput_del.value = gr.groupId;                  // Значение поля
+                                                newHiddenInput_del.name = "group_del_group" + gr.groupId;-->
+                                                        </form>
+                                                        <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;" data-bs-dismiss="modal">Отмена</button>
+                                                        <!--                                                <button type="button" class="btn btn-primary">Удалить</button>-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!--   ---------------------->
                                     </td>
 
                                      <td>
@@ -173,6 +222,10 @@
                                                    th:action="@{'/upload_image_group/' + ${group.getGroupId()}}"
                                                    th:object="${image}">   <!--связывает форму с объектом image-->
                                                  <input type="file" name="file" accept="image/*" required/>  <!--допустимые файлы image-->
+
+                                                 <input type="hidden"  name="page"  value="index_admin_group">
+                                                 <input type="hidden"  name="id_group"  th:value="${group.getParrentId}">
+
                                                  <button type="submit">Загрузить изображение</button>
                                              </form>
                                      </td>
@@ -253,11 +306,12 @@
                 <h6 class="text-center mb-4">Продукты</h6>
                 <p></p>
                 <form method="get" th:action = "'/product_admin/add_new'">
+                    <input type="hidden"  name="id_group"  th:value="${group.getGroupId}">
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                         <button class="btn btn-dark" type="submit" >Добавить продукт</button>
 
                     </div>
-                    <input type="hidden" name="id_group" th:value="${group.getGroupId()}"/>
+<!--                    <input type="hidden" name="id_group" th:value="${group.getGroupId()}"/>-->
                 </form>
                 <p></p>
 
@@ -294,14 +348,52 @@
                                 </div>
                             </td>
                             <td>
-                                <form method="post" th:action="'/index_admin/del_product/' + ${product.getProductId()}"
-                                      th:id="'del_product_' + ${product.getProductId()}">
-                                    <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;">Del.</button>
-                                </form>
+<!--                                <form method="post" th:action="'/index_admin/del_product/' + ${product.getProductId()}"-->
+<!--                                th:id="'del_product_' + ${product.getProductId()}">-->
+<!--&lt;!&ndash;                                    <input type="hidden"  name="page"  value="index_admin_group">&ndash;&gt;-->
+<!--                                    <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;">Удалить</button>-->
+<!--                                </form>-->
                                 <form method="post" th:action="'/index_admin/save_product/' + ${product.getProductId()}"
                                       th:id="'save_product_' + ${product.getProductId()}">
-                                    <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;">Save</button>
+                                    <input type="hidden"  name="page"  value="index_admin_group">
+                                    <input type="hidden"  name="id_group"  th:value="${group.getGroupId}">
+                                    <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
                                 </form>
+
+
+
+                                <!-- Кнопка модального окна на удаление -->
+                                <button button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;"
+                                        data-bs-toggle="modal" th:data-bs-target="'#'+ 'modal_' + ${product.getProductId()}">
+                                    Удалить
+                                </button>
+
+                                <!-- Модальное окно -->
+                                <div class="modal fade" th:id="'modal_' + ${product.getProductId()}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" > Удалить продукт ???</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Отмена"></button>
+                                            </div>
+<!--                                            <div class="modal-body">-->
+<!--                                                ...-->
+<!--                                            </div>-->
+                                            <div class="modal-footer">
+                                                <form method="post" th:action="'/index_admin/del_product/' + ${product.getProductId()}"
+                                                      th:id="'del_product_' + ${product.getProductId()}">
+                                                    <!--                                    <input type="hidden"  name="page"  value="index_admin_group">-->
+                                                    <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;">Удалить</button>
+                                                </form>
+                                                <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;" data-bs-dismiss="modal">Отмена</button>
+<!--                                                <button type="button" class="btn btn-primary">Удалить</button>-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+<!--                   --------------------------------------------         -->
+
                             </td>
                         </tr>
                         </tbody>

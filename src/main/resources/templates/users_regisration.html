@@ -16,6 +16,9 @@
 
                 <!-- Отображение возможных ошибок при регистрации -->
                 <div th:if="${param.error}" class="alert alert-danger mb-3">Ошибка регистрации!</div>
+                <div th:if="${not #strings.isEmpty(loginExist)}" class="alert alert-danger mb-3">
+                    <a th:text="'Логин ' + ${loginExist} + ' уже существует'"></a>
+                </div>
                 <div th:if="${param.success}" class="alert alert-success mb-3">Пользователь зарегистрирован успешно!</div>
 
                 <!-- Форма регистрации -->
@@ -25,9 +28,11 @@
                         <input type="email" class="form-control" id="email" name="email" placeholder="Введите email" required />
                     </div>
 
+
+
                     <div class="mb-3">
-                        <label for="username" class="form-label">Логин:</label>
-                        <input type="text" class="form-control" id="username" name="username" placeholder="Введите логин" required />
+                        <label for="userLogin" class="form-label">Логин:</label>
+                        <input type="text" class="form-control" id="userLogin" name="userLogin" placeholder="Введите логин" required />
                     </div>
 
                     <div class="mb-3">
@@ -35,16 +40,16 @@
                         <input type="password" class="form-control" id="password" name="password" placeholder="Введите пароль" required />
                     </div>
 
-                    <div class="mb-3">
-                        <label for="confirmPassword" class="form-label">Подтверждение пароля:</label>
-                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Подтвердите пароль" required />
-                    </div>
+<!--                    <div class="mb-3">-->
+<!--                        <label for="confirmPassword" class="form-label">Подтверждение пароля:</label>-->
+<!--                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Подтвердите пароль" required />-->
+<!--                    </div>-->
 
                     <div class="d-flex flex-column align-items-center">
                         <button type="submit" class="btn btn-primary w-100 mb-3">Зарегистрироваться</button>
 
                         <!-- Возможность вернуться обратно на страницу авторизации -->
-                        <a href="/auth" class="btn btn-link">Уже зарегистрированы?</a>
+                        <a href="/athurizathion" class="btn btn-link">Уже зарегистрированы?</a>
                     </div>
                 </form>
             </div>

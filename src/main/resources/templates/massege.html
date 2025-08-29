@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" lang="ru">
+    <title>Test</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+
+</head>
+<body>
+<header>
+    <div class="container">
+        <div class="row">
+            <div class="col-8">
+                <h3 class="text-center text-white"> Smart </h3>
+            </div>
+        </div>
+    </div>
+</header>
+<p></p>
+
+<h6 class="text-center text-black"> <a th:text = "'На указанную почту: ' + ${user.mail} + '  отправлена ссылка'"></a> </h6>
+
+<h6 class="text-center text-black"> <a th:text = "'для продолжения регистрации: ' + ${user.login}"></a> </h6>
+<h6 class="text-center text-black"> <a th:text = "'пройдите по ссылке из письма'"></a> </h6>
+
+
+</body>
+</html>

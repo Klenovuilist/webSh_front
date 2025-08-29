@@ -21,9 +21,9 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-8">
+        <div class="col-10">
             <p></p>
-            <h3>страница User, редактирование, просмотр товаров забронированных</h3>
+            <h3>страница User</h3>
             <p></p>
             <h4>   <a th:text="${errorMessage}" > </a>   </h4>
             <P></P>
@@ -32,27 +32,38 @@
 
             <table class="table table-bordered">
                 <thead>
-                <tr class="table-warning table align-middle">
+                <div class="row">
+                    <tr class="table-warning table align-middle">
+                        <div class="col-2">
+                            <th>
+                                <h6><a th:text="${user.getLogin}"></a></h6>
+                            </th>
+                        </div>
+                        <div class="col-2">
+                            <th>
 
-                    <th>
-                        <h6> 1.....</h6>
-                    </th>
-                    <th>
-                        <h6> 2.....</h6>
-                    </th>
-                    <th>
-                        <h6> 3.....</h6>
-                    </th>
-                    <th>
-                        <h6> 4.....</h6>
-                    </th>
-                    <th>
-                        <h6> 5.....</h6>
+                                <h6> <a th:text="${user.getMail}"> </a></h6>
+                            </th>
+                        </div>
 
-                    </th>
-                    <th></th>
+                        <div class="col-3">
+                            <th>
+                                <h6>  <input th:id="user.getId"   th:value="${user.getComment}"
+                                             type="text" name="comment" size="50"/> </a> </h6>
+                            </th>
+                        </div>
 
-                </tr>
+                        <div class="col-2">
+                            <th>
+                                <h6> <a th:text="${user.getDataCreateParsing}"> </a></h6>
+                            </th>
+                        </div>
+
+
+
+                    </tr>
+                </div>
+
                 </thead>
                 <tbody></tbody>
 
@@ -64,7 +75,7 @@
                     <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
                         <h3 class="text-center mb-4">Описание</h3>
                         <p></p>
-                        <h4>   <a th:text="'Я пользователь с id = ' + ${userId}" > </a>   </h4>
+
 
                     </div>
                 </div>
