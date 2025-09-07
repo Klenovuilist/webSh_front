@@ -5,16 +5,16 @@
 services:
 
 
-  app_1:
+  app_1_3d:
     build:
       #       . - текущая папка с docker файлом
       context: .
       #      сборка образа приложения по docker файлом
-      dockerfile: Dockerfile_1
+      dockerfile: Dockerfile_3d_front_server
     networks:
-      - smartFront
+      - 3detailFront_net
 
-    container_name: front
+    container_name: front_3d
     ports:
       #      внешний порт любой(80 или 443 что бы не вводить при зпросе)
       #      внутренний порт такой же как в апликешин - связь контейнера с приложением
@@ -22,33 +22,35 @@ services:
       - "9001:8098"
 
       #      порт для удаленного дебага 5005 по умолчанию
-      - "5004:5004"
+      - "5005:5005"
 
-    #        Переопределение переменных из property (задание путей для сохранения картинок внутри контейнера - простые строки)
+    #        Переопределение переменных из property ()
     environment:
-      feign.url: http://45.131.42.43:9002
+      feign.url: http://45.131.42.166:9002 #для запросов на БЭК
+      my.domein.mail: http://45.131.42.166:9001  #для ссылки в письме авторизации - запрос на фронт -9001
 
 
 
   nginx:
     image: nginx:1.27.5
-    container_name: nginx_front
+    container_name: nginx_3d
     ports:
       - "80:80"  # Доступен на порту 80
       - "443:443"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf  # Подключение конфигурационного файла  /etc/nginx/conf.d/
+      - ./nginx.conf:/etc/nginx/nginx.conf  # Подключение конфигурационного файла имя исходного файла только nginx.conf
 #      - /etc/letsencrypt/live/smart18.ru/:/etc/ssl/  # Папка с сертификатами /etc/ssl/ - существующаяя папка на сервере Unix
-      - /etc/letsencrypt/archive/smart18.ru/:/etc/letsencrypt/archive/smart18.ru/
+#      - /etc/letsencrypt/archive/3detail.ru/:/etc/letsencrypt/archive/3detail.ru/
+      - /etc/ssl/:/etc/ssl/  # Папка с сертификатами
 
     depends_on:
-      - app_1
+      - app_1_3d
     networks:
-      - smartFront
+      - 3detailFront_net
 
 
 networks:
-  smartFront:
+  3detailFront_net:
     driver: bridge
 
 

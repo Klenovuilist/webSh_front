@@ -1,0 +1,128 @@
+﻿#для запуска на сервере с nginx
+# приложение по докер файлу
+#version: "3.8"
+
+services:
+
+  postgres:
+    container_name: 'Postgres_SHOP'
+
+    # Порты контейнера
+    # При подключении к БД из вне контейнера использовать localhost и внешний порт
+    ports:
+      - '5304:5303'
+    environment:
+      POSTGRES_PASSWORD: 123
+      POSTGRES_USER: postgres
+      POSTGRES_DB: shop
+    image: postgres:15.12-alpine3.21
+    networks:
+      - net226
+
+    #  команда после установки образа:
+    #  изменение порта для postgres - должен совпадать с внутренним портом контейнера
+    command:
+      - "postgres"
+      - "-c"
+      - "port=5303"
+    volumes:
+      - ./pgdata_smart:/var/lib/postgresql/data  # Том для сохранения данных вне контейнера
+
+
+  app_1_front:
+    build:
+      #       . - текущая папка с docker файлом
+      context: .
+      #      сборка образа приложения по docker файлом
+      dockerfile: Dockerfile_front_server_shop
+    networks:
+      - net226
+
+    container_name: front
+    ports:
+      #      внешний порт любой(80 или 443 что бы не вводить при зпросе)
+      #      внутренний порт такой же как в апликешин - связь контейнера с приложением
+
+      - "9001:8098"
+
+      #      порт для удаленного дебага 5005 по умолчанию
+      - "5005:5005"
+
+    #        Переопределение переменных из property ()
+    environment:
+      feign.url: http://45.131.42.43:9002 #для запросов на БЭК
+      my.domein.mail: http://445.131.42.43:9001  #для ссылки в письме авторизации - запрос на фронт -9001
+
+
+  app_2_back:
+    build:
+
+      #       . - текущая папка с docker файлом
+      context: .
+      #      сборка образа приложения по docker файлом
+      dockerfile: Dockerfile_back_server_shop
+    networks:
+      - net226
+
+    container_name: BACK
+    ports:
+      #      внешний порт любой(80 или 443 что бы не вводить при зпросе)
+      #      внутренний порт такой же как в апликешин - связь контейнера с приложением
+
+      - "9002:8099"
+
+      #      порт для удаленного дебага 5005 по умолчанию
+      - "5006:5006"
+
+    #        Переопределение переменных из property (задание путей для сохранения картинок внутри контейнера - простые строки)
+    environment:
+      pathForSaveImage: /data/images/groups/
+      pathForSaveImageProduct: /data/images/product/
+
+
+      #      port: 8099
+      spring.datasource.username: postgres
+      #      URL для подключения к внутреней сети Docker - "postgres" как в разделе services
+      #      + порт //postgres:5303 если изменен (стандарт 5432 допускается не писать)
+      spring.datasource.url: jdbc:postgresql://postgres:5303/shop
+      spring.datasource.password: 123
+
+    #    Сопоставление папок на хосте(локальном в том числе) с папками внутри контейнера
+    #    Для unix используется / вместо \\
+    volumes:
+      - ./image_group_server:/data/images/groups/
+      - ./image_product_server:/data/images/product/
+
+    depends_on:
+      - postgres
+
+
+
+  nginx:
+    image: nginx:1.27.5
+    container_name: nginx
+    ports:
+      - "80:80"  # Доступен на порту 80
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf  # Подключение конфигурационного файла имя исходного файла только nginx.conf
+#
+      - /etc/letsencrypt/archive/smart18.ru/:/etc/letsencrypt/archive/smart18.ru/  # Папка с сертификатами
+
+    depends_on:
+      - app_1_front
+    networks:
+      - net226
+
+
+networks:
+  net226:
+    driver: bridge
+
+volumes:
+  pgdata_226:  # Объявление волюмс
+    driver: local  # Тип драйвера по умолчанию
+
+
+
+

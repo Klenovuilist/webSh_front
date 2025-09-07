@@ -73,7 +73,7 @@ public class SequrityConfig {
                                 .requestMatchers(HttpMethod.GET,"/athurizathion/**").permitAll()
                                 .requestMatchers(HttpMethod.POST,"/athurizathion/**").permitAll()
                                 .requestMatchers(HttpMethod.POST,"/register/**").permitAll()
-                                .requestMatchers(HttpMethod.GET,"//users/verify/{idUser}/**").permitAll() //подтверждение регистрации
+                                .requestMatchers(HttpMethod.GET,"/users/verify/{idUser}/**").permitAll() //подтверждение регистрации
 
 
                                 .requestMatchers(HttpMethod.POST,"/login/**").permitAll()

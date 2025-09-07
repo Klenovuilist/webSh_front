@@ -2,9 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" lang="ru">
-    <title>Smart</title>
+    <title>detail</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
+
+    <link rel="icon" href="/image/3detail icon.ico" sizes="any" type="image/x-icon"/>
+    <!--    <link rel="icon" href="/icon_noFon120.ico"  sizes="120x120" type="image/x-icon"/>-->
+    <meta name="description" th:content="${mapInfo[9].info}">
+
+    <meta name="keywords" th:content="${mapInfo[10].info}" >
+
+    <meta name="robots" content="index,follow">
+
+    <meta property="og:locale" content="ru_RU">
 
     <style>
         /* Стили для элементов h8 */
@@ -20,7 +30,7 @@
     <div class="container">
         <div class="row">
             <div class="col-8">
-                <h2 class="text-center text-white"> Smart </h2>
+<!--                <h2 class="text-center text-white"> 3detail </h2>-->
             </div>
         </div>
     </div>
@@ -34,9 +44,18 @@
        </div>
 
         <div class="col-md-4">
-            <h6 class="text-center mb-4">
-                <a href = "/athurizathion" > <p th:text="${userInfo['login']}"></p> </a>
-            </h6>
+            <div class="btn-group" role="group" > <!--имена групп в один ряд-->
+                <div class="me-3">
+                    <h6 class="text-center mb-4">
+                        <a href = "/athurizathion" > <p th:text="${userInfo['login']}"></p> </a>
+                    </h6>
+                </div>
+                <div class="me-3">
+                    <h6 class="text-center mb-4">
+                        <a href = "/index/order3d" > <p th:text="'Мои заказы'"></p> </a>
+                    </h6>
+                </div>
+            </div>
         </div>
 
 
@@ -63,11 +82,11 @@
     </div>
 
     <!--  строка сылки на группы-->
-    <div class="row">
+    <div th:if="${not #lists.isEmpty(groups)}" class="row">
         <div class="col-md-11">
             <p></p>
             <!--каталог разделов-->
-            <div class="btn-group" role="group" > <!--имена групп в один ряд-->
+            <div  class="btn-group" role="group" > <!--имена групп в один ряд-->
 
                              <div th:each = "group: ${groups}" class="me-2"> <!-- Отступ справа между каждым элементом -->
 
@@ -77,31 +96,32 @@
                                         style="margin-right: 20px; font-weight: bold;" th:text="${group.getGroupName()}"></a>
                                  </div>
 
-                </div>
+                            </div>
             </div>
             <p></p>
 <!--Вывод сообщения об ошибке-->
-            <h6>   <a th:text="${errorMessage}" > </a>   </h6>
-            <p></p>
+<!--            <h6>   <a th:text="${errorMessage}" > </a>   </h6>-->
+<!--            <p></p>-->
         </div>
 
         <p></p>
     </div>
 
-
+    <p></p>
+    <a th:href="'/index/order3d'"
+       class="btn btn-dark"
+       style="margin-right: 30px;"
+       th:text="'Заказать 3D печать'"></a>
     <p></p>
     <!--        контейнеры с группой и картинками-->
-    <div class="row">
-
-
+    <div th:if="${not #lists.isEmpty(groups)}" class="row">
         <div class="col-11">
-
          <div class="container mt-5">
                 <div class="row justify-content-center">
                     <div th:each="group : ${groups}" class="col-md-3 my-3">
 
                         <div th:if="${group.groupName != 'Свалка'}">  <!--если не свалка то выводим группу-->
-                            <div class="card h-100 border p-4 rounded shadow-lg bg-body-secondary" style="min-height: 250px;">
+                            <div class="card h-100 border p-4 rounded shadow-lg " style="min-height: 250px;">
                                 <a th:href="'/index/group/' + ${group.getGroupId}" class="stretched-link" tabindex="-1">
 
                                     <h6 class="text-center mb-4">
@@ -124,15 +144,13 @@
 
     <!--        контейнеры с продуктами и картинками-->
     <div class="row">
-
-        <!--  контейнеры с товарами и картинками-->
-        <div class="col-11 g-0">
+            <div class="col-11 g-0">
 
             <div class="container mt-0">
                 <div class="row justify-content-center">
                     <div th:each="product: ${products}" class="col-md-3 my-3">
 
-                        <div class="card h-100 border p-4 rounded shadow-lg bg-body-secondary" style="min-height: 250px;">
+                        <div class="card h-100 border p-4 rounded shadow-lg" style="min-height: 250px;">
                             <a th:href="'/index/product/' + ${product.getProductId}" class="stretched-link" tabindex="-1">
 
                                 <h6 class="text-center mb-4">
@@ -143,7 +161,7 @@
                                 <!-- Добавляем div для цены с абсолютным позиционированием -->
                                 <div >
                                     <h5 style="color: darkblue;">
-                                        <a th:text="${product.getProductCoast()} + ' руб'" >
+                                        <a th:text="${product.getProductCoast()}" >
                                         </a>
                                     </h5>
                                 </div>

@@ -1,0 +1,7 @@
+﻿FROM eclipse-temurin:17.0.8_7-jre
+WORKDIR /package_back
+#COPY target/nameAddress-0.1.0-jar-with-dependencies.jar /tmp/app.jar
+COPY ./webSh-0.0.1.jar /package_back/back_app.jar
+EXPOSE 8099
+CMD ["java", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006" ,"-jar", "back_app.jar"]
+

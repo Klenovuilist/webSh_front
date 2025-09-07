@@ -7,8 +7,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,7 +49,7 @@ public class AuthController {
     @PostMapping("/register")
     public String registrUser(HttpServletRequest request, Model model,  RedirectAttributes redirectAttributes){
 
-     UserDto userDto = userService.registrUser(request);
+     UserDto userDto = userService.saveUser(request);
 
      // если логин уже существет
      if (Objects.isNull(userDto)){

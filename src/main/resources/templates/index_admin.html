@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" lang="ru">
-    <title>Smart admin</title>
+    <title>detail admin</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
+    <link rel="icon" href="/image/3detail icon.ico" sizes="any" type="image/x-icon"/>
     <script src="/js/bootstrap.bundle.min.js" ></script>
 
 </head>
@@ -13,7 +14,7 @@
     <div class="container">
         <div class="row">
             <div class="col-8">
-                <h3 class="text-center text-white"> Smart администратор </h3>
+                <h3 class="text-center text-white"> 3detail администратор </h3>
 <!--                <h4 class="text-center text-white"> администратор </h4>-->
             </div>
         </div>
@@ -58,52 +59,7 @@
 
             </table>
             <p></p>
-            <!--контейнер 0-->
-<!--                <div class="row justify-content-center">-->
-<!--                    <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">-->
-<!--                        <h6 class="text-center mb-4">Статистика</h6>-->
-<!--                        <p></p>-->
-<!--                        Посещения-->
-<!--                        <table class="table table-bordered">-->
-<!--                            <thead>-->
-<!--                            <tr class="table-warning table align-middle">-->
 
-<!--                                <th>-->
-<!--                                    <h6> За неделю </h6>-->
-<!--                                </th>-->
-<!--                                <th>-->
-<!--                                    <h6> За день </h6>-->
-<!--                                </th>-->
-<!--                                <th>-->
-<!--                                    <h6> За месяц</h6>-->
-<!--                                </th>-->
-
-<!--                            </tr>-->
-<!--                            <tr class="table-warning table align-middle">-->
-
-<!--                                <th>-->
-<!--                                    <h6> ........ </h6>-->
-<!--                                </th>-->
-<!--                                <th>-->
-<!--                                    <h6> ........ </h6>-->
-<!--                                </th>-->
-<!--                                <th>-->
-<!--                                    <h6> ........ </h6>-->
-<!--                                </th>-->
-
-<!--                            </tr>-->
-<!--                            </thead>-->
-<!--                            <tbody></tbody>-->
-
-<!--                        </table>-->
-<!--                        <p></p>-->
-
-
-<!--                    </div>-->
-
-<!--                </div>-->
-
-            <!--кнопки-->
             <div>
                 <p></p>
                 <div class="btn-group" role="group" > <!--ссылки в один ряд-->
@@ -116,6 +72,53 @@
                 <p></p>
             </div>
            </div>
+
+    <!--контейнер пользователи-->
+    <div id="123" class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
+        <h6 class="text-center mb-4">  <a th:text="'Пользователи ( = ' + ${users.size} + ')'"> </a></h6>
+
+        <table class="table table-bordered">
+            <thead>
+
+            <tr class="table-warning table align-middle">
+
+                <th><h6>№</h6></th>
+                <th>
+                    <h6> Логин </h6>
+                </th>
+                <th>
+                    <h6> mail </h6>
+                </th>
+                <th>
+                    <h6> comment</h6>
+                </th>
+                <th>
+                    <h6> дата</h6>
+                </th>
+
+            </tr>
+
+            <tr th:each = "user, iterStat: ${users}">
+                <td><h10><span th:text="${iterStat.count}"></span></h10></td>
+
+                <th>  <a th:href="'/index_admin/user/' + ${user.getId}"
+                         class="text-black text-decoration-none"
+                         style="margin-right: 30px; font-weight: bold;" th:text="${user.getLogin}"></a>
+                </th>
+                <!--                            <th><h10 >   <a th:text="${user.getLogin}"> </a>  </h10> </th>-->
+                <th><h10 >   <a th:text="${user.getMail}"> </a> </h10> </th>
+
+                <th><h10 > <a th:text="${user.getComment}"></a>   </h10> </th>
+                <th><h10 >   <a th:text="${user.getDataCreateUser}"> </a> </h10> </th>
+            </tr>
+
+            </thead>
+            <tbody></tbody>
+
+        </table>
+
+    </div>
+    <p></p>
 
     <!--контейнер с разделами-->
             <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
@@ -415,33 +418,27 @@
 
 
     <p></p>
+    <!--строка с описанием инфо-->
 <div class="row">
-    <div class="col-12">
+    <div>
         <table class="table table-bordered">
             <thead>
             <tr class="table-warning table align-middle">
-
                 <th>
                     <!--контейнер 4  тексты-->
                     <form method="post" th:action = "'/saveInfo'">
                         <input type="hidden"  name="infoId"  value="2">
-
-                        <div class="col-10">
-                            <!-- Описание -->
+                               <!-- Описание -->
                             <div class="d-flex flex-column mb-3">
                                 <label for="info_2" class="mb-2">Текст сверху слева (главная страница) </label>
                                 <textarea class="form-control"
-
                                           th:text="${mapInfo[2].info}"
                                           id="info_2" rows="3" name="info">
                     </textarea>
                             </div>
-                        </div>
-                        <div class="col-2">
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                 <button class="btn btn-dark btn-sm mb-2" type="submit"
                                         style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
-                            </div>
                         </div>
                     </form>
                     <p></p>
@@ -451,7 +448,7 @@
                     <form method="post" th:action = "'/saveInfo'">
                         <input type="hidden"  name="infoId"  value="1">
 
-                        <div class="col-10">
+
                             <!-- Описание -->
                             <div class="d-flex flex-column mb-3">
                                 <label for="info_1" class="mb-2">Текст сверху справа (главная страница) </label>
@@ -461,13 +458,13 @@
                                           id="info_1" rows="3" name="info">
                     </textarea>
                             </div>
-                        </div>
-                        <div class="col-2">
+
+
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                 <button class="btn btn-dark btn-sm mb-2" type="submit"
                                         style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
                             </div>
-                        </div>
+
                     </form>
                     <p></p>
                 </th>
@@ -478,7 +475,7 @@
                             <form method="post" th:action = "'/saveInfo'">
                                 <input type="hidden"  name="infoId"  value="3">
 
-                                <div class="col-10">
+
                                     <!-- Описание -->
                                     <div class="d-flex flex-column mb-3">
                                         <label for="info_3" class="mb-2">Текст внизу слева (главная страница) </label>
@@ -488,13 +485,13 @@
                                                   id="info_3" rows="3" name="info">
                     </textarea>
                                     </div>
-                                </div>
-                                <div class="col-2">
+
+
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                         <button class="btn btn-dark btn-sm mb-2" type="submit"
                                                 style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
                                     </div>
-                                </div>
+
                             </form>
                     <p></p>
                 </th>
@@ -503,7 +500,6 @@
                             <form method="post" th:action = "'/saveInfo'">
                                 <input type="hidden"  name="infoId"  value="4">
 
-                                <div class="col-10">
                                     <!-- Описание -->
                                     <div class="d-flex flex-column mb-3">
                                         <label for="info_4" class="mb-2">Текст внизу справа (главная страница) </label>
@@ -513,13 +509,11 @@
                                                   id="info_4" rows="3" name="info">
                     </textarea>
                                     </div>
-                                </div>
-                                <div class="col-2">
+
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                         <button class="btn btn-dark btn-sm mb-2" type="submit"
                                                 style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
                                     </div>
-                                </div>
                             </form>
                     <p></p>
                 </th>
@@ -528,7 +522,6 @@
                 <th></th>
                 <th></th>
             </tr>
-
             <tr class="table-warning table align-middle">
 
                 <th>
@@ -536,23 +529,19 @@
                     <form method="post" th:action = "'/saveInfo'">
                         <input type="hidden"  name="infoId"  value="5">
 
-                        <div class="col-10">
+
                             <!-- Описание -->
                             <div class="d-flex flex-column mb-3">
                                 <label for="info_5" class="mb-2">Текст сверху слева (прочие страницы) </label>
                                 <textarea class="form-control"
-
                                           th:text="${mapInfo[5].info}"
                                           id="info_5" rows="3" name="info">
                     </textarea>
                             </div>
-                        </div>
-                        <div class="col-2">
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                 <button class="btn btn-dark btn-sm mb-2" type="submit"
                                         style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
                             </div>
-                        </div>
                     </form>
                     <p></p>
                 </th>
@@ -560,24 +549,18 @@
                     <!--контейнер 3  тексты-->
                     <form method="post" th:action = "'/saveInfo'">
                         <input type="hidden"  name="infoId"  value="6">
-
-                        <div class="col-10">
                             <!-- Описание -->
                             <div class="d-flex flex-column mb-3">
                                 <label for="info_6" class="mb-2">Текст сверху справа (прочие страницы) </label>
                                 <textarea class="form-control"
-
                                           th:text="${mapInfo[6].info}"
                                           id="info_6" rows="3" name="info">
                     </textarea>
                             </div>
-                        </div>
-                        <div class="col-2">
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                 <button class="btn btn-dark btn-sm mb-2" type="submit"
                                         style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
                             </div>
-                        </div>
                     </form>
                     <p></p>
                 </th>
@@ -587,8 +570,6 @@
                     <!--контейнер 5  тексты-->
                     <form method="post" th:action = "'/saveInfo'">
                         <input type="hidden"  name="infoId"  value="7">
-
-                        <div class="col-10">
                             <!-- Описание -->
                             <div class="d-flex flex-column mb-3">
                                 <label for="info_7" class="mb-2">Текст внизу слева (прочие страницы) </label>
@@ -598,13 +579,10 @@
                                           id="info_7" rows="3" name="info">
                     </textarea>
                             </div>
-                        </div>
-                        <div class="col-2">
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                 <button class="btn btn-dark btn-sm mb-2" type="submit"
                                         style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
                             </div>
-                        </div>
                     </form>
                     <p></p>
                 </th>
@@ -612,8 +590,6 @@
                     <!--контейнер 6  тексты-->
                     <form method="post" th:action = "'/saveInfo'">
                         <input type="hidden"  name="infoId"  value="8">
-
-                        <div class="col-10">
                             <!-- Описание -->
                             <div class="d-flex flex-column mb-3">
                                 <label for="info_4" class="mb-2">Текст внизу справа (прочие страницы) </label>
@@ -621,15 +597,59 @@
 
                                           th:text="${mapInfo[8].info}"
                                           id="info_8" rows="3" name="info">
-                    </textarea>
+                                 </textarea>
                             </div>
-                        </div>
-                        <div class="col-2">
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                 <button class="btn btn-dark btn-sm mb-2" type="submit"
                                         style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
                             </div>
-                        </div>
+                    </form>
+                    <p></p>
+                </th>
+            </tr>
+            <tr class="table-info">
+                <th></th>
+                <th></th>
+            </tr>
+            <tr class="table-warning table align-middle">
+                <th>
+                    <!--контейнер 5  тексты-->
+                    <form method="post" th:action = "'/saveInfo'">
+                        <input type="hidden"  name="infoId"  value="9">
+                            <!-- Описание -->
+                            <div class="d-flex flex-column mb-3">
+                                <label for="info_9" class="mb-2">Описание главных страниц(не продуктов) <br>
+                                    для отображения в поисковике </label>
+                                <textarea class="form-control"
+
+                                          th:text="${mapInfo[9].info}"
+                                          id="info_9" rows="3" name="info">
+                    </textarea>
+                            </div>
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button class="btn btn-dark btn-sm mb-2" type="submit"
+                                        style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
+                            </div>
+                    </form>
+                    <p></p>
+                </th>
+                <th>
+                    <!--контейнер 6  тексты-->
+                    <form method="post" th:action = "'/saveInfo'">
+                        <input type="hidden"  name="infoId"  value="10">
+                            <!-- Описание -->
+                            <div class="d-flex flex-column mb-3">
+                                <label for="info_10" class="mb-2">Теги для поисковика (набор ключевых слов) </label>
+                                <textarea class="form-control"
+
+                                          th:text="${mapInfo[10].info}"
+                                          id="info_10" rows="3" name="info">
+                    </textarea>
+                            </div>
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button class="btn btn-dark btn-sm mb-2" type="submit"
+                                        style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
+                            </div>
                     </form>
                     <p></p>
                 </th>
@@ -642,65 +662,6 @@
         <p></p>
     </div>
 </div>
-
-
-
-
-<!--        контейнер 2-->
-                <div id="123" class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
-                    <h6 class="text-center mb-4">  <a th:text="'Пользователи ( = ' + ${users.size} + ')'"> </a></h6>
-
-                    <table class="table table-bordered">
-                        <thead>
-
-                        <tr class="table-warning table align-middle">
-
-                            <th><h6>№</h6></th>
-                            <th>
-                                <h6> Логин </h6>
-                            </th>
-                            <th>
-                                <h6> mail </h6>
-                            </th>
-                            <th>
-                                <h6> comment</h6>
-                            </th>
-                            <th>
-                                <h6> дата</h6>
-                            </th>
-
-                        </tr>
-
-                        <tr th:each = "user, iterStat: ${users}">
-                            <td><h10><span th:text="${iterStat.count}"></span></h10></td>
-
-                           <th>  <a th:href="'/index_admin/user/' + ${user.getId}"
-                                    class="text-black text-decoration-none"
-                                    style="margin-right: 30px; font-weight: bold;" th:text="${user.getLogin}"></a>
-                           </th>
-<!--                            <th><h10 >   <a th:text="${user.getLogin}"> </a>  </h10> </th>-->
-                            <th><h10 >   <a th:text="${user.getMail}"> </a> </h10> </th>
-
-                            <th><h10 > <a th:text="${user.getComment}"></a>   </h10> </th>
-                            <th><h10 >   <a th:text="${user.getDataCreateUser}"> </a> </h10> </th>
-                        </tr>
-
-                        </thead>
-                        <tbody></tbody>
-
-                    </table>
-
-                </div>
-    <p></p>
-
-
-
-        <!--контейнер 3-->
-<!--                <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">-->
-<!--                    <h6 class="text-center mb-4">Последние комментарии</h6>-->
-<!--                </div>-->
-        <p></p>
-
 
 
 

@@ -435,6 +435,8 @@ public class AdminService {
         String productDescription = request.getParameter("product_description");
         String productCount = request.getParameter("count_product");
         String productCoast = request.getParameter("coast_product");
+        String productTeg = request.getParameter("teg_product");
+
 
 
 
@@ -463,6 +465,10 @@ public class AdminService {
 
         if(productCoast != null){
             productDto.setProductCoast(productCoast);
+        }
+
+        if(productTeg != null){
+            productDto.setTeg(productTeg);
         }
 
     }

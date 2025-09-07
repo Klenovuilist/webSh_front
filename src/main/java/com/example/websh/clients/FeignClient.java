@@ -1,10 +1,7 @@
 package com.example.websh.clients;
 
 
-import com.example.websh.dto.GroupProductDto;
-import com.example.websh.dto.MainInfoDto;
-import com.example.websh.dto.ProductDto;
-import com.example.websh.dto.UserDto;
+import com.example.websh.dto.*;
 import jakarta.xml.soap.SOAPEnvelope;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 //@FeignClient(name = "external-service-group", url = "http://192.168.0.130:9002") // URL для локального запуска в докере
@@ -167,8 +163,48 @@ import java.util.UUID;
     @GetMapping("api/userId/{userId}")
     ResponseEntity<UserDto> findUserById(@PathVariable("userId") String userId);
 
+    /**
+     * Получить всех пользователей
+     * @return
+     */
     @GetMapping("api/allUsers/")
     ResponseEntity<List<UserDto>> getAllUsers();
+
+
+    /**
+     * отправить файл 3Д продукта на сохранение
+     */
+    @PostMapping("/api/upload_file/{userId}")
+    void loadFile3D (@RequestBody byte[] file
+            , @PathVariable("userId") String uuidGroup
+            , @RequestHeader("file_name") String fileName
+            , @RequestHeader("extension") String extension);
+
+
+    /**
+     * получить List имен файлов по userId (непосредственно из папки)
+     */
+    @GetMapping("api/getAllFile3DUser/{userId}")
+    ResponseEntity<List<String>> getAllFile3DByUserId(@PathVariable("userId") String userId);
+
+    /**
+     * получить List<File3DDto> по  userId
+     */
+    @GetMapping("api/getListFile3DDescriptionUsers/{userId}")
+    ResponseEntity<List<File3DDto>> getListFile3DDescriptionUsers(@PathVariable("userId") String userId);
+
+    /**
+     * Получить File3DDto по его id
+     */
+    @GetMapping("api/getFile3DDto/{fileId}")
+    ResponseEntity<File3DDto> getFile3DDtoByFileId(@PathVariable("fileId") String fileId);
+
+
+    /**
+     * Сохранить File3DDto
+     */
+    @PostMapping("api/saveFile3DDto")
+    void saveFile3DDto(@RequestBody File3DDto file3DDto);
 
 
 //    @PutMapping("/api/index_admin/create_group/{id}")

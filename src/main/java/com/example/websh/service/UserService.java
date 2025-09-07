@@ -2,6 +2,7 @@ package com.example.websh.service;
 
 
 import com.example.websh.clients.FeignClient;
+import com.example.websh.dto.File3DDto;
 import com.example.websh.dto.UserDto;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -33,7 +34,7 @@ import java.util.*;
 
     private final FeignClient feignClient;
 
-    private final JavaMailSender mailSender;
+    private final JavaMailSender mailSender; //встроенныые отправщих сообщений
 
     private final JwtService jwtService;
 
@@ -76,7 +77,7 @@ import java.util.*;
         UserDto userDto = feignClient.findUserById(userId).getBody();// пользователь из БД
 
         DateTimeFormatter dataFormater = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
-        if(Objects.nonNull(userDto)){
+        if(Objects.nonNull(userDto) && userDto.getDataCreateUser() != null){
             userDto.setDataCreateParsing(dataFormater.format(userDto.getDataCreateUser()));
         }
 
@@ -89,15 +90,16 @@ import java.util.*;
      * @param request
      * @return
      */
-    public UserDto registrUser(HttpServletRequest request) {
+    public UserDto saveUser(HttpServletRequest request) {
 
-        UserDto userDto = getUserByLogin(request.getParameter("userLogin"));
+        UserDto userDto = getUserByLogin(request.getParameter("userLogin")); // пользователь из БД по логину
 
-        //если пользователь с логином существует то вернуть этого пользователя нового не сохранять
+        //если пользователь с логином существует то вернуть null нового не сохранять
         if (Objects.nonNull(userDto)){
             return null;
         }
 
+        //создать пользователя по параметрам из формы
          userDto = UserDto.builder()
                 .roleUser("ROLE_USER")
                 .psswordUser(request.getParameter("password"))
@@ -106,6 +108,14 @@ import java.util.*;
                 .login(request.getParameter("userLogin"))
                 .mail(request.getParameter("email"))
                 .build();
+
+        return feignClient.saveUser(userDto).getBody();
+    }
+
+    /**
+     * Сохранить пользователя
+     */
+    public UserDto saveUser(UserDto userDto) {
 
         return feignClient.saveUser(userDto).getBody();
     }
@@ -134,8 +144,8 @@ import java.util.*;
 
             helper.setTo(userDto.getMail());
             helper.setFrom("klenovuilist@yandex.ru");
-            helper.setSubject("Регистрация на smart18.ru");
-            helper.setText("<h3>Для продолжения регистрации на smart18.ru перейдите по ссылке ниже</h3><p>.</p>" +
+            helper.setSubject("Регистрация на 3detail.ru");
+            helper.setText("<h3>Для продолжения регистрации на 3detail.ru перейдите по ссылке ниже</h3><p>.</p>" +
                             "<a href=" + myDomeinMail + "/users/verify/" + userDto.getId() + ">Продолжить регистрацию</a>",
                     true);
 
@@ -148,18 +158,44 @@ import java.util.*;
    }
 
     /**
-     * Получить данные пользователя по токену
+     * Отправка письма со самому себе как уведомление
+     * Подключена зависимость и настройки конфигурации
+     * @param
+     */
+    public void sendWorkEmail(String textMessage, String subject)  {
+
+        MimeMessage message = mailSender.createMimeMessage();
+
+        MimeMessageHelper helper = null;
+        try {
+            helper = new MimeMessageHelper(message, true);
+
+            helper.setTo("klenovuilist@yandex.ru"); // адрес куда отправить
+            helper.setFrom("klenovuilist@yandex.ru");
+            helper.setSubject(subject);
+            helper.setText(textMessage);
+
+            mailSender.send(message);
+
+
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Получить данные пользователя Map<String, String> по токену или установить по умолчанию
      */
 
     public Map<String, String> getUserInfoFromToken(HttpServletRequest request){
 
         Map<String, String> mapUserInfo =new HashMap<>();
 
-        mapUserInfo.put("login", "Войти");
-        mapUserInfo.put("role", "Нет");
+        mapUserInfo.put("login", "Регистрация");
+        mapUserInfo.put("role", "ROLE_USER");
         mapUserInfo.put("name", "Нет");
-        mapUserInfo.put("mail", "Нет");
-        mapUserInfo.put("id", "Нет");
+        mapUserInfo.put("mail", "Не указанна");
+        mapUserInfo.put("id", UUID.randomUUID().toString());
 
         String token = null;
 
@@ -196,5 +232,70 @@ import java.util.*;
     public List<UserDto> getAllUsers() {
 
         return feignClient.getAllUsers().getBody();
+    }
+
+    /**
+     * Получить данные UserDto из формы запроса или установить UserDto по умолчанию
+     */
+    public UserDto getUserDtoByToken(HttpServletRequest request) {
+
+               Map<String, String> userInfoToken = getUserInfoFromToken(request);
+
+        return UserDto.builder()
+                .id(UUID.fromString(userInfoToken.get("id")))
+                .login(userInfoToken.get("login"))
+                .userName(userInfoToken.get("name"))
+                .mail(userInfoToken.get("mail"))
+                .roleUser(userInfoToken.get("role"))
+                .build();
+    }
+
+    /**
+     * Получить список File3DDto загруженных файлов 3D по id пользователя (непосредствено из папки)
+     */
+    public List<String> getListFile3DUsers(String userId) {
+        return feignClient.getAllFile3DByUserId(userId).getBody();
+    }
+
+    /**
+     * Получить список описаний File3DDto загруженных файлов 3D по id пользователя (в Postgress)
+     */
+    public List<File3DDto> getListFile3DDtoByUsersId(String userId, boolean isDelete) {
+
+        List<File3DDto> listFile3DDto = feignClient.getListFile3DDescriptionUsers(userId).getBody();
+        //в коллекции помеченные на удаленные
+        if (! listFile3DDto.isEmpty() && isDelete){
+            return listFile3DDto.stream().filter(file -> file.isDelete()).toList();
+        }
+        // убрать из коллекции помеченные на удаленные
+        else if (! listFile3DDto.isEmpty()) {
+            return listFile3DDto.stream().filter(file -> ! file.isDelete()).toList();
+        }
+        return listFile3DDto;
+    }
+
+
+    /**
+     * Получить  описание File3DDto  по id файла File3DDto (в Postgress)
+     */
+    public File3DDto getFile3DDtoById(String fileId) {
+        return feignClient.getFile3DDtoByFileId(fileId).getBody();
+    }
+
+
+    /**
+     * Проверка наличия токена пользователя при запросе
+     */
+    public boolean isExistToken(HttpServletRequest request){
+
+        if (Objects.nonNull(request.getCookies())){
+            // получение ТОКЕНА из кук
+            if(Arrays.stream(request.getCookies())
+                    .filter(c -> c.getName().equals("token"))
+                    .findFirst().map(c -> c.getValue()).orElse(null)  != null){
+                return true;
+            }
+        }
+            return false;
     }
 }

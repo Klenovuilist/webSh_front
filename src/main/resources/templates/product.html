@@ -2,9 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" lang="ru">
-    <title>Smart</title>
+    <title>detail</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
+
+    <link rel="icon" href="/image/3detail icon.ico" sizes="any" type="image/x-icon"/>
+    <!--    <link rel="icon" href="/icon_noFon120.ico"  sizes="120x120" type="image/x-icon"/>-->
+    <meta name="description" th:content="${tegDescription}">
+
+    <meta name="keywords" th:content="${tegKeywords}" >
+
+    <meta name="robots" content="index,follow">
+
+    <meta property="og:locale" content="ru_RU">
 
 </head>
 <body>
@@ -12,7 +22,7 @@
     <div class="container">
         <div class="row">
             <div class="col-8">
-                <h3 class="text-center text-white"> Smart</h3>
+<!--                <h3 class="text-center text-white"> 3detail</h3>-->
 <!--                <h4 class="text-center text-white"> администратор </h4>-->
             </div>
         </div>
@@ -21,6 +31,29 @@
 
 <div class="container">
     <p></p>
+    <!--  Строка пользоваьтель-->
+    <div class="row">
+        <div class="col-md-8">
+        </div>
+
+        <div class="col-md-4">
+            <div class="btn-group" role="group" > <!--имена групп в один ряд-->
+                <div class="me-3">
+                    <h6 class="text-center mb-4">
+                        <a href = "/athurizathion" > <p th:text="${userInfo['login']}"></p> </a>
+                    </h6>
+                </div>
+                <div class="me-3">
+                    <h6 class="text-center mb-4">
+                        <a href = "/index/order3d" > <p th:text="'Мои заказы'"></p> </a>
+                    </h6>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <P></P>
 
     <!--  Строка с инфо сверху-->
     <div class="row">
@@ -61,11 +94,18 @@
                 </div>
             </div>
             <p></p>
-            <a th:href="'/index/group/' + ${product.getGroupsId}"
-               class="btn btn-outline-secondary text-black text-decoration-none"
-               style="margin-right: 20px; font-weight: bold;"
-               th:text="'Назад'"></a>
+            <div th:if="${product.getGroupsId() != null}">
+                <a th:href="'/index/group/' + ${product.getGroupsId()}"
+                   class="btn btn-outline-secondary text-black text-decoration-none"
+                   style="margin-right: 20px; font-weight: bold;"
+                   th:text="'Назад'"></a>
+            </div>
 
+            <p></p>
+            <a th:href="'/index/order3d'"
+               class="btn btn-dark"
+               style="margin-right: 30px;"
+               th:text="'Заказать 3D печать'"></a>
 
             <!--Вывод сообщения об ошибке-->
             <h6>   <a th:text="${errorMessage}" > </a>   </h6>
@@ -74,6 +114,8 @@
 
         <p></p>
     </div>
+
+    <!-- строка продукт описание и картинки-->
     <div class="row">
         <div class="col-9">
             <p></p>
@@ -86,23 +128,23 @@
                 <h3 class="text-center mb-4"><a th:text="${product.getProduct_name}"> </a></h3>
                 <p></p>
                 <div class="row g-3"> <!-- Основное распределение -->
-                    <div class="col-md-7"> <!-- Левый блок для изображений -->
+                    <div class="col-md-5"> <!-- Левый блок для изображений -->
                         <div th:each="nameImages: ${ListNameImages}" class="mb-3">
                             <a th:href="'/image/product/' + ${product.getProductId()} + '/' + ${nameImages}">
-                                <img th:src="@{'/image/product/' + ${product.getProductId()} + '/' + ${nameImages}}" class="img-fluid w-100 h-auto" alt="Описание">
+                                <img th:src="@{'/image/product/' + ${product.getProductId()} + '/' + ${nameImages}}" class="img-fluid w-70 h-auto" alt="Описание">
                             </a>
                         </div>
                     </div>
-                    <div class="col-md-5 text-right"> <!-- Правый блок для описания -->
-                        <h3><a th:text="${product.getProductCoast}"> </a> руб</h3>
+                    <div class="col-md-7 text-right"> <!-- Правый блок для описания -->
+                        <h4><a th:text="${product.getProductCoast}"> </a></h4>
                         <p></p>
-                        <h4>
-                            <p style="white-space: pre-wrap; line-height: 1.7;"
+                        <h8>
+                            <p style="white-space: pre-wrap; line-height: 1.2;"
                                th:text="${product.productDescription}"></p>
-                        </h4>
+                        </h8>
 
                         <p></p>
-                        <h5><a th:text="'В наличии: ' + ${product.getProductCount} + ' шт'"> </a> </h5>
+                        <h5><a th:text="${product.getProductCount}"> </a> </h5>
                     </div>
                 </div>
             </div>

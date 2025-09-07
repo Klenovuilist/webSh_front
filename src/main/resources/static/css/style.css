@@ -1,12 +1,12 @@
 :root {
-    --color1: #b0cccc;
-    --color2: #09373f;
+    --color1: rgba(148, 120, 196, 0.66);
+    --color2: rgba(33, 9, 63, 0.71);
     --color3: #66d330;
     --color4: #efda8e;
 }
-    header {
-              padding: 15px 20px;
-    }
+    /*header {*/
+    /*          padding: 15px 20px;*/
+    /*}*/
  footer{
     padding: 5px;
 }
@@ -23,9 +23,26 @@
 /* !*   background-position: 80px 20px; !* Позиция по оси x и y *!*!*/
 /*}*/
 
+/*header, footer {*/
+/*    background: url("/image/main_logo.png") no-repeat 50px center, !* Перемещаем изображение на 50px от левого края *!*/
+/*    linear-gradient(to right, var(--color1) 0%, var(--color2) 100%) center/cover; !* Градиент растянут на всю ширину *!*/
+/*    background-size: contain; !* Масштабируем изображение, сохраняя пропорции *!*/
+/*}*/
+
+header {
+    min-height: 70px; /* Минимальная высота равна ширине изображения */
+    display: flex;
+    align-items: center; /* Центрируем содержимое по вертикали */
+    padding: 10px 10px;
+}
+
 header, footer {
-    background: url("/image/main.png") no-repeat 50px center, /* Перемещаем изображение на 50px от левого края */ linear-gradient(to right, var(--color1) 0%, var(--color2) 100%) center/cover; /* Градиент растянут на всю ширину */
-    background-size: contain; /* Масштабируем изображение, сохраняя пропорции */
+    background-image: url("/image/main_logo.png"), linear-gradient(to right, var(--color1) 0%, var(--color2) 100%);
+    background-position: 100px center, left center; /* Позиционирование для изображения и градиента отдельно */
+    /*background-repeat: no-repeat, repeat-x; !* Повторяемость фона для обоих уровней *!*/
+    background-repeat: no-repeat;
+    background-size: 170px auto, cover;
+
 }
 
 
@@ -45,15 +62,66 @@ li {
 }
 
 /* Настройки градиентного фона */
+/*body {*/
+/*    background: linear-gradient(to bottom, rgb(231, 228, 236), #573283);*/
+/*    min-height: 100vh;*/
+/*    margin: 0;*/
+/*}*/
+
+
+/* Устанавливаем фоновое изображение для всей страницы */
 body {
-    background: linear-gradient(to bottom, #dde5e5, #62797e);
-    min-height: 100vh;
-    margin: 0;
+    background-image: url('/image/10.JPG'); /* Путь к изображению */
+    background-position: center center; /* Центрируем изображение горизонтально и вертикально */
+    background-repeat: no-repeat; /* Изображение не повторяется */
+    background-size: cover; /* Растягиваем изображение на весь экран, сохраняя пропорции */
+    color: #380202; /* Цвет текста поверх фона */
+    font-family: Arial, sans-serif; /* Семейство шрифтов */
+    height: 100vh; /* Высота тела документа равна высоте окна браузера */
+    margin: 0; /* Обнуляем отступы вокруг body */
+}
+
+ /*Дополнительно добавляем линейный градиент поверх изображения*/
+html::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Фон находится ниже содержимого страницы */
+    background: rgba(243, 241, 241, 0.82); /* Полупрозрачная черная подложка */
+}
+
+ /*плавный переход цвета сверху-вниз */
+html::after {
+    content: '';
+    position: fixed; /* Градиент закреплён фиксировано */
+    top: 0;
+    left: 0;
+    width: 100vw; /* Ширина градиента равна виду окна */
+    height: 100vh; /* Высота равняется всему окну браузера */
+    z-index: -1; /* Расположен под всеми элементами */
+    pointer-events: none; /* Наведение мышью игнорируется */
+    background: linear-gradient(
+            to bottom,
+            rgba(218, 196, 196, 0.09),
+            rgba(73, 10, 10, 0.66)
+    );
 }
 
 /* Радиус закругления уголков (чем больше значение, тем сильнее округляются углы) */
 .rounded-img {
     border-radius: 10px;
+}
+/* карточа плавный переход цвета сверху-вниз */
+.card {
+    background: linear-gradient(
+            /*to bottom,*/
+            rgba(205, 215, 215, 0.4),
+            rgba(148, 120, 196, 0.49)
+    );
+    /*background-color: rgba(138, 28, 41, 0.56) !important; !* Единый цвет фона для всех карточек *!*/
 }
 
 

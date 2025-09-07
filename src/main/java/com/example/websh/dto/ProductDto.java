@@ -35,6 +35,8 @@ public class ProductDto {
 
     private String productCount;
 
+    private String teg;
+
     private int productReserv;
 
     private UUID groupsId;

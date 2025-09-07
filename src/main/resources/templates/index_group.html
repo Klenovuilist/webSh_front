@@ -2,9 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" lang="ru">
-    <title>Smart</title>
+    <title>detail</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
+
+    <link rel="icon" href="/image/3detail icon.ico" sizes="any" type="image/x-icon"/>
+    <!--    <link rel="icon" href="/icon_noFon120.ico"  sizes="120x120" type="image/x-icon"/>-->
+    <meta name="description" th:content="${mapInfo[9].info}">
+
+    <meta name="keywords" th:content="${mapInfo[10].info}" >
+
+    <meta name="robots" content="index,follow">
+
+    <meta property="og:locale" content="ru_RU">
 
     <style>
         /* Стили для элементов h8 */
@@ -20,7 +30,7 @@
     <div class="container">
         <div class="row">
             <div class="col-8">
-                <h2 class="text-center text-white"> Smart </h2>
+<!--                <h2 class="text-center text-white"> 3detail </h2>-->
             </div>
         </div>
     </div>
@@ -28,6 +38,29 @@
 
 <div class="container">
     <p></p>
+    <!--  Строка пользоваьтель-->
+    <div class="row">
+        <div class="col-md-8">
+        </div>
+
+        <div class="col-md-4">
+            <div class="btn-group" role="group" > <!--имена групп в один ряд-->
+                <div class="me-3">
+                    <h6 class="text-center mb-4">
+                        <a href = "/athurizathion" > <p th:text="${userInfo['login']}"></p> </a>
+                    </h6>
+                </div>
+                <div class="me-3">
+                    <h6 class="text-center mb-4">
+                        <a href = "/index/order3d" > <p th:text="'Мои заказы'"></p> </a>
+                    </h6>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <P></P>
 
     <!--  Строка с инфо сверху-->
     <div class="row">
@@ -60,8 +93,13 @@
                 <div th:each = "group: ${zeroGroups}" class="me-3"> <!-- Отступ справа между каждым элементом -->
 
                     <div th:if="${group.groupName != 'Свалка'}">  <!-- Проверка имени чтобы не была свалка -->
-                        <a th:href="'/index/group/' + ${group.getGroupId}" class="btn btn-outline-secondary text-black text-decoration-none"
-                           style="margin-right: 20px; font-weight: bold;" th:text="${group.getGroupName()}"></a>
+                        <a th:href="'/index/group/' + ${group.getGroupId}"
+
+                           th:style="${groupCurrent.getGroupId eq group.getGroupId ?
+                           'line-height: 25px; background-color: #CD5C5C;' : 'margin-right: 20px; font-weight: bold;'}"
+                           class="btn btn-outline-secondary text-black text-decoration-none"
+
+                           th:text="${group.getGroupName()}"></a>
                     </div>
 
                 </div>
@@ -69,40 +107,47 @@
             <p></p>
 
             <!-- Первая ссылка будет показана, если parentId не равен null -->
-            <a th:if="${group.getParrentId != null}"
+            <a th:if="${groupCurrent.getParrentId != null}"
                th:href="'/index/group/' + ${group.getParrentId}"class="btn btn-outline-secondary text-black text-decoration-none"
                style="margin-right: 20px; font-weight: bold;"
                th:text="'Назад '"></a>
 
             <!-- Вторая ссылка будет показана, если parentId равен null -->
-            <a th:if="${group.getParrentId == null}"
-               th:href="'/index'" class="btn btn-outline-secondary text-black text-decoration-none"
+            <a th:if="${groupCurrent.getParrentId == null}"
+               th:href="'/'" class="btn btn-outline-secondary text-black text-decoration-none"
                style="margin-right: 20px; font-weight: bold;"
                th:text="'Назад '"></a>
 
-<!--Вывод сообщения об ошибке-->
-            <h6>   <a th:text="${errorMessage}" > </a>   </h6>
+<!--&lt;!&ndash;Вывод сообщения об ошибке&ndash;&gt;-->
+<!--            <h6>   <a th:text="${errorMessage}" > </a>   </h6>-->
 
+            <!--Заказ печати ссылка-->
+            <p></p>
+            <a th:href="'/index/order3d'"
+               class="btn btn-dark"
+               style="margin-right: 30px;"
+               th:text="'Заказать 3D печать'"></a>
+            <p></p>
         </div>
 
 
     </div>
 
 
-<!--    вторая строка-->
+<!--   строка с группами -->
     <div class="row g-1">
 
 <!--        контейнеры с группой и картинками-->
         <div class="col-11">
-            <h4 class="text-center mb-4">
-                <a th:text="${group.getGroupName()}"></a>
-            </h4>
+<!--            <h4 class="text-center mb-4">-->
+<!--                <a th:text="${groupCurrent.getGroupName()}"></a>-->
+<!--            </h4>-->
 
          <div th:if="${not #lists.isEmpty(groups)}" class="container mt-2">
                 <div class="row justify-content-center">
                     <div th:each="group : ${groups}" class="col-md-3 my-3">
 
-                            <div class="card h-100 border p-4 rounded shadow-lg bg-body-secondary" style="min-height: 250px;">
+                            <div class="card h-100 border p-4 rounded shadow-lg" style="min-height: 250px;">
                                 <a th:href="'/index/group/' + ${group.getGroupId}" class="stretched-link" tabindex="-1">
 
                                 <h6 class="text-center mb-4">
@@ -123,7 +168,7 @@
     </div>
 
 
-    <!--     товары -->
+    <!--  строка с товарами -->
     <div class="row">
 
         <!--  контейнеры с товарами и картинками-->
@@ -133,7 +178,7 @@
                 <div class="row justify-content-center">
                     <div th:each="product: ${products}" class="col-md-3 my-3">
 
-                        <div class="card h-100 border p-4 rounded shadow-lg bg-body-secondary" style="min-height: 250px;">
+                        <div class="card h-100 border p-4 rounded shadow-lg" style="min-height: 250px;">
                             <a th:href="'/index/product/' + ${product.getProductId}" class="stretched-link" tabindex="-1">
 
                                 <h6 class="text-center mb-4">

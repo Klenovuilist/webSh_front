@@ -65,7 +65,10 @@ public class IndexController {
 
         if(! cash.mapInfo .isEmpty()){
             model.addAttribute("mapInfo", cash.getMapInfo());
+
         }
+
+
 
         return "index.html";
     }
@@ -76,14 +79,34 @@ public class IndexController {
      */
 
     @GetMapping("/index/product/{id}")
-    public String productPageAdmin(@PathVariable("id") String prodId, Model model){
+    public String productPageAdmin(@PathVariable("id") String prodId, Model model, HttpServletRequest request){
 
 
         ProductDto product = adminService.getProductDtoById(prodId);
         indexService.delPrefixNameProduct(product);
 
+        model.addAttribute("userInfo", userService.getUserInfoFromToken(request));
+
         model.addAttribute("product", product);
         model.addAttribute("ListNameImages", adminService.getListNameImageProduct(UUID.fromString(prodId)));
+
+        try {
+            if(product.getTeg() != null){
+                String [] teg = product.getTeg().split(";");
+                if(teg.length > 1){
+                    model.addAttribute("tegDescription",product.getTeg().split(";")[0]);
+                    model.addAttribute("tegKeywords",product.getTeg().split(";")[1].trim());
+                }
+                else {
+                    model.addAttribute("tegDescription",product.getTeg().split(";")[0]);
+                    model.addAttribute("tegKeywords",product.getTeg().split(";")[0]);
+                }
+            }
+        }
+        catch (RuntimeException e){
+
+        }
+
 
         model.addAttribute("zeroGroups",cash.getListZeroGroupNoPrefix());
 
@@ -111,7 +134,6 @@ public class IndexController {
     /**
      * Получение картинок по uuid(запрос от браузера)
      */
-
     @GetMapping(value = "/image/{id}")
     public ResponseEntity<byte[]> getServerImage(@PathVariable("id") String uuid) {
 
@@ -144,6 +166,9 @@ public class IndexController {
                 case ".bmp":
                     headers.setContentType(MediaType.valueOf("image/bmp"));
                     break;
+                case ".ico":
+                    headers.setContentType(MediaType.valueOf("image/x-icon"));
+                    break;
                 case ".tiff":
                 case ".tif":
                     headers.setContentType(MediaType.valueOf("image/tiff"));
@@ -172,7 +197,7 @@ public class IndexController {
      * получение страницы группы по uuid с продуктами
      */
     @GetMapping("/index/group/{id}")
-    public String groupPage(@PathVariable("id") String uuidGroup, Model model) {
+    public String groupPage(@PathVariable("id") String uuidGroup, Model model, HttpServletRequest request) {
 
         if (cash.getListGroups().isEmpty()) {
            cash.refreshListGroup(); //обновление кеш листа с группами
@@ -187,7 +212,7 @@ public class IndexController {
             model.addAttribute("zeroGroups", cash.getListZeroGroupNoPrefix()); // список нулевых групп
 
 
-            model.addAttribute("group", groupProductDto); // группа
+            model.addAttribute("groupCurrent", groupProductDto); // группа
 
 //            indexService.delPrefixNameGroup(groupProductDto.getListUnderGroups()); //удаление префиксов в имени групп
             model.addAttribute("groups", groupProductDto.getListUnderGroups()); //список подгрупп
@@ -199,6 +224,8 @@ public class IndexController {
             if(! cash.mapInfo .isEmpty()){
                 model.addAttribute("mapInfo", cash.getMapInfo());
             }
+
+            model.addAttribute("userInfo", userService.getUserInfoFromToken(request));
         }
         return "index_group.html";
     }

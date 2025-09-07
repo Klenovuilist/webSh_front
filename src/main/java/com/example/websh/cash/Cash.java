@@ -11,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -39,7 +36,7 @@ public class Cash {
     public List<GroupProductDto> listZeroGroupNoPrefix = new ArrayList<>();
 
 
-    @PostConstruct
+//    @PostConstruct
     public void refreshListGroup(){
         // лист с группами для админа
 //        listGroups = feignForGroup.getGroup().getBody();
@@ -66,9 +63,10 @@ public class Cash {
      */
     public Map<Integer, MainInfoDto> mapInfo = new HashMap<>();
 
+    public List<String> listStatus = Arrays.asList("", "отправлен на расчет стоимости", "стоимость рассчитана", "отправлен на печать", "на печати", "готово", "отмена");
 
-    @PostConstruct
 
+//    @PostConstruct
     public void refreshMapInfo(){
         mapInfo = feignForGroup.getInfo().getBody();
     }

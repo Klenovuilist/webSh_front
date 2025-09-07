@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" lang="ru">
+    <title>detail</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <link rel="icon" href="/image/3detail icon.ico" sizes="any" type="image/x-icon"/>
+    <script src="/js/bootstrap.bundle.min.js" ></script> <!--в т.ч. для модальных окон-->
+
+</head>
+<body>
+<header>
+    <div class="container">
+        <div class="row">
+            <div class="col-8">
+<!--                <h3 class="text-center text-white"> 3detail </h3>-->
+                <!--                <h4 class="text-center text-white"> администратор </h4>-->
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <!--  Строка пользоваьтель-->
+    <div class="row">
+        <div class="col-md-8">
+        </div>
+
+        <div class="col-md-4">
+            <h6 class="text-center mb-4">
+                <p></p>
+                <a href = "/athurizathion" > <p th:text="${userInfo['login']}"></p> </a>
+            </h6>
+        </div>
+
+
+    </div>
+    <div class="btn-group" role="group" > <!--имена групп в один ряд-->
+        <a th:href="'/'"class="btn btn-outline-secondary text-black text-decoration-none"
+           style="margin-right: 20px; font-weight: bold;" th:text="'На главную'"></a>
+    </div>
+    <P></P>
+    <div class="row">
+        <div class="col-10">
+            <p></p>
+            <h4>Загрузите собственные файлы моделей чтобы узнать стоимость печати детали</h4>
+            <p></p>
+            <h4>   <a th:text="${errorMessage}" > </a>   </h4>
+            <P></P>
+            <!--Вывод сообщения об ошибке-->
+
+            <div class="container mt-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
+                        <p></p>
+
+<!--                        <form method="post" enctype="multipart/form-data"-->
+<!--                              th:action="'/upload_file/' + ${userInfo['id']}"-->
+<!--                              th:object="${file}" >   &lt;!&ndash;связывает форму с объектом file  в контроллере&ndash;&gt;-->
+<!--                            <input type="file" name="file" accept="model/*" required/>  &lt;!&ndash;accept="image/*" допустимые файлы image&ndash;&gt;-->
+<!--                            <button type="submit">Загрузить файл</button>-->
+
+<!--                        </form>-->
+                        <form method="post" enctype="multipart/form-data"
+                              th:action="'/upload_file/' + ${userInfo['id']}"
+                              th:object="${file}">
+
+                            <div class="mb-3">
+<!--                                <label for="fileInput" class="form-label">Выберите файл:</label>-->
+                                <input id="fileInput" type="file" name="file" accept="model/*" class="form-control" required/>
+                            </div>
+
+                            <div >
+                                <button type="submit" class="btn btn-dark">Загрузить файл</button>
+                            </div>
+                        </form>
+                        <p></p>
+                        <div th:if="${not #lists.isEmpty(listFile)}">
+                            <h6> Загруженные файлы </a></h6>
+                            <p></p>
+                            <table class="table table-bordered">
+                                <thead>
+                                <div class="row">
+                                    <tr class="table-warning table align-middle">
+                                        <div class="col-1">
+                                            <th>
+                                                <h6>№</h6>
+                                            </th>
+                                        </div>
+                                        <div class="col-2">
+                                            <th>
+
+                                                <h6> Наименование</h6>
+                                            </th>
+                                        </div>
+
+                                        <div class="col-1">
+                                            <th>
+                                                <h6> Статус </a> </h6>
+                                            </th>
+                                        </div>
+
+                                        <div class="col-1">
+                                            <th>
+                                                <h6> Стоимость </a></h6>
+                                            </th>
+                                        </div>
+                                        <div class="col-2">
+                                            <th>
+                                                <h6> Комментарии </a></h6>
+                                            </th>
+                                        </div>
+                                    </tr>
+
+                                    <div th:each="file, iterStat : ${listFile}">
+                                        <!-- Первая строка -->
+                                        <tr>
+                                            <th style="vertical-align: top; text-align: center;" > <span th:text="${iterStat.count}"></span></th>
+                                            <th style="vertical-align: top; text-align: center;" > <a th:text="${file.getFileName}">Имя файла</a>
+                                                <p></p>
+                                                <div class="btn-group" role="group" > <!--кнопки в один ряд-->
+                                                    <!--Кнопки управления файлом-->
+
+                                                    <div class="me-2"> <!--Отступ между элементами-->
+
+                                                        <!-- Кнопка модального окна на удаление -->
+                                                        <button button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 32px; width: 80px; font-size: 15px;"
+                                                                data-bs-toggle="modal" th:data-bs-target="'#'+ 'modal_' + ${file.getId}"> <!--вызов определенного модального окна-->
+                                                            Удалить
+                                                        </button>
+
+                                                        <!-- Модальное окно -->
+                                                        <div class="modal fade" th:id="'modal_' + ${file.getId}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h1 class="modal-title fs-5" > Удалить файл ???</h1>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Отмена"></button>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <form method="get" th:action="'/delete_file/' + ${file.getId}">
+                                                                            <input type="hidden"  name="page"  value="index_order_page">
+                                                                            <input type="hidden"  name="file_isDelete"  value="delete">
+                                                                            <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;">Удалить</button>
+                                                                        </form>
+                                                                        <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;" data-bs-dismiss="modal">Отмена</button>
+                                                                        <!--                                                <button type="button" class="btn btn-primary">Удалить</button>-->
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--                   --------------------------------------------         -->
+
+                                                    </div>
+                                                    <div th:if="${file.getStatus eq ''}" class="me-2">
+                                                        <!--Отправить на оценку стоимости-->
+                                                        <form method="post" th:action="'/save_file3DDto/' + ${file.getId}">
+                                                            <input type="hidden"  name="page"  value="index_order_page">
+                                                            <input type="hidden"  name="file_status"  value="отправлен на расчет стоимости">
+                                                            <input type="hidden"  name="file_fileName"  th:value="${file.getFileName}">
+                                                            <input type="hidden"  name="user_login"  th:value="${userInfo['login']}">
+
+                                                            <button class="btn btn-info btn-sm mb-2" type="submit" >Расcчитать стоимость </button>
+                                                        </form>
+                                                    </div>
+                                                    <div th:if="${file.getStatus eq 'стоимость рассчитана'}" class="me-2">
+                                                        <!--Отправить на печать-->
+                                                        <form method="post" th:action="'/save_file3DDto/' + ${file.getId}">
+                                                            <input type="hidden"  name="page"  value="index_order_page">
+                                                            <input type="hidden"  name="file_status"  value="отправлен на печать">
+
+                                                            <button class="btn btn-info btn-sm mb-2" type="submit" >Подтвердить и отправить на 3D печать </button>
+                                                        </form>
+                                                        <h6 class="text-center mb-4">
+                                                            <a th:text="'Укажите номер телефона в комментарии'"></a>
+                                                        </h6>
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th th:style="${file.getStatus eq 'стоимость рассчитана'} ? 'background-color: #FFA07A;' :
+                                            (${file.getStatus eq 'отправлен на расчет стоимости'} ? 'background-color: #7FFF00;' :
+                                            (${file.getStatus eq 'отправлен на печать'} ? 'background-color: #00FF00;' :
+                                            (${file.getStatus eq 'на печати'} ? 'background-color: #00FFFF;' :
+                                            (${file.getStatus eq 'готово'} ? 'background-color: #00FF00;' :
+                                            (${file.getStatus eq 'отмена'} ? 'background-color: #696969;' :''))))) + '; vertical-align: top; text-align: center;'"
+                                            >
+                                                <h6> <a th:text="${file.getStatus}"> </a> </h6>
+                                            </th>
+                                            <th style="vertical-align: top; text-align: center;">
+                                                <h6> <a th:text="${file.getCoast}"> </a> </h6>
+                                            </th>
+                                            <th style="min-width: 400px; max-width: 500px;">
+                                                <!--комментарий на заказ-->
+                                                <form method="post" th:action="'/save_file3DDto/' + ${file.getId}"
+                                                      th:id="'save_product_' + ${file.getComment}">
+                                                <textarea class="form-control"
+                                                          th:text="${file.getComment}"
+                                                          id="description" name="file_comment" rows="4">
+                                                </textarea>
+                                                    <input type="hidden"  name="page"  value="index_order_page">
+                                                    <input type="hidden"  name="file_id"  th:value="${file.getId}">
+                                                    <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 32px; width: 90px; font-size: 15px;">Сохранить</button>
+                                                </form>
+                                            </th>
+                                        </tr>
+
+                                        <!-- Вторая строка -->
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </div>
+                                </div>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <p></p>
+
+            <div class="container mt-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
+                        <h6>
+                            После загрузки файла также укажите материал пластика, процент заполнения детали, желательное расположение детали на столе принтера
+                            и другую важную для Вас информацию в графе комментарии и нажмите "Сохранить", далее "Расчитать стоимость"<br><br>
+
+                            При устраивании цены нажмите "Отправить на 3D печать" <br><br>
+
+                            </a> </h6>
+                        <h8>
+                            Стоимость расчитывается с учетом поддержек необходимых для печати <br>
+                            Доставка по  г.Санкт-Петербург от 200р, отправка в другие регионы службами доставки<br><br>
+                            Допустимые файлы STL, STEP, SLDPRT и другие  <br><br>
+                            </a> </h8>
+                        <p></p>
+                    </div>
+                </div>
+                <p></p>
+            </div>
+
+            <p></p>
+        </div>
+
+        <p></p>
+    </div>
+</div>
+
+<style>
+    label {
+        font-size: 17px;
+        font-weight: bold;
+        text-align: left;
+    }
+</style>
+
+
+
+</body>
+</html>

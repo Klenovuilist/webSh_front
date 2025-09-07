@@ -2,9 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" lang="ru">
-    <title>Smart admin</title>
+    <title>3detail admin</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
+
+
 
 </head>
 <body>
@@ -12,7 +14,7 @@
     <div class="container">
         <div class="row">
             <div class="col-8">
-                <h3 class="text-center text-white"> Smart администратор new product </h3>
+                <h3 class="text-center text-white"> 3detail администратор new product </h3>
 <!--                <h4 class="text-center text-white"> администратор </h4>-->
             </div>
         </div>
@@ -130,7 +132,7 @@
                         <input type="hidden" id="hiddenGroupSelect" th:value="${currentGroupId ?: 'null'}"/>
 
 
-
+                            <!--скрипт для выбора текущей группы-->
                         <script>
                             const currentGroup = document.getElementById("hiddenGroupSelect");
 
@@ -142,7 +144,7 @@
                         <!--конец выбор группы продукта-->
                     <p></p>
 
-                        <!-- ИМЯ ГРУППЫ -->
+                        <!-- ИМЯ -->
                         <div class="d-flex align-items-center mb-3">
                             <label for="product_name" class="me-2">Наименование: </label>
                             <input class="form-control flex-grow-1" id="product_name"
@@ -152,6 +154,8 @@
 
                         <p></p>
 
+                        <!-- Стоимость -->
+
                         <div class="d-flex align-items-center mb-3">
                             <label for="coast_product" class="me-2">Цена: </label>
                             <input class="form-control flex-grow-1" id="coast_product"
@@ -160,7 +164,7 @@
                         </div>
 
                         <p></p>
-
+                        <!-- Количество -->
                         <div class="d-flex align-items-center mb-3">
                             <label for="count_product" class="me-2">Количество: </label>
                             <input class="form-control flex-grow-1" id="count_product"
@@ -177,7 +181,7 @@
         </div>
     <!--конец строка 1-->
 
-    <!--   строка 2  Описание   -->
+    <!--   строка   Описание   -->
     <div class="row">
         <div class="col-8">
 
@@ -205,6 +209,35 @@
 
         <p></p>
 
+        <!--   строка  ТЕГИ   -->
+        <div class="row">
+            <div class="col-8">
+
+                <div class="container mt-5">
+                    <div class="row justify-content-center">
+                        <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
+
+                            <!-- Описание -->
+                            <div class="d-flex flex-column mb-3">
+                                <label for="description" class="mb-2">Теги (для поисковиков):<br>
+                                разделить на две части символом ";"<br>
+                                1-я описание то что будет видно на странице поиска"<br>
+                                2-я набор ключевых слов по которым поисковик найдет данную страницу
+                                </label>
+                                <textarea class="form-control"
+
+                                          th:text="${product.teg}"
+                                          id="teg" name="teg_product" rows="8">
+
+
+                            </textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
 
     </div>    <!--конец строка 2-->
 
