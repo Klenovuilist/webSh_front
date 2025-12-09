@@ -11,18 +11,22 @@
 <header>
     <div class="container">
         <div class="row">
+            <div class="col-8" >
+                <!--картинка группы  @{'/image_group/' + ${fileName}}   "@{'/image_group/new.jpg'}" -->
+                <img src="/image/main_logo.png"  style="max-height: 80px;">
+            </div>
             <div class="col-8">
-                <h3 class="text-center text-white"> 3detail </h3>
+                <h4 class="text-white"> Сервис 3D печати </h4>
             </div>
         </div>
     </div>
 </header>
 <p></p>
 
-<h6 class="text-center text-black"> <a th:text = "'На указанную почту: ' + ${user.mail} + '  отправлена ссылка'"></a> </h6>
+<h4 class="text-center text-black"> <a th:text = "'На указанную почту: ' + ${user.mail} + '  отправлена ссылка.'"></a> </h4>
 
-<h6 class="text-center text-black"> <a th:text = "'для продолжения регистрации: ' + ${user.login}"></a> </h6>
-<h6 class="text-center text-black"> <a th:text = "'пройдите по ссылке из письма'"></a> </h6>
+<h4 class="text-center text-black"> <a th:text = "'Для продолжения регистрации пользователя: ' + ${user.login}"></a> </h4>
+<h4 class="text-center text-black"> <a th:text = "'пройдите по ссылке из письма'"></a> </h4>
 
 
 </body>

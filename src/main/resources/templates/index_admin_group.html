@@ -5,7 +5,7 @@
     <title>detail admin</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
-    <link rel="icon" href="/image/3detail icon.ico" sizes="any" type="image/x-icon"/>
+    <link rel="icon" href="/image/3detail_icon.ico" sizes="any" type="image/x-icon"/>
     <script src="/js/bootstrap.bundle.min.js" ></script>
 
 </head>
@@ -13,6 +13,10 @@
 <header>
     <div class="container">
         <div class="row">
+            <div class="col-4" >
+                <!--картинка группы  @{'/image_group/' + ${fileName}}   "@{'/image_group/new.jpg'}" -->
+                <img src="/image/main_logo.png"  style="max-height: 80px;">
+            </div>
             <div class="col-8">
                 <h3 class="text-center text-white"> 3detail администратор </h3>
 <!--                <h4 class="text-center text-white"> администратор </h4>-->
@@ -51,14 +55,12 @@
                                     <thead>
                                     <tr class="table-warning table align-middle">
 
-<!--                                        <th>-->
-<!--                                            <h6> Имя </h6>-->
-<!--                                        </th>-->
                                         <form method="post" th:action = "'/index_admin/save_group/' + ${group.getGroupId}">
 
                                         <th>
                                             <input type="hidden"  name="page"  value="index_admin_group">
                                             <input type="hidden"  name="id_group"  th:value="${group.getGroupId}">
+                                            <input type="hidden"  name="parrent_group_Id"  th:value="${group.getParrentId}">
 
                                             <!--Поле для ввода имени группы-->
                                             <input class="form-control" th:value="${group.getGroupName()}"
@@ -160,7 +162,8 @@
                                         <form method="post" th:action = "'/index_admin/save_group/' + ${group.getGroupId}"
                                          th:id="'save_group_' + ${group.getGroupId}">
                                             <input type="hidden"  name="page"  value="index_admin_group">
-                                            <input type="hidden"  name="id_group"  th:value="${group.getParrentId}">
+                                            <input type="hidden"  name="id_group"  th:value="${group.getGroupId}">
+                                            <input type="hidden"  name="parrent_group_Id"  th:value="${group.getParrentId}">
 
                                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                                 <button class="btn btn-dark btn-sm mb-2" type="submit"
@@ -358,7 +361,9 @@
                                 <form method="post" th:action="'/index_admin/save_product/' + ${product.getProductId()}"
                                       th:id="'save_product_' + ${product.getProductId()}">
                                     <input type="hidden"  name="page"  value="index_admin_group">
-                                    <input type="hidden"  name="id_group"  th:value="${group.getGroupId}">
+                                    <input type="hidden"  name="group_Id"  th:value="${group.getGroupId()}">
+                                    <input type="hidden" name="is_load" th:value="${product.getIsLoad()}"/>
+                                    <input type="hidden" name="no_image_view" th:value="${product.getView_image()}"/>
                                     <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;">Сохранить</button>
                                 </form>
 

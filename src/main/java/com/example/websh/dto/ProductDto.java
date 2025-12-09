@@ -37,9 +37,13 @@ public class ProductDto {
 
     private String teg;
 
+    private String view_image;
+
     private int productReserv;
 
     private UUID groupsId;
+
+    private String isLoad;
 
     @Builder.Default
     private List<UUID> usersEntity = new ArrayList<>();

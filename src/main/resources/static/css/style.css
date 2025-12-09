@@ -1,6 +1,6 @@
 :root {
-    --color1: rgba(148, 120, 196, 0.66);
-    --color2: rgba(33, 9, 63, 0.71);
+    --color1: rgba(234, 218, 158, 0.8);
+    --color2: rgba(2, 2, 44, 0.94);
     --color3: #66d330;
     --color4: #efda8e;
 }
@@ -37,11 +37,12 @@ header {
 }
 
 header, footer {
-    background-image: url("/image/main_logo.png"), linear-gradient(to right, var(--color1) 0%, var(--color2) 100%);
-    background-position: 100px center, left center; /* Позиционирование для изображения и градиента отдельно */
+    /*background-image: url("/image/main_logo.png"), */
+    background-image: linear-gradient(to right, var(--color1) 0%, var(--color2) 100%);
+    /*background-position: 100px center, left center; !* Позиционирование для изображения и градиента отдельно *!*/
     /*background-repeat: no-repeat, repeat-x; !* Повторяемость фона для обоих уровней *!*/
-    background-repeat: no-repeat;
-    background-size: 170px auto, cover;
+    /*background-repeat: no-repeat;*/
+    /*background-size: 170px auto, cover;*/
 
 }
 
@@ -69,19 +70,19 @@ li {
 /*}*/
 
 
-/* Устанавливаем фоновое изображение для всей страницы */
+/* фоновое изображение для всей страницы */
 body {
     background-image: url('/image/10.JPG'); /* Путь к изображению */
     background-position: center center; /* Центрируем изображение горизонтально и вертикально */
     background-repeat: no-repeat; /* Изображение не повторяется */
     background-size: cover; /* Растягиваем изображение на весь экран, сохраняя пропорции */
-    color: #380202; /* Цвет текста поверх фона */
+    color: #282525; /* Цвет текста поверх фона */
     font-family: Arial, sans-serif; /* Семейство шрифтов */
     height: 100vh; /* Высота тела документа равна высоте окна браузера */
     margin: 0; /* Обнуляем отступы вокруг body */
 }
 
- /*Дополнительно добавляем линейный градиент поверх изображения*/
+ /*линейный градиент поверх изображения*/
 html::before {
     content: '';
     position: absolute;
@@ -90,7 +91,7 @@ html::before {
     width: 100%;
     height: 100%;
     z-index: -1; /* Фон находится ниже содержимого страницы */
-    background: rgba(243, 241, 241, 0.82); /* Полупрозрачная черная подложка */
+    background: rgba(243, 241, 241, 0.82); /* Полупрозрачная подложка */
 }
 
  /*плавный переход цвета сверху-вниз */
@@ -105,8 +106,8 @@ html::after {
     pointer-events: none; /* Наведение мышью игнорируется */
     background: linear-gradient(
             to bottom,
-            rgba(218, 196, 196, 0.09),
-            rgba(73, 10, 10, 0.66)
+            rgba(186, 201, 204, 0.58),
+            rgba(132, 123, 145, 0.6)
     );
 }
 
@@ -114,18 +115,19 @@ html::after {
 .rounded-img {
     border-radius: 10px;
 }
+
 /* карточа плавный переход цвета сверху-вниз */
 .card {
     background: linear-gradient(
             /*to bottom,*/
-            rgba(205, 215, 215, 0.4),
-            rgba(148, 120, 196, 0.49)
+            rgba(204, 181, 94, 0.32),
+            rgba(185, 165, 210, 0.4)
+
+            /*rgba(205, 215, 215, 0.4),*/
+            /*rgba(239, 218, 142, 0.87)*/
     );
     /*background-color: rgba(138, 28, 41, 0.56) !important; !* Единый цвет фона для всех карточек *!*/
 }
 
-
-/* table { table-layout: fixed; } !* �������� ������ *!*/
-/*td { width: 200px; overflow: hidden;} !* ��������� ������ ������ *!*/
 
 

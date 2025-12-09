@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" lang="ru">
-    <title>Test</title>
+    <title>user admin</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
+    <link rel="icon" href="/image/3detail_icon.ico" sizes="any" type="image/x-icon"/>
     <script src="/js/bootstrap.bundle.min.js" ></script> <!--в т.ч. для модальных окон-->
 
 </head>
@@ -12,8 +13,12 @@
 <header>
     <div class="container">
         <div class="row">
+            <div class="col-4" >
+                <!--картинка группы  @{'/image_group/' + ${fileName}}   "@{'/image_group/new.jpg'}" -->
+                <img src="/image/main_logo.png"  style="max-height: 80px;">
+            </div>
             <div class="col-8">
-                <h3 class="text-center text-white"> 3detail </h3>
+                <h3 class="text-center text-white"> 3detail администратор </h3>
                 <!--                <h4 class="text-center text-white"> администратор </h4>-->
             </div>
         </div>
@@ -104,6 +109,15 @@
                                         <th style="vertical-align: top; text-align: center;" > <span th:text="${iterStat.count}"></span></th>
                                         <th style="vertical-align: top; text-align: center;" >
                                             <a th:text="${file.getFileName}">Имя файла</a>
+                                            <!-- картинка по id если id есть -->
+                                            <div th:if="${file.getFileId() != null}">
+                                                <a th:href="'/index/product/' + ${file.getFileId()}"  >
+                                                    <img th:src="@{'/image/product/'+ ${file.getFileId} + '/1'}"
+                                                         class="img-fluid flex-shrink-0" style="width: 80px; height: auto; object-fit: cover;
+                                                  margin-right: 1rem;"/>
+                                                </a>
+
+                                            </div>
                                             <p></p>
 
                                             <!-- Кнопка модального окна на удаление -->
@@ -136,25 +150,30 @@
 
                                         <form method="post" th:action="'/save_file3DDto/' + ${file.getId}"
                                               th:id="'save_product_' + ${file.getComment}">
-                                        <th th:style="${file.getStatus eq 'стоимость рассчитана'} ? 'background-color: #98FB98;' :
+
+                                        <th style="vertical-align: top; text-align: center;">
+
+                                            <div th:style="${file.getStatus eq 'стоимость рассчитана'} ? 'background-color: #98FB98;' :
                                             (${file.getStatus eq 'отправлен на расчет стоимости'} ? 'background-color: #F08080;' :
                                             (${file.getStatus eq 'отправлен на печать'} ? 'background-color: #F08080;' :
                                             (${file.getStatus eq 'на печати'} ? 'background-color: #FF8C00;' :
                                             (${file.getStatus eq 'готово'} ? 'background-color: #ADD8E6;' :
-                                            (${file.getStatus eq 'отмена'} ? 'background-color: #696969;' :'')))))"
-                                                >
-                                            <!--Форма выбора статуса файла-->
-                                                    <p></p>
-                                                    <a th:text="${file.getStatus}"></a>
-                                                    <p></p>
-                                            <!--выбор статуса-->
-                                                        <select id="status" name="file_status" class="form-select form-select-sm" style="width: auto; height: 28px; font-size: 12px;">
-                                                            <option th:each="status : ${listStatus}"
-                                                                    th:value="${status}"
-                                                                    th:text="${status}"
-                                                                    th:id="${file.getId} + ${status}"
-                                                                    ></option>
-                                                        </select>
+                                            (${file.getStatus eq 'отмена'} ? 'background-color: #696969;' :'')))))">
+
+                                                <!--Форма выбора статуса файла-->
+                                                <p></p>
+                                                <a th:text="${file.getStatus}"></a>
+                                                <p></p>
+                                                <!--выбор статуса-->
+                                                <select id="status" name="file_status" class="form-select form-select-sm" style="width: auto; height: 28px; font-size: 12px;">
+                                                    <option th:each="status : ${listStatus}"
+                                                            th:value="${status}"
+                                                            th:text="${status}"
+                                                            th:id="${file.getId} + ${status}"
+                                                    ></option>
+                                                </select>
+                                            </div>
+
 
                                             <!-- вспомогательная переменная и сохранение выбора в селект -->
                                             <input type="hidden"  th:id="${file.getId} + 'hiddenStatusSelect'"  th:value="${file.getId} + ${file.getStatus}" />
@@ -166,14 +185,33 @@
                                         </th>
                                             <!--комментарий на заказ-->
                                         <th >
+                                            <div th:if="${file.getCommentList != null}" class="me-2">
+                                                <div style="max-height: calc(30 * 1rem + 2em); overflow-y: auto; line-height: 1.5;">
+                                                    <div th:each="comment : ${file.getCommentList}">
+                                                        <div th:if="${comment.getAutor eq 'admin'}">
+                                                            <div style="display: flex; align-items: baseline; margin-bottom: 0.5em;">
+                                                                <span style="margin-left: auto; white-space: pre-line; font-size: 0.8rem; color: darkred;">
+                                                                     <a th:text="${comment.getMessage}"></a> </span>
+                                                            </div>
+                                                        </div>
+                                                        <div th:if="${comment.getAutor eq 'user'}">
+                                                            <div style="display: flex; align-items: baseline; margin-bottom: 0.5em;">
+                                                                <span style="margin-right: auto; white-space: pre-line; font-size: 0.8rem;">
+                                                                    <a th:text="${comment.getMessage}"></a></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <textarea class="form-control"
-                                                          th:text="${file.getComment}"
-                                                          id="description" name="file_comment" rows="4">
+                                                         name="file_comment" rows="4">
                                             </textarea>
                                                 <div class="btn-group" role="group" > <!--кнопки в один ряд-->
                                                     <input type="hidden"  name="page"  value="admin_user_page">
                                                     <input type="hidden"  name="file_id"  th:value="${file.getId}">
                                                     <input type="hidden"  name="user_id"  th:value="${user.getId}">
+                                                    <input type="hidden"  name="isAdmin"  value="true">
 
                                                 <!--Кнопки управления файлом-->
                                                 <div class="me-2"> <!--Отступ между элементами-->

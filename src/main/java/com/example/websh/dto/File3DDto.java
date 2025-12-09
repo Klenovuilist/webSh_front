@@ -3,6 +3,8 @@ package com.example.websh.dto;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Builder
@@ -34,6 +36,10 @@ public class File3DDto {
     private LocalDateTime data_create;
 
     private String dataCreatePars;
+
+    private String fileId;
+
+    private List<CommentDto> commentList = new ArrayList<>();
 
 
 }

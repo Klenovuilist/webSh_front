@@ -19,6 +19,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -38,8 +40,12 @@ import java.util.*;
 
     private final JwtService jwtService;
 
+
+
     @org.springframework.beans.factory.annotation.Value("${my.domein.mail}")
     private String myDomeinMail;
+
+
 
 
 
@@ -99,14 +105,15 @@ import java.util.*;
             return null;
         }
 
-        //создать пользователя по параметрам из формы
+        //создать пользователя по параметрам из формы если не был найден в БД
          userDto = UserDto.builder()
                 .roleUser("ROLE_USER")
                 .psswordUser(request.getParameter("password"))
-                .userName("noName")
+                .userName(request.getParameter("userName"))
                 .dataCreateUser(LocalDateTime.now())
                 .login(request.getParameter("userLogin"))
                 .mail(request.getParameter("email"))
+                 .boolverify(false)
                 .build();
 
         return feignClient.saveUser(userDto).getBody();
@@ -125,10 +132,65 @@ import java.util.*;
 
      * @return
      */
-    public UserDto updateUser(UserDto userDto) {
+    public UserDto updateUserAndSave(UserDto userDto) {
 
         return feignClient.updateUser(userDto).getBody();
     }
+
+    /**
+     * Изменение данных пользователя
+
+     * @return
+     */
+    public String updateUser(UserDto userDto, String userId, HttpServletRequest request) {
+
+        if(!userDto.getPsswordUser().equals(request.getParameter("old_password"))){
+            return "неверный пароль";
+        }
+        if(request.getParameter("userLogin").isBlank()){
+            return "логин не должен быть пустым";
+        }
+        String newLogin = request.getParameter("userLogin");
+        String newMail = request.getParameter("email");
+        UserDto userFromBD = getUserByLogin(newLogin);
+
+        //если логина нет то разрешено поменять
+        if(userFromBD != null && ! userFromBD.getLogin().equals(userDto.getLogin())){
+            return "логин: " + request.getParameter("userLogin") + " уже занят";
+        }
+
+        //обновить пароль если пришел новый в запросе
+        if(!request.getParameter("password").isBlank()){
+            userDto.setPsswordUser(request.getParameter("password"));
+        }
+//        userDto.setPsswordUser(request.getParameter("password"));
+        userDto.setUserName(request.getParameter("userName"));
+        userDto.setDataCreateUser(LocalDateTime.now());
+        userDto.setLogin(request.getParameter("userLogin"));
+
+        boolean isChangeMail = false; //была ли изменена почта
+
+        //обновить почту если пришла новая в запросе и отправить письмо на подтверждение
+        if(! newMail.isBlank() && !newMail.equals(userDto.getMail())){
+            try {
+                InternetAddress address = new InternetAddress(newMail);
+                address.validate(); // проверяем синтаксически правильный email
+
+                userDto.setMail(newMail);
+                sendVerificationEmail(userDto); // отправка письма верификации
+                userDto.setBoolverify(false); // обнуление верификации
+            } catch (AddressException | RuntimeException ex) {
+                return "почта указана не верно";
+            }
+        }
+        feignClient.updateUser(userDto).getBody();
+         if(isChangeMail){
+             return "На почту: " + newMail + " направлено письмо для подтверждения, перейдите по ссылке в письме";
+         }
+
+        return "данные изменены";
+    }
+
 
     /**
      * Отправка письма со ссылкой для подтверждения почты пользователя
@@ -143,7 +205,8 @@ import java.util.*;
             helper = new MimeMessageHelper(message, true);
 
             helper.setTo(userDto.getMail());
-            helper.setFrom("klenovuilist@yandex.ru");
+//            helper.setFrom("klenovuilist@yandex.ru");
+            helper.setFrom("info@3detail.ru");
             helper.setSubject("Регистрация на 3detail.ru");
             helper.setText("<h3>Для продолжения регистрации на 3detail.ru перейдите по ссылке ниже</h3><p>.</p>" +
                             "<a href=" + myDomeinMail + "/users/verify/" + userDto.getId() + ">Продолжить регистрацию</a>",
@@ -171,7 +234,9 @@ import java.util.*;
             helper = new MimeMessageHelper(message, true);
 
             helper.setTo("klenovuilist@yandex.ru"); // адрес куда отправить
-            helper.setFrom("klenovuilist@yandex.ru");
+//            helper.setFrom("klenovuilist@yandex.ru");
+            helper.setFrom("info@3detail.ru");
+
             helper.setSubject(subject);
             helper.setText(textMessage);
 
@@ -194,8 +259,9 @@ import java.util.*;
         mapUserInfo.put("login", "Регистрация");
         mapUserInfo.put("role", "ROLE_USER");
         mapUserInfo.put("name", "Нет");
-        mapUserInfo.put("mail", "Не указанна");
+        mapUserInfo.put("mail", "Не указана");
         mapUserInfo.put("id", UUID.randomUUID().toString());
+        mapUserInfo.put("verify", "false");
 
         String token = null;
 
@@ -216,6 +282,7 @@ import java.util.*;
                 mapUserInfo.put("name", jwtService.getParametrToken(token, "name"));
                 mapUserInfo.put("mail", jwtService.getParametrToken(token, "mail"));
                 mapUserInfo.put("id", jwtService.getParametrToken(token, "id"));
+                mapUserInfo.put("verify", jwtService.getParametrToken(token, "verify" ));
             }
             catch (RuntimeException e){
                 return mapUserInfo;
@@ -241,14 +308,34 @@ import java.util.*;
 
                Map<String, String> userInfoToken = getUserInfoFromToken(request);
 
+
+
         return UserDto.builder()
                 .id(UUID.fromString(userInfoToken.get("id")))
                 .login(userInfoToken.get("login"))
                 .userName(userInfoToken.get("name"))
                 .mail(userInfoToken.get("mail"))
                 .roleUser(userInfoToken.get("role"))
+                .boolverify(Boolean.parseBoolean(userInfoToken.get("verify")))
                 .build();
     }
+
+    /**
+     * Получить данные UserDto из Map<String, String> userInfo
+     */
+    public UserDto getUserDtoByMapUserInfo(Map<String, String> userInfo) {
+
+
+        return UserDto.builder()
+                .id(UUID.fromString(userInfo.get("id")))
+                .login(userInfo.get("login"))
+                .userName(userInfo.get("name"))
+                .mail(userInfo.get("mail"))
+                .roleUser(userInfo.get("role"))
+                .boolverify(Boolean.parseBoolean(userInfo.get("verify")))
+                .build();
+    }
+
 
     /**
      * Получить список File3DDto загруженных файлов 3D по id пользователя (непосредствено из папки)
@@ -257,22 +344,7 @@ import java.util.*;
         return feignClient.getAllFile3DByUserId(userId).getBody();
     }
 
-    /**
-     * Получить список описаний File3DDto загруженных файлов 3D по id пользователя (в Postgress)
-     */
-    public List<File3DDto> getListFile3DDtoByUsersId(String userId, boolean isDelete) {
 
-        List<File3DDto> listFile3DDto = feignClient.getListFile3DDescriptionUsers(userId).getBody();
-        //в коллекции помеченные на удаленные
-        if (! listFile3DDto.isEmpty() && isDelete){
-            return listFile3DDto.stream().filter(file -> file.isDelete()).toList();
-        }
-        // убрать из коллекции помеченные на удаленные
-        else if (! listFile3DDto.isEmpty()) {
-            return listFile3DDto.stream().filter(file -> ! file.isDelete()).toList();
-        }
-        return listFile3DDto;
-    }
 
 
     /**
@@ -298,4 +370,65 @@ import java.util.*;
         }
             return false;
     }
+
+    /**
+     *  продукты из БД добавить для пользователя - создать  File3DDto
+     * @param userId
+     * @param productId
+     */
+//todo не используется
+    //todo  feignClient.getAllUsers() заменить на кеш
+    public void orderProduct(String userId, String productId){
+
+        File3DDto fileForSave = File3DDto.builder()
+                .userId(UUID.fromString(userId))
+                .coast("")
+                .comment("")
+                .data_create(LocalDateTime.now())
+                .material("")
+                .status("")
+                .fileId(productId)
+                .fileName(null)
+                .build();
+
+
+        feignClient.saveFile3DDto(fileForSave);
+
+//            ProductDto productDto = feignClient.getProductDtoById(productId).getBody();
+//            List<UserDto> listUser = feignClient.getAllUsers().getBody();
+//
+//            // добавить в userDto продукт ProductsDTO и сохранить в БД
+//            if (!listUser.isEmpty()){
+//                UserDto userDto = listUser.stream().filter(user -> user.getId().toString().equals(userId)).findFirst().orElse(null);
+//                if(userDto != null && productDto != null){
+//                    userDto.setProductsDTO(new ArrayList<>());
+//                    userDto.getProductsDTO().add(productDto);
+//
+//                    feignClient.orderProduct(userDto);
+//
+//                }
+//            }
+
+
+    }
+
+    /**
+     * Проверка пароля пользователя - является ли он паролем по умолчанию
+     * возвращает null если пароль не является паролем по умолчанию либо пароль по умолчанию
+     */
+    public String isDefoultPassword(UUID id) {
+        UserDto user = getUserById(id.toString());
+        if(Objects.isNull(user)){
+            return null;
+        }
+        if(Objects.isNull(user.getPsswordUser())){
+            return  null;
+        }
+
+        if (user.getPsswordUser().startsWith("psw")){
+            return user.getPsswordUser();
+        }
+        return null;
+    }
 }
+

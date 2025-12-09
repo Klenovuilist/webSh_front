@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+
     <meta charset="UTF-8" lang="ru">
     <title>detail</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
 
-    <link rel="icon" href="/image/3detail icon.ico" sizes="any" type="image/x-icon"/>
+    <link rel="icon" href="/image/3detail_icon.ico" sizes="any" type="image/x-icon"/>
+<!--    <link rel="icon" href="/icon_noFon.ico" sizes="any" type="image/x-icon"/>-->
     <!--    <link rel="icon" href="/icon_noFon120.ico"  sizes="120x120" type="image/x-icon"/>-->
     <meta name="description" th:content="${mapInfo[9].info}">
 
@@ -29,8 +32,12 @@
 <header>
     <div class="container">
         <div class="row">
+            <div class="col-8" >
+                <!--картинка группы  @{'/image_group/' + ${fileName}}   "@{'/image_group/new.jpg'}" -->
+                <img src="/image/main_logo.png"  style="max-height: 80px;">
+            </div>
             <div class="col-8">
-<!--                <h2 class="text-center text-white"> 3detail </h2>-->
+                <h4 class="text-white"> Сервис 3D печати </h4>
             </div>
         </div>
     </div>
@@ -42,39 +49,39 @@
     <div class="row">
         <div class="col-md-8">
        </div>
-
         <div class="col-md-4">
             <div class="btn-group" role="group" > <!--имена групп в один ряд-->
-                <div class="me-3">
-                    <h6 class="text-center mb-4">
-                        <a href = "/athurizathion" > <p th:text="${userInfo['login']}"></p> </a>
+                <div th:if="${userInfo['login'] eq 'Регистрация'}">
+                    <h6 class="text-center mb-4 mx-2">
+                    <a href = "/athurizathion" > <p th:text="${userInfo['login']}"></p></a>
                     </h6>
                 </div>
-                <div class="me-3">
+                <div th:unless="${userInfo['login'] eq 'Регистрация'}">
+                    <h6 class="text-center mb-4 mx-2">
+                        <a href = "/index_user_page" > <p th:text="'Логин: ' + ${userInfo['login']}"></p></a>
+                    </h6>
+                </div>
+                <div class="me-3 mx-2">
                     <h6 class="text-center mb-4">
                         <a href = "/index/order3d" > <p th:text="'Мои заказы'"></p> </a>
                     </h6>
                 </div>
             </div>
         </div>
-
-
     </div>
     <P></P>
 
     <!--  Строка с инфо сверху-->
     <div class="row">
         <div class="col-md-4">
-            <h6 class="text-center mb-4">
-                <a th:text="${mapInfo[2].info}"></a>
+            <h6 class="mb-4" style="white-space: pre-wrap;" th:text="${mapInfo[2].info}">
+
             </h6>
-
-
         </div>
+
         <div class="col-md-4"></div>
         <div class="col-md-4">
-            <h6 class="text-center mb-4">
-                <a th:text="${mapInfo[1].info}"></a>
+            <h6 class="mb-4" style="white-space: pre-wrap;" th:text="${mapInfo[1].info}">
             </h6>
         </div>
 
@@ -95,7 +102,6 @@
                                      <a th:href="'/index/group/' + ${group.getGroupId}" class="btn btn-outline-secondary text-black text-decoration-none"
                                         style="margin-right: 20px; font-weight: bold;" th:text="${group.getGroupName()}"></a>
                                  </div>
-
                             </div>
             </div>
             <p></p>
@@ -113,18 +119,18 @@
        style="margin-right: 30px;"
        th:text="'Заказать 3D печать'"></a>
     <p></p>
-    <!--        контейнеры с группой и картинками-->
-    <div th:if="${not #lists.isEmpty(groups)}" class="row">
+    <!--        контейнеры с группой и картинками  продукты-->
+    <div class="row">
         <div class="col-11">
          <div class="container mt-5">
                 <div class="row justify-content-center">
-                    <div th:each="group : ${groups}" class="col-md-3 my-3">
+                    <div th:if="${not #lists.isEmpty(groups)}" th:each="group : ${groups}" class="col-md-3 my-3">
 
                         <div th:if="${group.groupName != 'Свалка'}">  <!--если не свалка то выводим группу-->
                             <div class="card h-100 border p-4 rounded shadow-lg " style="min-height: 250px;">
                                 <a th:href="'/index/group/' + ${group.getGroupId}" class="stretched-link" tabindex="-1">
 
-                                    <h6 class="text-center mb-4">
+                                    <h6 class="text-center mb-4" style="color: #0a0a0a; font-weight: bold;">
                                         <a th:text="${group.getGroupName()}"></a>
                                     </h6>
                                     <!--картинка группы  @{'/image_group/' + ${fileName}}   "@{'/image_group/new.jpg'}" -->
@@ -132,6 +138,27 @@
                                     <!--                                    <img th:src="@{ '/image_group/' + 'new' + '.jpg'}" class="img-fluid mx-auto d-block" style="width: 100%; height: auto;" alt="Пустое изображение">-->
                                 </a>
                             </div>
+                        </div>
+                    </div>
+
+                    <!--        контейнеры с продуктами и картинками-->
+                    <div th:if="${not #lists.isEmpty(products)}" th:each="product: ${products}" class="col-md-3 my-3">
+                        <div class="card border p-4 rounded shadow-lg" style="height: fit-content; min-height: 250px;"> <!-- Используем height: fit-content -->
+                            <a th:href="'/index/product/' + ${product.getProductId}" class="stretched-link" tabindex="-1">
+                                <h6 class="text-center mb-4" style="color: #0a0a0a; font-weight: bold;">
+                                    <a th:text="${product.getProduct_name}"></a>
+                                </h6>
+                                <img th:src="@{'/image/product/'+ ${product.getProductId()} + '/1'}"
+                                     class="rounded-img img-fluid mx-auto d-block"
+                                     style="width: 100%; height: auto;"
+                                     alt="Пустое изображение">
+                                <p></p>
+                                <div>
+                                    <h5 style="color: darkblue;">
+                                        <a th:text="${product.getProductCoast()}"></a>
+                                    </h5>
+                                </div>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -143,60 +170,58 @@
 
 
     <!--        контейнеры с продуктами и картинками-->
+<!--    <div class="row">-->
+<!--            <div class="col-11 g-0">-->
+<!--                <div class="container mt-5">-->
+<!--                    <div class="row justify-content-center">-->
+<!--                        <div th:each="product: ${products}" class="col-md-3 my-3">-->
+<!--                            <div class="card border p-4 rounded shadow-lg" style="height: fit-content; min-height: 250px;"> &lt;!&ndash; Используем height: fit-content &ndash;&gt;-->
+<!--                                <a th:href="'/index/product/' + ${product.getProductId}" class="stretched-link" tabindex="-1">-->
+<!--                                    <h6 class="text-center mb-4">-->
+<!--                                        <a th:text="${product.getProduct_name}"></a>-->
+<!--                                    </h6>-->
+<!--                                    <img th:src="@{'/image/product/'+ ${product.getProductId()} + '/1'}"-->
+<!--                                         class="rounded-img img-fluid mx-auto d-block"-->
+<!--                                         style="width: 100%; height: auto;"-->
+<!--                                         alt="Пустое изображение">-->
+<!--                                    <p></p>-->
+<!--                                    <div>-->
+<!--                                        <h5 style="color: darkblue;">-->
+<!--                                            <a th:text="${product.getProductCoast()}"></a>-->
+<!--                                        </h5>-->
+<!--                                    </div>-->
+<!--                                </a>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--            <p></p>-->
+<!--        </div>-->
+<!--        <p></p>-->
+<!--    </div>-->
+
+    <!--  Строка с инфо снизу-->
     <div class="row">
-            <div class="col-11 g-0">
+        <div class="col-md-4">
+            <h6 class="mb-4" style="white-space: pre-wrap;" th:text="${mapInfo[3].info}">
+            </h6>
 
-            <div class="container mt-0">
-                <div class="row justify-content-center">
-                    <div th:each="product: ${products}" class="col-md-3 my-3">
 
-                        <div class="card h-100 border p-4 rounded shadow-lg" style="min-height: 250px;">
-                            <a th:href="'/index/product/' + ${product.getProductId}" class="stretched-link" tabindex="-1">
-
-                                <h6 class="text-center mb-4">
-                                    <a th:text="${product.getProduct_name}"></a>
-                                </h6>
-                                <img th:src="@{'/image/product/'+ ${product.getProductId()} + '/1'}" class="rounded-img img-fluid mx-auto d-block" style="width: 100%; height: auto;" alt="Пустое изображение">
-                                <p></p>
-                                <!-- Добавляем div для цены с абсолютным позиционированием -->
-                                <div >
-                                    <h5 style="color: darkblue;">
-                                        <a th:text="${product.getProductCoast()}" >
-                                        </a>
-                                    </h5>
-                                </div>
-                                <!--                                <h5 > <a th:text="${product.getProductCoast} + ' руб'"></a></h5>-->
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <p></p>
         </div>
-        <p></p>
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <h6 class="mb-4" style="white-space: pre-wrap;" th:text="${mapInfo[4].info}">
+            </h6>
+        </div>
+
+
     </div>
 
 </div>
 <P></p>
 
-<!--  Строка с инфо снизу-->
-<div class="row">
-    <div class="col-md-4">
-        <h6 class="text-center mb-4">
-            <a th:text="${mapInfo[3].info}"></a>
-        </h6>
 
-
-    </div>
-    <div class="col-md-4"></div>
-    <div class="col-md-4">
-        <h6 class="text-center mb-4">
-            <a th:text="${mapInfo[4].info}"></a>
-        </h6>
-    </div>
-
-
-</div>
 
 <style>
     label {

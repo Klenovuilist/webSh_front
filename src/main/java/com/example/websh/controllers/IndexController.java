@@ -2,9 +2,11 @@ package com.example.websh.controllers;
 
 import com.example.websh.cash.Cash;
 import com.example.websh.clients.FeignClient;
+import com.example.websh.dto.CounterDto;
 import com.example.websh.dto.GroupProductDto;
 import com.example.websh.dto.ProductDto;
 import com.example.websh.service.AdminService;
+import com.example.websh.service.CounterServices;
 import com.example.websh.service.IndexService;
 import com.example.websh.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,6 +42,8 @@ public class IndexController {
 
     private final Cash cash;
 
+    private final CounterServices counterServices;
+
     /**
      * Получение главной страницы
      * доступ для всех
@@ -55,6 +59,11 @@ public class IndexController {
         model.addAttribute("groups", cash.getListZeroGroupNoPrefix());
 
         model.addAttribute("userInfo", userService.getUserInfoFromToken(request));
+
+        /**
+         * создание счетчика посещений
+         */
+        counterServices.createCounter(request, userService.getUserInfoFromToken(request), "Main", "");
 
 //        model.addAttribute("users", userService.getAllUsers());
 
@@ -82,14 +91,28 @@ public class IndexController {
     public String productPageAdmin(@PathVariable("id") String prodId, Model model, HttpServletRequest request){
 
 
+
+
         ProductDto product = adminService.getProductDtoById(prodId);
         indexService.delPrefixNameProduct(product);
+
+        List<String> listNameImages = adminService.getListNameImageProduct(UUID.fromString(prodId));
 
         model.addAttribute("userInfo", userService.getUserInfoFromToken(request));
 
         model.addAttribute("product", product);
-        model.addAttribute("ListNameImages", adminService.getListNameImageProduct(UUID.fromString(prodId)));
+        model.addAttribute("ListNameImages", listNameImages);
 
+
+        /**
+         * создание счетчика посещений
+         */
+        counterServices.createCounter(request
+                , userService.getUserInfoFromToken(request)
+                , "продукт"
+                , product.getProduct_name());
+
+        //добавление тегов и описания страницы для поисковика
         try {
             if(product.getTeg() != null){
                 String [] teg = product.getTeg().split(";");
@@ -107,6 +130,8 @@ public class IndexController {
 
         }
 
+        model.addAttribute("mapDescription", adminService.getMapDescriptionProduct(product, listNameImages));
+
 
         model.addAttribute("zeroGroups",cash.getListZeroGroupNoPrefix());
 
@@ -123,10 +148,10 @@ public class IndexController {
      */
 
     @GetMapping("/user/{id}")
-    public String userInfo(@PathVariable("id") int userId, Model model){
+    public String userInfo(@PathVariable("id") String userId, Model model){
 
         //        todo ввести проверку роли, id заменить на UUID
-        model.addAttribute("userId", String.valueOf(userId));
+        model.addAttribute("userId", userId);
 
         return "user_page.html";
     }
@@ -207,7 +232,18 @@ public class IndexController {
                 .filter(gr -> gr.getGroupId().equals(UUID.fromString(uuidGroup)))
                 .findFirst().orElse(null);
 
+
+
         if (Objects.nonNull(groupProductDto)) {
+
+            /**
+             * создание счетчика посещений
+             */
+            counterServices.createCounter(request
+                    , userService.getUserInfoFromToken(request)
+                    , "группа"
+                    , groupProductDto.getGroupName());
+
 
             model.addAttribute("zeroGroups", cash.getListZeroGroupNoPrefix()); // список нулевых групп
 

@@ -5,7 +5,7 @@
     <title>detail</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
-    <link rel="icon" href="/image/3detail icon.ico" sizes="any" type="image/x-icon"/>
+    <link rel="icon" href="/image/3detail_icon.ico" sizes="any" type="image/x-icon"/>
     <script src="/js/bootstrap.bundle.min.js" ></script> <!--в т.ч. для модальных окон-->
 
 </head>
@@ -13,9 +13,12 @@
 <header>
     <div class="container">
         <div class="row">
+            <div class="col-8" >
+                <!--картинка группы  @{'/image_group/' + ${fileName}}   "@{'/image_group/new.jpg'}" -->
+                <img src="/image/main_logo.png"  style="max-height: 80px;">
+            </div>
             <div class="col-8">
-<!--                <h3 class="text-center text-white"> 3detail </h3>-->
-                <!--                <h4 class="text-center text-white"> администратор </h4>-->
+                <h4 class="text-white"> Сервис 3D печати </h4>
             </div>
         </div>
     </div>
@@ -26,12 +29,24 @@
     <div class="row">
         <div class="col-md-8">
         </div>
-
         <div class="col-md-4">
-            <h6 class="text-center mb-4">
+
+            <div th:if="${userInfo['login'] eq 'Регистрация'}">
                 <p></p>
-                <a href = "/athurizathion" > <p th:text="${userInfo['login']}"></p> </a>
-            </h6>
+                <a href = "/athurizathion" > <p th:text="${userInfo['login']}"></p>
+                </a>
+            </div>
+            <div th:unless="${userInfo['login'] eq 'Регистрация'}">
+                <h6 class="text-center mb-4">
+                    <p></p>
+                    <a href = "/index_user_page" > <p th:text="'Логин: ' + ${userInfo['login']}"></p>
+                        <div th:if="${passwordUser != null}">
+                            <h6> <a th:text="'Временный пароль: ' + ${passwordUser}" > </a>   </h6>
+                        </div>
+                    </a>
+                </h6>
+            </div>
+
         </div>
 
 
@@ -44,7 +59,7 @@
     <div class="row">
         <div class="col-10">
             <p></p>
-            <h4>Загрузите собственные файлы моделей чтобы узнать стоимость печати детали</h4>
+            <h4>Загрузите собственные модели или модели сайта чтобы узнать стоимость печати детали</h4>
             <p></p>
             <h4>   <a th:text="${errorMessage}" > </a>   </h4>
             <P></P>
@@ -55,29 +70,103 @@
                     <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
                         <p></p>
 
-<!--                        <form method="post" enctype="multipart/form-data"-->
-<!--                              th:action="'/upload_file/' + ${userInfo['id']}"-->
-<!--                              th:object="${file}" >   &lt;!&ndash;связывает форму с объектом file  в контроллере&ndash;&gt;-->
-<!--                            <input type="file" name="file" accept="model/*" required/>  &lt;!&ndash;accept="image/*" допустимые файлы image&ndash;&gt;-->
-<!--                            <button type="submit">Загрузить файл</button>-->
 
-<!--                        </form>-->
-                        <form method="post" enctype="multipart/form-data"
-                              th:action="'/upload_file/' + ${userInfo['id']}"
-                              th:object="${file}">
 
-                            <div class="mb-3">
-<!--                                <label for="fileInput" class="form-label">Выберите файл:</label>-->
-                                <input id="fileInput" type="file" name="file" accept="model/*" class="form-control" required/>
+                        <!-- Кнопка модального окна загрузить собственную модель -->
+                        <button button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 35px; width: 300px; font-size: 16px;"
+                                data-bs-toggle="modal" th:data-bs-target="'#'+ 'modal_load_file'">
+                            Загрузить собственную модель
+                        </button>
+
+                        <!-- Модальное окно загрузки собственной модели -->
+                        <div class="modal fade" th:id="'modal_load_file'" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <!--                                        <h1 class="modal-title fs-5" >Готовые можели</h1>-->
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Отмена"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form method="post" enctype="multipart/form-data"
+                                              th:action="'/upload_file/' + ${userInfo['id']}"
+                                              th:object="${file}">
+
+                                            <div class="mb-3">
+                                                <!--                                <label for="fileInput" class="form-label">Выберите файл:</label>-->
+                                                <input id="fileInput" type="file" name="file" accept="model/*" class="form-control" required/>
+                                            </div>
+
+                                            <div >
+                                                <button type="submit" class="btn btn-dark">Загрузить </button>
+                                            </div>
+                                        </form>
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <!--                                        <form method="post" th:action="'/order_product/'"-->
+                                        <!--                                              th:id="'order_product'">-->
+                                        <!--                                            &lt;!&ndash;                                    <input type="hidden"  name="page"  value="index_admin_group">&ndash;&gt;-->
+                                        <!--                                            <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;">Выбрать</button>-->
+                                        <!--                                        </form>-->
+                                        <!--                                        <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;" data-bs-dismiss="modal">Отмена</button>-->
+                                        <!--                                        &lt;!&ndash;                                                <button type="button" class="btn btn-primary">Удалить</button>&ndash;&gt;-->
+                                    </div>
+                                </div>
                             </div>
+                        </div>
 
-                            <div >
-                                <button type="submit" class="btn btn-dark">Загрузить файл</button>
+                        <p></p>
+
+                        <!-- Кнопка модального окна лист моделей -->
+                        <button button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 35px; width: 240px; font-size: 16px;"
+                                data-bs-toggle="modal" th:data-bs-target="'#'+ 'modal_list_file'">
+                            Выбрать готовую модель
+                        </button>
+
+                        <!-- Модальное окно с моделями -->
+                        <div class="modal fade" th:id="'modal_list_file'" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+<!--                                        <h1 class="modal-title fs-5" >Готовые можели</h1>-->
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Отмена"></button>
+                                    </div>
+                                        <div class="modal-body">
+
+                                            <div th:each="product, iterStat : ${list_product}" class="mb-3">
+
+
+                                                <a th:href="'/order_product/'+${userInfo['id']} + '/' + ${product.getProductId()}" class="d-flex align-items-center gap-2 text-decoration-none text-black">
+                                                    <img th:src="@{'/image/product/'+ ${product.getProductId()} + '/1'}" class="img-fluid flex-shrink-0" style="width: 90px; height: auto; object-fit: cover; margin-right: 1rem;"/>
+
+                                                    <div class="flex-grow-1 d-flex flex-column justify-content-start">
+                                                        <span th:text="${product.getProduct_name}" class="fs-8 fw-semibold mb-1"></span>
+                                                        <span th:text="${product.getProductCoast}" class="text-muted small"></span>
+                                                    </div>
+                                                    <input type="hidden"  name="product_name"  th:value="${product.getProduct_name}">
+
+                                                </a>
+                                            </div>
+                                        </div>
+                                    <div class="modal-footer">
+<!--                                        <form method="post" th:action="'/order_product/'"-->
+<!--                                              th:id="'order_product'">-->
+<!--                                            &lt;!&ndash;                                    <input type="hidden"  name="page"  value="index_admin_group">&ndash;&gt;-->
+<!--                                            <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;">Выбрать</button>-->
+<!--                                        </form>-->
+<!--                                        <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;" data-bs-dismiss="modal">Отмена</button>-->
+<!--                                        &lt;!&ndash;                                                <button type="button" class="btn btn-primary">Удалить</button>&ndash;&gt;-->
+                                    </div>
+                                </div>
                             </div>
-                        </form>
+                        </div>
+
+                        <!--                   --------------------------------------------         -->
+
+
                         <p></p>
                         <div th:if="${not #lists.isEmpty(listFile)}">
-                            <h6> Загруженные файлы </a></h6>
+                            <h6> Загруженные модели </a></h6>
                             <p></p>
                             <table class="table table-bordered">
                                 <thead>
@@ -90,7 +179,6 @@
                                         </div>
                                         <div class="col-2">
                                             <th>
-
                                                 <h6> Наименование</h6>
                                             </th>
                                         </div>
@@ -108,7 +196,7 @@
                                         </div>
                                         <div class="col-2">
                                             <th>
-                                                <h6> Комментарии </a></h6>
+                                                <h6> Сообщения </a></h6>
                                             </th>
                                         </div>
                                     </tr>
@@ -117,14 +205,26 @@
                                         <!-- Первая строка -->
                                         <tr>
                                             <th style="vertical-align: top; text-align: center;" > <span th:text="${iterStat.count}"></span></th>
-                                            <th style="vertical-align: top; text-align: center;" > <a th:text="${file.getFileName}">Имя файла</a>
+
+
+                                            <th style="vertical-align: top; text-align: center;" >
+                                                <!-- картинка по id если id есть -->
+                                                <div th:if="${file.getFileId() != null}">
+                                                    <a th:href="'/index/product/' + ${file.getFileId()}"  >
+                                                        <img th:src="@{'/image/product/'+ ${file.getFileId} + '/1'}"
+                                                             class="img-fluid flex-shrink-0" style="width: 80px; height: auto; object-fit: cover;
+                                                  margin-right: 1rem;"/>
+                                                    </a>
+
+                                                </div>
+                                                <a th:text="${file.getFileName}">Имя файла</a>
                                                 <p></p>
                                                 <div class="btn-group" role="group" > <!--кнопки в один ряд-->
                                                     <!--Кнопки управления файлом-->
 
                                                     <div class="me-2"> <!--Отступ между элементами-->
 
-                                                        <!-- Кнопка модального окна на удаление -->
+                                                        <!-- Кнопка модального окна на удаление файла -->
                                                         <button button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 32px; width: 80px; font-size: 15px;"
                                                                 data-bs-toggle="modal" th:data-bs-target="'#'+ 'modal_' + ${file.getId}"> <!--вызов определенного модального окна-->
                                                             Удалить
@@ -177,30 +277,59 @@
                                                         </h6>
                                                     </div>
                                                 </div>
-                                            </th>
-                                            <th th:style="${file.getStatus eq 'стоимость рассчитана'} ? 'background-color: #FFA07A;' :
-                                            (${file.getStatus eq 'отправлен на расчет стоимости'} ? 'background-color: #7FFF00;' :
-                                            (${file.getStatus eq 'отправлен на печать'} ? 'background-color: #00FF00;' :
-                                            (${file.getStatus eq 'на печати'} ? 'background-color: #00FFFF;' :
-                                            (${file.getStatus eq 'готово'} ? 'background-color: #00FF00;' :
-                                            (${file.getStatus eq 'отмена'} ? 'background-color: #696969;' :''))))) + '; vertical-align: top; text-align: center;'"
-                                            >
-                                                <h6> <a th:text="${file.getStatus}"> </a> </h6>
+                                            <th style="vertical-align: top; text-align: center;">
+                                                <div th:style="${file.getStatus eq 'стоимость рассчитана'} ? 'border: 1px solid #ccc; padding: 0.5em; background-color: #FFA07A; border-radius: 4px; vertical-align: top;' :
+                                                           (${file.getStatus eq 'отправлен на расчет стоимости'} ? 'border: 1px solid #ccc; padding: 0.5em; background-color: #7FFF00; border-radius: 4px; vertical-align: top;' :
+                                                           (${file.getStatus eq 'отправлен на печать'} ? 'border: 1px solid #ccc; padding: 0.5em; background-color: #00FF00; border-radius: 4px; vertical-align: top;' :
+                                                           (${file.getStatus eq 'на печати'} ? 'border: 1px solid #ccc; padding: 0.5em; background-color: #00FFFF; border-radius: 4px; vertical-align: top;' :
+                                                           (${file.getStatus eq 'готово'} ? 'border: 1px solid #ccc; padding: 0.5em; background-color: #00FF00; border-radius: 4px; vertical-align: top;' :
+                                                           (${file.getStatus eq 'отмена'} ? 'border: 1px solid #ccc; padding: 0.5em; background-color: #696969; border-radius: 4px; vertical-align: top;' : '')))))">
+                                                    <h6> <a th:text="${file.getStatus}"> </a> </h6>
+                                            </div>
+
                                             </th>
                                             <th style="vertical-align: top; text-align: center;">
-                                                <h6> <a th:text="${file.getCoast}"> </a> </h6>
+                                                 <a th:text="${file.getCoast}"> </a>
                                             </th>
                                             <th style="min-width: 400px; max-width: 500px;">
-                                                <!--комментарий на заказ-->
+                                                <!--комментарий переписка на заказ-->
+                                                <div th:if="${file.getCommentList != null}" >
+                                                    <div style="max-height: 30rem; overflow-y: auto; ">
+                                                        <div th:each="comment : ${file.getCommentList}">
+                                                            <div th:if="${comment.getAutor eq 'admin'}">
+                                                                <div style="display: flex; ">
+                                                                    <div style="border: 1px solid #ccc; padding: 0.5em; background-color: #f9f9f9; border-radius: 4px;">
+                                                                        <span style=" font-size: 0.8rem; color: darkred;">
+                    <a th:text="${comment.getMessage}"></a>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div th:if="${comment.getAutor eq 'user'}">
+                                                                <div style="display: flex; justify-content: flex-end; align-items: start; margin-bottom: 0.1em;">
+                                                                    <div style="border: 1px solid #ccc; padding: 0.5em; background-color: #f9f9f9; border-radius: 4px;">
+                <span style="white-space: pre-line; font-size: 0.8rem;">
+                    <a th:text="${comment.getMessage}"></a>
+                </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+
                                                 <form method="post" th:action="'/save_file3DDto/' + ${file.getId}"
                                                       th:id="'save_product_' + ${file.getComment}">
                                                 <textarea class="form-control"
-                                                          th:text="${file.getComment}"
-                                                          id="description" name="file_comment" rows="4">
+
+                                                          id="description" name="file_comment" rows="3">
                                                 </textarea>
                                                     <input type="hidden"  name="page"  value="index_order_page">
                                                     <input type="hidden"  name="file_id"  th:value="${file.getId}">
-                                                    <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 32px; width: 90px; font-size: 15px;">Сохранить</button>
+                                                    <input type="hidden"  name="isAdmin"  value="false">
+                                                    <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 32px; width: 90px; font-size: 15px;">Отправить</button>
                                                 </form>
                                             </th>
                                         </tr>
@@ -217,6 +346,9 @@
                                 <tbody></tbody>
                             </table>
                         </div>
+                        <p></p>
+
+
 
                     </div>
                 </div>

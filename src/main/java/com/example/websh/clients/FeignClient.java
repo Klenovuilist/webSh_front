@@ -4,8 +4,10 @@ package com.example.websh.clients;
 import com.example.websh.dto.*;
 import jakarta.xml.soap.SOAPEnvelope;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -206,7 +208,33 @@ import java.util.UUID;
     @PostMapping("api/saveFile3DDto")
     void saveFile3DDto(@RequestBody File3DDto file3DDto);
 
+    /**
+     * изменить имя картинки продукта
+     */
+    @PostMapping("api/changeNameImage/{product_Id}")
+    void changeNameImageProduct(@PathVariable("product_Id")String productId
+            , @RequestHeader("currentNameImage")String currentNameImage
+            , @RequestHeader("newName")String newName);
 
-//    @PutMapping("/api/index_admin/create_group/{id}")
-//    ResponseEntity<List<GroupProductDto>> createGroup(@RequestBody TestEntity testEntity, @PathVariable("id") UUID id);
+
+
+    /**
+     * добавить и сохранить продукты для пользователя
+     */
+    @PostMapping("api/order_product")
+     ResponseEntity<?> orderProduct(@RequestBody UserDto userDto);
+
+
+    /**
+     * Удалить пользователя по id
+     */
+    @DeleteMapping("api/del_user/{userId}")
+    void deleteUserById(@PathVariable("userId") String userId);
+
+
+    @GetMapping("api/get_counters")
+    ResponseEntity<List<CounterDto>> getListCounter();
+
+    @PostMapping("api/save_counter")
+    ResponseEntity<?> saveNewCounter(@RequestBody CounterDto counter);
 }

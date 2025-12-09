@@ -1,18 +1,26 @@
 package com.example.websh.service;
 
+import com.example.websh.cash.Cash;
 import com.example.websh.clients.FeignClient;
 import com.example.websh.dto.GroupProductDto;
 import com.example.websh.dto.ProductDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class IndexService {
 
     private final FeignClient feignForGroup;
+
+    private final AdminService adminService;
+
+
 
 
     /**
@@ -132,5 +140,27 @@ public class IndexService {
             currentName.append(ch);
         }
         product.setProduct_name(currentName.toString());
+    }
+
+    /**
+     *Получение листа моделей (продуктов) сайта доступных для заказа
+     */
+    public List<ProductDto> getProductsFromOrder(List<GroupProductDto> listGroup){
+        List<ProductDto> listProduct = new ArrayList<>();
+
+        //получить все продукты для которых IdGroup == null
+        listProduct.addAll(adminService.getListProductDtoByIdGroup("1"));
+
+        //получить продукты все продукты всех групп кроме главной(id = null)
+        for (GroupProductDto group: listGroup){
+            listProduct.addAll(adminService.getListProductDtoByIdGroup(group.getGroupId().toString()));
+        }
+
+        List<ProductDto> listLoadProduct = listProduct.stream()
+                .filter(productDto -> Objects.nonNull(productDto.getIsLoad()))
+                .filter(productDto -> productDto.getIsLoad().equals("load")).collect(Collectors.toList());
+
+        delPrefixNameProduct(listLoadProduct);
+        return listLoadProduct;
     }
 }

@@ -74,7 +74,7 @@ public class AuthorizeController {
     public ResponseEntity<?> authorize(HttpServletRequest request) {
 
 /**
- * аутентификация пользовотеля по данным из запроса (UserDto)
+ * аутентификация пользователя по данным из запроса (UserDto)
  */
         try {
             //authenticationManager проверяет существует пользователь в базе с

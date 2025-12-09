@@ -1,6 +1,7 @@
 package com.example.websh.controllers;
 
 import com.example.websh.dto.UserDto;
+import com.example.websh.service.CounterServices;
 import com.example.websh.service.JwtService;
 import com.example.websh.service.UserService;
 import jakarta.servlet.http.Cookie;
@@ -26,6 +27,8 @@ public class AuthController {
 
     private final UserService userService;
 
+    private final CounterServices counterServices;
+
 
     /**
      * Страница Регистрация нового пользователя
@@ -33,7 +36,16 @@ public class AuthController {
      */
     @GetMapping("/registration")
     public String registrationUser(Model model
-            , @ModelAttribute("loginExist") Optional<String> loginExistOpt){
+            , @ModelAttribute("loginExist") Optional<String> loginExistOpt
+    , HttpServletRequest request){
+
+        /**
+         * создание счетчика посещений
+         */
+        counterServices.createCounter(request
+                , userService.getUserInfoFromToken(request)
+                , "registration"
+                , "");
 
         String loginExist = loginExistOpt.orElseGet(null);
         model.addAttribute("loginExist", loginExist);
@@ -43,13 +55,21 @@ public class AuthController {
 
 
     /**
-     * Регистрация нового пользователя - отправка данных
+     * Регистрация нового пользователя - отправка данных при нажатии кнопки "Зарегистрироваться"
      * @return
      */
     @PostMapping("/register")
     public String registrUser(HttpServletRequest request, Model model,  RedirectAttributes redirectAttributes){
 
      UserDto userDto = userService.saveUser(request);
+
+        /**
+         * создание счетчика посещений
+         */
+        counterServices.createCounter(request
+                , userService.getUserInfoFromToken(request)
+                , "зарегистрировать"
+                , userDto.getLogin());
 
      // если логин уже существет
      if (Objects.isNull(userDto)){
@@ -73,13 +93,21 @@ public class AuthController {
      */
     @GetMapping("/athurizathion")
     public String athurizathion(Model model,
-            HttpServletResponse response
+            HttpServletResponse response, HttpServletRequest request
             , @ModelAttribute("errorLogin") Optional<String> errorLoginOpt
             , @ModelAttribute("noVerify") Optional<String> noVerifyOpt){
 
 
         boolean showErrorMessage = errorLoginOpt.filter(s -> "true".equalsIgnoreCase(s)).isPresent();
         boolean noVerify = noVerifyOpt.filter(s -> "true".equalsIgnoreCase(s)).isPresent();
+
+        /**
+         * создание счетчика посещений
+         */
+        counterServices.createCounter(request
+                , userService.getUserInfoFromToken(request)
+                , "авторизация"
+                , "");
 
         if (showErrorMessage) {
             // Удаление cookie
@@ -102,7 +130,7 @@ public class AuthController {
 
 
     /**
-     * Ввод данных пользователя в форме авторизации
+     * Ввод данных пользователя в форме авторизации для входа
      * @param request
      * @param response
      * @param redirectAttributes
@@ -113,6 +141,14 @@ public class AuthController {
             , RedirectAttributes redirectAttributes){
 
         UserDto userDto = userService.getUserByLogin(request.getParameter("userLogin"));
+
+        /**
+         * создание счетчика посещений
+         */
+        counterServices.createCounter(request
+                , userService.getUserInfoFromToken(request)
+                , "вход пользователя"
+                , userDto.getLogin());
 
         if (userDto == null
                 || userDto.getLogin() == null
@@ -157,16 +193,24 @@ public class AuthController {
      * Подтверждение регистрации по ссылке из письма пользователю
      */
     @GetMapping("/users/verify/{idUser}")
-    public String verifyUser(@PathVariable("idUser") String userId, HttpServletResponse response){
+    public String verifyUser(@PathVariable("idUser") String userId, HttpServletResponse response, HttpServletRequest request){
 
         UserDto userDto = userService.getUserById(userId);
+
+        /**
+         * создание счетчика посещений
+         */
+        counterServices.createCounter(request
+                , userService.getUserInfoFromToken(request)
+                , "подтверждение mail"
+                , userDto.getMail() + "  " + userDto.getLogin());
 
         //Установка подтверждения аккаунта
         if (! userDto.isBoolverify()){
             userDto.setBoolverify(true); ;
         }
 
-        userDto = userService.updateUser(userDto);
+        userDto = userService.updateUserAndSave(userDto);
 
         // Генерация токена для пользователя
         String token = jwtService.generateJWToken(userDto);

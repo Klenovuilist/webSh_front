@@ -5,7 +5,7 @@
     <title>detail admin</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
-    <link rel="icon" href="/image/3detail icon.ico" sizes="any" type="image/x-icon"/>
+    <link rel="icon" href="/image/3detail_icon.ico" sizes="any" type="image/x-icon"/>
     <script src="/js/bootstrap.bundle.min.js" ></script>
 
 </head>
@@ -13,6 +13,10 @@
 <header>
     <div class="container">
         <div class="row">
+            <div class="col-4" >
+                <!--картинка группы  @{'/image_group/' + ${fileName}}   "@{'/image_group/new.jpg'}" -->
+                <img src="/image/main_logo.png"  style="max-height: 80px;">
+            </div>
             <div class="col-8">
                 <h3 class="text-center text-white"> 3detail администратор </h3>
 <!--                <h4 class="text-center text-white"> администратор </h4>-->
@@ -66,6 +70,9 @@
                     <!--                <a th:href="'/index'" class="text-black text-decoration-none" style="margin-right: 20px;" th:text="'На главную'"></a>-->
                     <a th:href="'/product_admin/add_new'" class="text-black text-decoration-none" style="margin-right: 30px; font-weight: bold;" th:text="'Добавить продукт'"></a>
                     <a th:href="'/product/all'" class="text-black text-decoration-none" style="margin-right: 30px; font-weight: bold;" th:text="'Все продукты'"></a>
+                    <a th:href="'/index_admin/counter_page'" class="text-black text-decoration-none" style="margin-right: 30px; font-weight: bold;" th:text="'Посещения'"></a>
+                    <a th:href="'/'"class="btn btn-outline-secondary text-black text-decoration-none"
+                       style="margin-right: 20px; font-weight: bold;" th:text="'3detail.ru'"></a>
 
                     </div>
                 </div>
@@ -90,6 +97,9 @@
                     <h6> mail </h6>
                 </th>
                 <th>
+                    <h6> Comand </h6>
+                </th>
+                <th>
                     <h6> comment</h6>
                 </th>
                 <th>
@@ -107,6 +117,50 @@
                 </th>
                 <!--                            <th><h10 >   <a th:text="${user.getLogin}"> </a>  </h10> </th>-->
                 <th><h10 >   <a th:text="${user.getMail}"> </a> </h10> </th>
+
+                <th>
+                    <!--   Кнопка удалить группу -->
+
+                        <!-- Кнопка модального окна на удаление пользователя -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button  class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;"
+                                     data-bs-toggle="modal" th:data-bs-target="'#'+ 'modal_' + ${user.getId}">
+                                Удалить
+                            </button>
+                        </div>
+                    <!-- Модальное окно удалить пользователя -->
+                    <div class="modal fade" th:id="'modal_' + ${user.getId}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5">
+                                        <a> Удалить пользователя <br/>
+                                            <span th:text="${user.getLogin} + ' ???'"></span>
+                                        </a>
+                                    </h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Отмена"></button>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <form method="get" th:action = "'/index_admin/del_user/' + ${user.getId}">
+                                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                            <button class="btn btn-dark btn-sm mb-2"
+                                                    type="submit"
+                                                    style="height: 25px; width: 80px; font-size: 12px;">Удалить</button> <!--Удалить-->
+                                        </div>
+                                        <!--                                        скрытое поле -->
+                                        <!-- newHiddenInput_del.value = gr.groupId;                  // Значение поля
+                            newHiddenInput_del.name = "group_del_group" + gr.groupId;-->
+                                    </form>
+                                    <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;" data-bs-dismiss="modal">Отмена</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--   ---------------------->
+                </th>
 
                 <th><h10 > <a th:text="${user.getComment}"></a>   </h10> </th>
                 <th><h10 >   <a th:text="${user.getDataCreateUser}"> </a> </h10> </th>
@@ -197,7 +251,7 @@
                                         </div>
 
 
-                                        <!-- Модальное окно -->
+                                        <!-- Модальное окно удалить группу -->
                                         <div class="modal fade" th:id="'modal_' + ${group.getGroupId}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
@@ -247,6 +301,7 @@
                                                                                 newHiddenInput_save.name = "group_save_" + gr.groupId;       // Имя параметра на сохранение группы-->
 
                                                 </div>
+                                                <input type="hidden" name="parrent_group_Id" th:value="${group.getParrentId}"/>
                                             </form>
                                         </div>
 
@@ -285,8 +340,8 @@
                                                 </div>
                                             </form>
                                         </div>
-                                        <!--Кнопка загрузить изображение -->
 
+                                        <!--Кнопка загрузить изображение -->
                                         <div class="col-2">
                                             <form method="post" enctype="multipart/form-data"
                                                   th:action="@{'/upload_image_group/' + ${group.getGroupId()}}"
@@ -295,7 +350,6 @@
                                                 <button type="submit">Загрузить</button>
                                             </form>
                                         </div>
-
                                     </div>
                                 </th>
                             </tr>
@@ -304,9 +358,8 @@
                         </tbody>
                     </table>
 
-
+<!--                вложенность-->
                 <div th:each = "group: ${groups}" id="loop" >
-
                     <input   th:value="${group.getGroupName()} + '  вложенность: ' + ${group.getLevelGroup} "
                             type="text" name="testName" size="50"/>
                 </div>
@@ -670,6 +723,7 @@
 
 <input type="hidden" id="point" th:value="${point}"/>
 
+<!--установка текущего якоря-->
 <script>
     const point = document.getElementById("point");
     // document.addEventListener('DOMContentLoaded', function () {

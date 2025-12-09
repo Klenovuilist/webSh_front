@@ -5,6 +5,7 @@
     <title>Test</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
+    <script src="/js/bootstrap.bundle.min.js" ></script> <!--в т.ч. для модальных окон-->
 
 </head>
 <body>
@@ -19,77 +20,158 @@
     </div>
 </header>
 
+<p></p>
+<!--  Строка кнопок-->
 <div class="container">
-    <div class="row">
-        <div class="col-10">
-            <p></p>
-            <h3>страница User</h3>
-            <p></p>
-            <h4>   <a th:text="${errorMessage}" > </a>   </h4>
-            <P></P>
-            <!--Вывод сообщения об ошибке-->
+<div class="row">
 
-
-            <table class="table table-bordered">
-                <thead>
-                <div class="row">
-                    <tr class="table-warning table align-middle">
-                        <div class="col-2">
-                            <th>
-                                <h6><a th:text="${user.getLogin}"></a></h6>
-                            </th>
+    <div class="col-md-5">
+        <div class="btn-group" role="group" > <!--кнопки верхние в один ряд-->
+            <!-- Кнопка модального окна выйти из профиля -->
+            <button button class="btn btn-dark btn-sm mb-2 mx-2" type="submit" style="height: 35px; width: 110px; font-size: 16px;"
+                    data-bs-toggle="modal" th:data-bs-target="'#'+ 'modal_logout'"> Выйти
+            </button>
+            <!-- Модальное окно выйти из профиля -->
+            <div class="modal fade" th:id="'modal_logout'" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Отмена"></button>
                         </div>
-                        <div class="col-2">
-                            <th>
+                        <div class="modal-body">
+                            <h6><a th:text="'Выйти из профиля: ' +${userInfo['login']} + ' ??'"></a></h6>
+                            <div th:if="${userInfo['verify'] eq 'false'}">
+                                <p></p>
+                                <h6>Почта не указана или не подтверждена:</h6>
+                                <h4><a th:text="'Войти в профиль: ' +${userInfo['login']} + ' повторно невозможно'"></a></h4>
+                           </div>
+                            </div>
+                        <div class="modal-footer">
+                            <form method="get" th:action="'/logout_user'"
+                             th:id="'logout_user'">
+                             <!--                                    <input type="hidden"  name="page"  value="index_admin_group">-->
+                            <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;">Выйти</button>
+                            </form>
+                            <button class="btn btn-dark btn-sm mb-2" type="submit" style="height: 25px; width: 80px; font-size: 12px;" data-bs-dismiss="modal">Отмена</button>
 
-                                <h6> <a th:text="${user.getMail}"> </a></h6>
-                            </th>
                         </div>
-
-                        <div class="col-3">
-                            <th>
-                                <h6>  <input th:id="user.getId"   th:value="${user.getComment}"
-                                             type="text" name="comment" size="50"/> </a> </h6>
-                            </th>
-                        </div>
-
-                        <div class="col-2">
-                            <th>
-                                <h6> <a th:text="${user.getDataCreateParsing}"> </a></h6>
-                            </th>
-                        </div>
-
-
-
-                    </tr>
-                </div>
-
-                </thead>
-                <tbody></tbody>
-
-            </table>
-            <p></p>
-
-            <div class="container mt-5">
-                <div class="row justify-content-center">
-                    <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
-                        <h3 class="text-center mb-4">Описание</h3>
-                        <p></p>
-
-
                     </div>
                 </div>
             </div>
 
-
-            <p></p>
-
-
+            <form method="get" th:action="'/athurizathion'"
+                  th:id="'logout_user'">
+                <button class="btn btn-dark btn-sm mb-2 mx-2" type="submit" style="height: 35px; width: 200px; font-size: 16px;">Войти заново</button>
+            </form>
+            <form method="get" th:action="'/'">
+                <button class="btn btn-dark btn-sm mb-2 mx-2" type="submit" style="height: 35px; width: 120px; font-size: 16px;">На главную</button>
+            </form>
         </div>
-
-        <p></p>
     </div>
 </div>
+    </div>
+
+
+<form method="post" th:action="'/index_user_update/' + ${userInfo['id']}">
+    <input type="hidden"  name="user_id"  th:value="${userInfo['id']}">
+<div class="container">
+
+    <div th:if="${userInfo['verify'] eq 'false'}">
+        <p></p>
+        <h6 style="color: rgb(245,38,38);"> Профиль не подтвержден</h6>
+        <h6 style="color: rgb(255, 0, 0);">Для подтверждения укажите почту и перейдите по ссылке из письма</h6>
+        <p></p>
+    </div>
+
+    <div class="row">
+        <div class="col-5">
+            <p></p>
+            <p></p>
+            <h4>   <a th:text="${errorMessage}" > </a>   </h4>
+            <P></P>
+
+
+
+            <label for="login" class="form-label">Логин:</label>
+            <input class="form-control"
+                   id="login" th:value="${userInfo['login']}"
+                   type="text" size="12" maxlength="20" name="userLogin" />
+            <p></p>
+
+            <label for="name" class="form-label">Имя:</label>
+            <input class="form-control"
+                   id="name" th:value="${userInfo['name']}"
+                   type="text" maxlength="20" name="userName" />
+            <p></p>
+
+            <label for="mail" class="form-label">Почта:</label>
+            <input class="form-control" id="mail" th:value="${userInfo['mail']}"
+                   type="text" size="12"  name="email"/>
+            <p></p>
+
+            <label for="password" class="form-label">Новый пароль:</label>
+            <input class="form-control" id="password"  type="password" size="12"  name="password"/>
+            <p></p>
+        </div>
+    </div>
+            <div class="row">
+                <div class="col-5">
+                    <label for="old_password" class="form-label">Текущий пароль (обязательно):</label>
+                    <input class="form-control"
+                           id="old_password" type="password" size="12" name="old_password"/>
+                    <p></p>
+                </div>
+            </div>
+
+                <button class="btn btn-dark btn-sm mb-2" type="submit"
+                        style="height: 32px; width: 100px; font-size: 15px;">Сохранить </button>
+
+            <p></p>
+            <div th:if="${message != null}">
+                <h6> <a th:text="${message}" > </a>   </h6>
+            </div>
+            <p></p>
+                <div th:if="${passwordUser != null}">
+                    <h6> <a th:text="'Временный пароль: ' + ${passwordUser}" > </a>   </h6>
+                </div>
+            <p></p>
+
+    </div>
+</form>
+
+<!-- Сообщение показывается в модале -->
+<div th:if="${message != null && message != ''}">
+    <!-- Модальное окно -->
+    <div class="modal fade" id="messageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <h6><a th:text="${message}"></a></h6>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Скрипт для автоматического открытия модала, если message не null -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const message = "${message}";
+            if (message !== "" && message !== null) {
+                var myModalEl = document.getElementById('messageModal');
+                var modal = new bootstrap.Modal(myModalEl);
+                modal.show();
+            }
+        });
+    </script>
+</div>
+
+
 
 <style>
     label {

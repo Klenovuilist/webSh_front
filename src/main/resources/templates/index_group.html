@@ -6,7 +6,7 @@
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
 
-    <link rel="icon" href="/image/3detail icon.ico" sizes="any" type="image/x-icon"/>
+    <link rel="icon" href="/image/3detail_icon.ico" sizes="any" type="image/x-icon"/>
     <!--    <link rel="icon" href="/icon_noFon120.ico"  sizes="120x120" type="image/x-icon"/>-->
     <meta name="description" th:content="${mapInfo[9].info}">
 
@@ -29,8 +29,12 @@
 <header>
     <div class="container">
         <div class="row">
+            <div class="col-8" >
+                <!--картинка группы  @{'/image_group/' + ${fileName}}   "@{'/image_group/new.jpg'}" -->
+                <img src="/image/main_logo.png"  style="max-height: 80px;">
+            </div>
             <div class="col-8">
-<!--                <h2 class="text-center text-white"> 3detail </h2>-->
+                <h4 class="text-white"> Сервис 3D печати </h4>
             </div>
         </div>
     </div>
@@ -45,12 +49,17 @@
 
         <div class="col-md-4">
             <div class="btn-group" role="group" > <!--имена групп в один ряд-->
-                <div class="me-3">
-                    <h6 class="text-center mb-4">
-                        <a href = "/athurizathion" > <p th:text="${userInfo['login']}"></p> </a>
+                <div th:if="${userInfo['login'] eq 'Регистрация'}">
+                    <h6 class="text-center mb-4 mx-2">
+                        <a href = "/athurizathion" > <p th:text="${userInfo['login']}"></p></a>
                     </h6>
                 </div>
-                <div class="me-3">
+                <div th:unless="${userInfo['login'] eq 'Регистрация'}">
+                    <h6 class="text-center mb-4 mx-2">
+                        <a href = "/index_user_page" > <p th:text="'Логин: ' + ${userInfo['login']}"></p></a>
+                    </h6>
+                </div>
+                <div class="me-3 mx-2">
                     <h6 class="text-center mb-4">
                         <a href = "/index/order3d" > <p th:text="'Мои заказы'"></p> </a>
                     </h6>
@@ -65,16 +74,14 @@
     <!--  Строка с инфо сверху-->
     <div class="row">
         <div class="col-md-4">
-            <h6 class="text-center mb-4">
-                <a th:text="${mapInfo[5].info}"></a>
+            <h6 class="mb-4" style="white-space: pre-wrap;" th:text="${mapInfo[5].info}">
             </h6>
 
 
         </div>
         <div class="col-md-4"></div>
         <div class="col-md-4">
-            <h6 class="text-center mb-4">
-                <a th:text="${mapInfo[6].info}"></a>
+            <h6 class="mb-4" style="white-space: pre-wrap;" th:text="${mapInfo[6].info}">
             </h6>
         </div>
 
@@ -108,7 +115,7 @@
 
             <!-- Первая ссылка будет показана, если parentId не равен null -->
             <a th:if="${groupCurrent.getParrentId != null}"
-               th:href="'/index/group/' + ${group.getParrentId}"class="btn btn-outline-secondary text-black text-decoration-none"
+               th:href="'/index/group/' + ${groupCurrent.getParrentId}"class="btn btn-outline-secondary text-black text-decoration-none"
                style="margin-right: 20px; font-weight: bold;"
                th:text="'Назад '"></a>
 
@@ -189,7 +196,7 @@
                                 <!-- Добавляем div для цены с абсолютным позиционированием -->
                                 <div >
                                     <h5 style="color: darkblue;">
-                                        <a th:text="${product.getProductCoast()} + ' руб'" >
+                                        <a th:text="${product.getProductCoast()}" >
                                         </a>
                                     </h5>
                                 </div>
@@ -207,23 +214,17 @@
     <!--  Строка с инфо снизу-->
     <div class="row">
         <div class="col-md-4">
-            <h6 class="text-center mb-4">
-                <a th:text="${mapInfo[7].info}"></a>
+            <h6 class="mb-4" style="white-space: pre-wrap;" th:text="${mapInfo[7].info}">
             </h6>
-
 
         </div>
         <div class="col-md-4"></div>
         <div class="col-md-4">
-            <h6 class="text-center mb-4">
-                <a th:text="${mapInfo[8].info}"></a>
+            <h6 class="mb-4" style="white-space: pre-wrap;" th:text="${mapInfo[8].info}">
             </h6>
         </div>
-
-
     </div>
     <p></p>
-
 </div>
 
 

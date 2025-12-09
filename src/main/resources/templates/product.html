@@ -6,7 +6,7 @@
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
 
-    <link rel="icon" href="/image/3detail icon.ico" sizes="any" type="image/x-icon"/>
+    <link rel="icon" href="/image/3detail_icon.ico" sizes="any" type="image/x-icon"/>
     <!--    <link rel="icon" href="/icon_noFon120.ico"  sizes="120x120" type="image/x-icon"/>-->
     <meta name="description" th:content="${tegDescription}">
 
@@ -21,9 +21,12 @@
 <header>
     <div class="container">
         <div class="row">
+            <div class="col-8" >
+                <!--картинка группы  @{'/image_group/' + ${fileName}}   "@{'/image_group/new.jpg'}" -->
+                <img src="/image/main_logo.png"  style="max-height: 80px;">
+            </div>
             <div class="col-8">
-<!--                <h3 class="text-center text-white"> 3detail</h3>-->
-<!--                <h4 class="text-center text-white"> администратор </h4>-->
+                <h4 class="text-white"> Сервис 3D печати </h4>
             </div>
         </div>
     </div>
@@ -58,26 +61,23 @@
     <!--  Строка с инфо сверху-->
     <div class="row">
         <div class="col-md-4">
-            <h6 class="text-center mb-4">
-                <a th:text="${mapInfo[5].info}"></a>
+            <h6 class="mb-4" style="white-space: pre-wrap;" th:text="${mapInfo[5].info}">
             </h6>
 
 
         </div>
         <div class="col-md-4"></div>
         <div class="col-md-4">
-            <h6 class="text-center mb-4">
-                <a th:text="${mapInfo[6].info}"></a>
+            <h6 class="mb-4" style="white-space: pre-wrap;" th:text="${mapInfo[6].info}">
             </h6>
         </div>
-
-
     </div>
 
+    <!--сылки каталог разделов-->
     <div class="row">
         <div class="col-md-11">
             <p></p>
-            <!--сылки каталог разделов-->
+
             <div class="btn-group" role="group" > <!--имена групп в один ряд-->
                 <a th:href="'/'"
                    class="btn btn-outline-secondary text-black text-decoration-none"
@@ -116,35 +116,49 @@
     </div>
 
     <!-- строка продукт описание и картинки-->
-    <div class="row">
+    <div class="row my-4">
         <div class="col-9">
             <p></p>
+            <!--Вывод сообщения об ошибке-->
             <h4>   <a th:text="${errorMessage}" > </a>   </h4>
             <P></P>
-<!--Вывод сообщения об ошибке-->
-            <p></p>
 
-            <div class="col-md-12 border p-4 rounded shadow-lg bg-body-secondary">
+            <div class="card h-100 border p-4 rounded shadow-lg ">
+
                 <h3 class="text-center mb-4"><a th:text="${product.getProduct_name}"> </a></h3>
                 <p></p>
-                <div class="row g-3"> <!-- Основное распределение -->
-                    <div class="col-md-5"> <!-- Левый блок для изображений -->
-                        <div th:each="nameImages: ${ListNameImages}" class="mb-3">
+                <h4 class="text-end mb-4"><a  th:text="${product.getProductCoast}"> </a></h4>
+                <p></p>
+
+                <div th:each="nameImages: ${ListNameImages}" class="mb-3">
+                    <div class="row g-3"> <!-- Основное распределение -->
+                        <!--                   вывод картинок если разрешено -->
+                        <div th:if="${product.getView_image != 'no_view_image'}" class="col-5"> <!-- Левый блок для изображений -->
                             <a th:href="'/image/product/' + ${product.getProductId()} + '/' + ${nameImages}">
                                 <img th:src="@{'/image/product/' + ${product.getProductId()} + '/' + ${nameImages}}" class="img-fluid w-70 h-auto" alt="Описание">
                             </a>
                         </div>
-                    </div>
-                    <div class="col-md-7 text-right"> <!-- Правый блок для описания -->
-                        <h4><a th:text="${product.getProductCoast}"> </a></h4>
-                        <p></p>
-                        <h8>
-                            <p style="white-space: pre-wrap; line-height: 1.2;"
-                               th:text="${product.productDescription}"></p>
-                        </h8>
 
-                        <p></p>
-                        <h5><a th:text="${product.getProductCount}"> </a> </h5>
+                        <div class="col-7"> <!-- Правый блок для описания -->
+<!--                            текст описания назначается скриптом-->
+                            <h8>
+                                <a style="white-space: pre-wrap; line-height: 1.2;" th:id="'description_' + ${nameImages}"></a>
+                            </h8>
+                            <p></p>
+                            <h5><a th:text="${product.getProductCount}"></a></h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${mapDescription.containsKey('no_image')}" >
+                    <div class="row g-3">
+                        <div class="col-5"> </div>
+                        <div class="col-7">
+                            <h8>
+                                <a style="white-space: pre-wrap; line-height: 1.2;"
+                                th:text="${mapDescription['no_image']}"></a>
+                            </h8>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -152,21 +166,40 @@
 
         </div>
 
-        <p></p>
     </div>
+    <p></p>
+
+    <!--        добавление описаний к картинкам -->
+    <script th:inline="javascript">
+
+        // Преобразование Java-коллекций
+        const images = [[${ListNameImages}]]; // Массив изображений
+        const descriptions = [[${mapDescription}]]; // Мапа описаний
+
+        // Проход по каждой картинке
+        for (let i = 0; i < images.length; i++) {
+            let image = images[i];
+
+            // Находим элемент по id
+            const a_text = document.getElementById("description_" + image);
+
+            if (a_text && descriptions.hasOwnProperty(image)) { // Проверяем наличие и доступность
+                a_text.text= descriptions[image];
+            }
+        }
+    </script>
+
     <!--  Строка с инфо снизу-->
-    <div class="row">
+    <div class="row my-4">
         <div class="col-md-4">
-            <h6 class="text-center mb-4">
-                <a th:text="${mapInfo[7].info}"></a>
+            <h6 class="mb-4" style="white-space: pre-wrap;" th:text="${mapInfo[7].info}">
             </h6>
 
 
         </div>
         <div class="col-md-4"></div>
         <div class="col-md-4">
-            <h6 class="text-center mb-4">
-                <a th:text="${mapInfo[8].info}"></a>
+            <h6 class="mb-4" style="white-space: pre-wrap;" th:text="${mapInfo[8].info}">
             </h6>
         </div>
 

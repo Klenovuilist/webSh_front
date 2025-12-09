@@ -67,7 +67,7 @@ public class AdminService {
 
     public List<GroupProductDto> addUnderGroupAndStructure(List<GroupProductDto> listGroup){
 
-        //добавление в листы родителей дочерниние группы
+        //добавление в листы родителей дочерних групп
         for (GroupProductDto groupDto: listGroup){
                     if (Objects.isNull(groupDto.getParrentId())) {
                         continue;
@@ -78,8 +78,7 @@ public class AdminService {
                             .findFirst();
 
                      //добавление группы в родителя
-                            optionalGroupDto
-                                    .ifPresent(gr -> gr.getListUnderGroups().add(groupDto));
+                            optionalGroupDto.ifPresent(gr -> gr.getListUnderGroups().add(groupDto));
         }
         //лист GroupProductDto только из начальных групп
          List<GroupProductDto> listGroupDtoResult = listGroup.stream()
@@ -302,7 +301,7 @@ public class AdminService {
     /**
      * Создание ДТО на отправку изменений по группе
      */
-    public GroupProductDto createGroupDto(HttpServletRequest request) {
+    public GroupProductDto changeParrentIdGroupDto(HttpServletRequest request) {
         GroupProductDto newDto = new GroupProductDto();
 
         String parrentUuid = request.getParameter("parrent_group_Id");
@@ -325,14 +324,14 @@ public class AdminService {
     /**
      * Создание ДТО на отправку изменений по группе (перегруженный)
      */
-    public GroupProductDto createGroupDto(HttpServletRequest request, String groupUuid) {
+    public GroupProductDto changeParrentIdGroupDto(HttpServletRequest request, String groupUuid) {
         GroupProductDto newDto = new GroupProductDto();
 
         String parrentUuid = request.getParameter("parrent_group_Id");
         String nameGroup = request.getParameter("name_group");
         String groupId = groupUuid;
 
-        if (parrentUuid != null) {
+        if (parrentUuid != null && ! parrentUuid.isBlank()) {
             newDto.setParrentId(UUID.fromString(parrentUuid));
         }
 
@@ -340,7 +339,7 @@ public class AdminService {
             newDto.setGroupId(UUID.fromString(groupId));
         }
 
-        if (groupId != null) {
+        if (nameGroup != null) {
             newDto.setGroupName(nameGroup);
         }
         return newDto;
@@ -430,13 +429,17 @@ public class AdminService {
      */
     public void setParamfromFORMForProductDto(ProductDto productDto, HttpServletRequest request) {
 
+        List<String> listNameImages = feignForGroup.getListNameImageProduct(productDto.getProductId().toString()).getBody();
+
         String uuidGroupId = request.getParameter("group_Id");
         String productName = request.getParameter("product_name");
-        String productDescription = request.getParameter("product_description");
+//        String productDescription = request.getParameter("product_description");
+//        String productDescription = "";  // пустая строка по умолчанию описание продукта
         String productCount = request.getParameter("count_product");
         String productCoast = request.getParameter("coast_product");
         String productTeg = request.getParameter("teg_product");
-
+        String productView = request.getParameter("no_image_view");
+        String productIsload = request.getParameter("is_load");
 
 
 
@@ -455,9 +458,36 @@ public class AdminService {
             productDto.setProduct_name(productName);
         }
 
-        if(productDescription != null){
-            productDto.setProductDescription(productDescription);
+//        if(productDescription != null){
+//            productDto.setProductDescription(productDescription);
+//        }
+
+//        Установка описаний к картинкам
+        StringBuilder currentDescription = new StringBuilder();
+        for (String imageName: listNameImages){
+
+
+//            описание к картинке из формы браузера по имени картинки
+            String description = request.getParameter("product_description$" + imageName);
+            if (description != null) {
+                // разделитель по имени картинки
+                currentDescription.append(imageName).append("!name!");
+                currentDescription.append(description);
+
+                //разделитель описания для картинок
+                currentDescription.append("!new!");
+            }
+
         }
+        //сохранить no_image в описании если оно существует в форме
+        String description = request.getParameter("product_description$no_image");
+        if(Objects.nonNull(description)){
+            currentDescription.append("no_image!name!").append(description);
+        }
+        if(! currentDescription.isEmpty()){
+            productDto.setProductDescription(currentDescription.toString());
+        }
+
 
         if(productCount != null){
             productDto.setProductCount(productCount);
@@ -470,6 +500,21 @@ public class AdminService {
         if(productTeg != null){
             productDto.setTeg(productTeg);
         }
+
+        if(productView != null){
+            productDto.setView_image(productView);
+        }
+        else {
+            productDto.setView_image("image_view");
+        }
+
+        if(productIsload != null){
+            productDto.setIsLoad(productIsload);
+        }
+        else {
+            productDto.setIsLoad("no_load");
+        }
+
 
     }
 
@@ -521,6 +566,85 @@ public class AdminService {
     }
 
 
+    /**
+     * Получить Map описаний картинок из поля String Description  описания продукта - распарсить String Description
+     */
+    public Map<String, String> getMapDescriptionProduct(ProductDto product, List<String> listNameImages) {
+
+        if(product.getProductDescription() == null){
+            product.setProductDescription("");
+        }
+
+        String[] parseDescriptionByCountImages = product.getProductDescription().split("!new!");
+
+        //если описание отсутствует
+        if (parseDescriptionByCountImages.length == 0) {
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("no_image", "");
+            return map;
+        }
+        //создание map из описания продукта, ключ имя картинки
+        Map<String, String> mapDescription = Arrays.stream(parseDescriptionByCountImages)
+                .map(desc -> desc.split("!name!"))
+                .filter(parts -> parts.length == 2) // фильтрация элементов с неправильным форматом
+                .collect(Collectors.toMap(
+                        parts -> parts[0], // ключ
+                        parts -> parts[1]  // значение
+                ));
 
 
+        if(mapDescription.isEmpty()){
+            mapDescription.put("no_image", product.getProductDescription());
+            return mapDescription;
+        }
+
+        // builder для сбора описаний для которых нет картинок(удалены)
+        StringBuilder no_imageDescription = new StringBuilder();
+
+
+        //проход по списку описаний с помощью итератора и удалить и удалить не соответствующие описания(переложить)
+        Iterator<Map.Entry<String, String>> iterator = mapDescription.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, String> entry = iterator.next();
+
+            // если имя описания есть в списке картинок, продолжаем следующую итерацию
+            if (listNameImages.contains(entry.getKey())) {
+                continue;
+            }
+            // положить в "no_image" описания без картинок
+            no_imageDescription.append(entry.getValue()).append("\n");
+
+            // удаляем элемент из мапы через итератор
+            iterator.remove(); // безопасно удаляется элемент
+        }
+
+        // положить в мап все описания без картинок с ключом "no_image"
+        if (! no_imageDescription.isEmpty()){
+            mapDescription.put("no_image", no_imageDescription.toString());
+        }
+
+        return mapDescription;
+
+     }
+
+    /**
+     * Получить лист имен картинок продукта без расширений типа .jpg
+     */
+    public List<String> getListNameImageProductNoExpansion(List<String> listName) {
+
+        return listName.stream().map(name -> {
+            String[] arrName = name.split("\\.");
+            if(arrName.length > 1){
+                name = arrName[0];  //после разделении полного имени берется только первая часть без расширения
+            }
+            return name;
+        }).toList();
+    }
+
+    /**
+     * изменить имя картинки продукта
+     */
+        public void changeNameImageProduct(String productId, String currentNameImage, String newName) {
+            feignForGroup.changeNameImageProduct(productId, currentNameImage, newName);
+    }
 }

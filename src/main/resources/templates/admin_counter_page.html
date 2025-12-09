@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" lang="ru">
+    <title>user admin</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <link rel="icon" href="/image/3detail_icon.ico" sizes="any" type="image/x-icon"/>
+    <script src="/js/bootstrap.bundle.min.js" ></script> <!--в т.ч. для модальных окон-->
+
+</head>
+<body>
+<header>
+    <div class="container">
+        <div class="row">
+            <div class="col-4" >
+                <!--картинка группы  @{'/image_group/' + ${fileName}}   "@{'/image_group/new.jpg'}" -->
+                <img src="/image/main_logo.png"  style="max-height: 80px;">
+            </div>
+            <div class="col-8">
+                <h3 class="text-center text-white"> 3detail администратор </h3>
+                <!--                <h4 class="text-center text-white"> администратор </h4>-->
+            </div>
+        </div>
+    </div>
+</header>
+<p></p>
+
+
+<div class="container">
+    <div class="btn-group" role="group" > <!--имена групп в один ряд-->
+        <a th:href="'/index_admin'" class="text-black text-decoration-none" style="margin-right: 20px; font-weight: bold;" th:text="'На главную ->'"></a>
+
+    </div>
+    <p></p>
+
+    <!--таблица посещений-->
+    <div class="row">
+        <div class="col-10">
+            <table class="table table-success table-striped">
+                <thead>
+                <tr>
+                    <th> № </th>
+                    <th> Дата </th>
+                    <th> id, имя  </th>
+                    <th> Enter </th>
+                    <th> Aplly </th>
+                    <th> Параметры </th>
+
+                </tr>
+
+                </thead>
+                <tbody>
+                <div th:each = "counter, iterStat: ${listCounter}" >
+
+                    <tr>
+                        <th  th:text="${iterStat.count}"></th>
+                        <th>
+                            <h8>
+                                <a style="white-space: pre-wrap; line-height: 1.2;"
+                                   th:text="${counter.getDataCreateParsing}"></a>
+                            </h8>
+                        </th>
+
+                        <th>
+                            <h8>
+                                <a style="white-space: pre-wrap; line-height: 1.2; font-size: 12px;"
+                                   th:text="${counter.getUserInfo}"></a>
+                            </h8>
+                        </th>
+
+                        <th>
+                            <h8>
+                                <a style="white-space: pre-wrap; line-height: 1.2;"
+                                   th:text="${counter.getCountEnter}"></a>
+                            </h8>
+                        </th>
+
+                        <th>
+                            <h8>
+                                <a style="white-space: pre-wrap; line-height: 1.2;"
+                                   th:text="${counter.getCountOrder}"></a>
+                            </h8>
+                        </th>
+
+                        <th>
+                            <h8>
+                                <a style="white-space: pre-wrap; line-height: 1.2; font-size: 10px;"
+                                   th:text="${counter.getParameter}"></a>
+                            </h8>
+                        </th>
+
+                    </tr>
+
+                </div>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+<style>
+    label {
+        font-size: 17px;
+        font-weight: bold;
+        text-align: left;
+    }
+</style>
+
+
+
+</body>
+</html>

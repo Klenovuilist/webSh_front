@@ -40,6 +40,7 @@ public class JwtService {
         payLoadToken.put("name", userDto.getUserName());
         payLoadToken.put("mail", userDto.getMail());
         payLoadToken.put("id", userDto.getId().toString());
+        payLoadToken.put("verify", Boolean.toString(userDto.isBoolverify()));
 
         Date issuedDate = new Date(); // время создания токена - текущее время
         Date expiriedDate = new Date(issuedDate.getTime() + jwtLifeTime.toMillis());  // время жизни токена

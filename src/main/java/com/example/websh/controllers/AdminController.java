@@ -7,6 +7,7 @@ import com.example.websh.dto.GroupProductDto;
 import com.example.websh.dto.ProductDto;
 import com.example.websh.exceptions.ErrorMessage;
 import com.example.websh.service.AdminService;
+import com.example.websh.service.CounterServices;
 import com.example.websh.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -32,6 +33,8 @@ public class AdminController {
     private  final Cash cash;
 
     private  final Anchor anchor;
+
+    private final CounterServices counterServices;
 
 //    public List<GroupProductDto> listGroups = new ArrayList<>();
 
@@ -59,7 +62,7 @@ public class AdminController {
         model.addAttribute("parentGroup", parentGroup);
         model.addAttribute("groups", cash.getListGroups());
 
-        model.addAttribute("products", adminService.getListProductDtoByIdGroup("1"));
+        model.addAttribute("products", adminService.getListProductDtoByIdGroup("1")); //если IdGroup == 1 то список всех продутов id == null - для главной страницы
 
 //        model.addAttribute("boolean", true);
 
@@ -127,7 +130,7 @@ public class AdminController {
     public String saveNameGroup(@PathVariable("id") String groupId, HttpServletRequest request){
 //       String newNameGroup = request.getParameter("name_group" + groupId); //параметр запроса
 
-        feignForGroup.changeGroup(adminService.createGroupDto(request, groupId));
+        feignForGroup.changeGroup(adminService.changeParrentIdGroupDto(request, groupId));
 //        adminService.changeNameGroup(listGroups, newNameGroup, UUID.fromString(groupId));
 
         anchor.point = "group_name_" + groupId; //точка перехода на странице к сохраненной группе
@@ -191,7 +194,7 @@ public class AdminController {
     @PostMapping("/index_admin/change_parrent_group")
     public String changeParrentGroup(HttpServletRequest request){
 
-        GroupProductDto groupDto = adminService.createGroupDto(request);
+        GroupProductDto groupDto = adminService.changeParrentIdGroupDto(request);
         feignForGroup.changeGroup(groupDto);
         cash.refreshListGroup();
 
@@ -278,9 +281,8 @@ public class AdminController {
     public String adminProductNew(Model model, HttpServletRequest request){
 
        ProductDto productDto =  adminService.createNewProduct();
+
 //        feignForGroup.getImageProductById("0"); //получение картинки по умолчанию
-
-
 
         // список картинок для продукта
         List<String> images = adminService.getListNameImageProduct(productDto.getProductId());
@@ -290,15 +292,32 @@ public class AdminController {
         model.addAttribute("product", productDto);
         model.addAttribute("ListNameImages", images); //лист с именами картинок
 
-        List<GroupProductDto> parentGroup = new ArrayList<>(cash.getListGroups());
-        parentGroup.add(GroupProductDto.builder()
+        //        описание к картинкам (парсить из продукта)
+        Map<String, String> descriptionProductMap = adminService.getMapDescriptionProduct(productDto, images);
+        model.addAttribute("mapDescription", descriptionProductMap);
+
+        List<GroupProductDto> listGroup = new ArrayList<>(cash.getListGroups());
+        //добавление главной группы в список групп
+        listGroup.add(GroupProductDto.builder()
+//                .groupId(UUID.randomUUID())
                 .groupName("MAIN")
                 .build());
 
-//        model.addAttribute("parentGroup", parentGroup);
-        model.addAttribute("groups", parentGroup);
+        model.addAttribute("groups", listGroup);
 
-        model.addAttribute("currentGroupId", request.getParameter("id_group")); //текущее значение группы для товара
+        // если в параметрах передан 0 в качестве id группы то текущей группой сделать "MAIN"
+        if (request.getParameter("id_group").equals("0")){
+            model.addAttribute("currentGroupId", listGroup.stream()
+                    .filter(gr -> gr.getGroupName().equals("MAIN"))
+                    .findFirst()
+                    .get()
+                    .getGroupId()); //текущее id группы для товара
+        }
+        else {
+            model.addAttribute("currentGroupId", request.getParameter("id_group")); //текущее значение группы для товара
+        }
+//        }
+
 
         return "new_product.html";
     }
@@ -343,14 +362,13 @@ public class AdminController {
     }
 
     /**
-     * Получить страницу продукта для админа
+     * Получить страницу продукта по id для админа
      */
     @GetMapping("/product_admin/{productId}")
     public String adminProductById(@PathVariable("productId") String productId, Model model
                 , @ModelAttribute("currentGroupId") Optional<String> currentGroupIdOptional){   //@ModelAttribute("currentGroupId") Optional<String> currentGroupIdOptional  для получения параметров из другого контроллера
 
         ProductDto productDto =  adminService.getProductDtoById(productId);
-//        feignForGroup.getImageProductById("0"); //получение картинки по умолчанию
 
         // список картинок для продукта
         List<String> images = adminService.getListNameImageProduct(productDto.getProductId());
@@ -358,11 +376,18 @@ public class AdminController {
         if (cash.getListGroups().isEmpty()){ //обновить группы
             cash.refreshListGroup();
         }
+//        описание к картинкам (парсить из продукта)
+        Map<String, String> descriptionProductMap = adminService.getMapDescriptionProduct(productDto, images);
+        model.addAttribute("mapDescription", descriptionProductMap);
 
 //        List<String> images = new ArrayList<>();
 //        images.add("1----0");
         model.addAttribute("product", productDto);
         model.addAttribute("ListNameImages", images); //лист с именами картинок
+//
+//        Получить лист имен картинок продукта без расширений типа .jpg
+        List<String> imagesNoExpansion = adminService.getListNameImageProductNoExpansion(images);
+        model.addAttribute("ListNameImagesNoExpansion", imagesNoExpansion); //лист с именами картинок
 
         List<GroupProductDto> parentGroup = new ArrayList<>(cash.getListGroups());
         parentGroup.add(GroupProductDto.builder()
@@ -399,9 +424,14 @@ public class AdminController {
     public String saveProduct(@PathVariable("productId") String productId, HttpServletRequest request,
                               RedirectAttributes redirectAttributes){
 
+//        ProductDto productDto = feignForGroup.getProductDtoById(productId).getBody();
+//        if (productDto == null){
+//            productDto = new ProductDto();
+//        }
         ProductDto productDto = new ProductDto();
         productDto.setProductId(UUID.fromString(productId));
 
+// установка параметров из формы в ДТО
         adminService.setParamfromFORMForProductDto(productDto, request);
 
         feignForGroup.saveProduct(productDto);
@@ -413,7 +443,7 @@ public class AdminController {
 
             anchor.setPoint("product_name_" + productId); //точка перехода на странице
 
-            return "redirect:/index_admin/group/" + request.getParameter("id_group");
+            return "redirect:/index_admin/group/" + request.getParameter("group_Id");
         }
 
         // условие остаться на той же странице index_admin/group
@@ -514,7 +544,36 @@ public class AdminController {
         return "redirect:/index_admin";
     }
 
+    @PostMapping("/index_admin/{product_id}/change_name_image")
+        public String changeNameImage(@PathVariable("product_id")String productId, HttpServletRequest request){
+
+        adminService.changeNameImageProduct(productId
+                , request.getParameter("currentNameImage")
+                , request.getParameter("select_new_name"));
+
+        return "redirect:/product_admin/" + productId;
+    }
 
 
+    /**
+     * Удалить пользователя по id
+     */
+    @GetMapping("/index_admin/del_user/{userId}")
+    public String deletUserbyId(@PathVariable("userId") String userId){
+        feignForGroup.deleteUserById(userId);
 
+        return "redirect:/index_admin";
+    }
+
+
+    /**
+     * Получить страницу посещений
+     */
+    @GetMapping("/index_admin/counter_page")
+    public String counterPage(Model model){
+
+       model.addAttribute("listCounter", counterServices.getListCounter());
+
+        return "admin_counter_page.html";
+    }
 }
